@@ -91,6 +91,16 @@ export default function Accueil() {
         <img className="lp-visuel lp-photo-grande" src={MEDIA.photoPlage2.src} alt={MEDIA.photoPlage2.alt} loading="lazy" width={900} height={1125} />
       </section>
 
+      <section className="lp-section lp-galerie" aria-labelledby="tg">
+        <div className="lp-wrap">
+          <h2 id="tg">D’où que tu viennes, l’important est d’être vrai</h2>
+          <p className="lp-intro">Africain(e), européen(ne), asiatique, de la diaspora : Love Infinity réunit des personnes de toutes origines qui cherchent une vraie histoire.</p>
+          <div className="lp-mosaique">
+            {MEDIA.galerie.map((g, i) => <img key={i} src={g.src} alt={g.alt} loading="lazy" className={`m${i + 1}`} />)}
+          </div>
+        </div>
+      </section>
+
       <section className="lp-signe" aria-label="Notre promesse">
         <div className="lp-wrap">
           <h2>Ici, tout le monde est vrai.</h2>

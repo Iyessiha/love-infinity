@@ -202,3 +202,13 @@
 .lp-photo-grande{width:100%;max-width:380px;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:26px;box-shadow:0 30px 60px -30px rgba(74,14,46,.45)}
 .lp-bloc-fond{background:#fff;border-block:1px solid var(--trait)}
 .lp-credits{border-top:1px solid rgba(251,246,238,.15);margin-top:28px;padding-top:16px;font-size:13px;color:#B8A29E}
+
+.lp-galerie h2{max-width:24ch}
+.lp-mosaique{display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:150px;gap:12px;margin-top:36px}
+.lp-mosaique img{width:100%;height:100%;object-fit:cover;border-radius:20px;background:var(--trait);display:block}
+.lp-mosaique .m1{grid-column:span 2;grid-row:span 2}
+.lp-mosaique .m2{grid-column:span 2}
+.lp-mosaique .m3{grid-column:span 2;grid-row:span 2}
+.lp-mosaique .m4{grid-column:span 2}
+.lp-mosaique .m5{grid-column:span 2}
+@media (max-width:860px){.lp-mosaique{grid-template-columns:1fr 1fr;grid-auto-rows:150px}.lp-mosaique .m1,.lp-mosaique .m3{grid-column:span 1;grid-row:span 2}.lp-mosaique .m2,.lp-mosaique .m4,.lp-mosaique .m5{grid-column:span 1}.lp-mosaique .m5{grid-column:span 2}}

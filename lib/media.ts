@@ -5,5 +5,13 @@ export const MEDIA = {
   heroPoster: 'https://images.unsplash.com/photo-1497414826197-4166f61a8e14?auto=format&fit=crop&w=1400&q=70', // Unsplash – Nathan Dumlao
   photoPlage1: { src: 'https://images.unsplash.com/photo-1497414826197-4166f61a8e14?auto=format&fit=crop&w=900&q=75', alt: 'Un couple se tient la main au bord de l’eau, au coucher du soleil' },
   photoPlage2: { src: 'https://images.unsplash.com/photo-1588632258523-26242d0a8c2c?auto=format&fit=crop&w=900&q=75', alt: 'Un couple marche main dans la main sur la plage' },
-  credits: 'Photos : Nathan Dumlao et Bob Oh sur Unsplash. Vidéo : Mixkit.',
+  // Mosaïque « toutes les origines » (à remplacer par vos propres photos)
+  galerie: [
+    { src: 'https://images.unsplash.com/photo-1655683576616-c40706fa79f2?auto=format&fit=crop&w=800&q=75', alt: 'Un couple africain qui s’enlace', credit: 'Iwaria' },
+    { src: 'https://images.unsplash.com/photo-1644041852210-4873f99366be?auto=format&fit=crop&w=800&q=75', alt: 'Deux couples souriants qui s’enlacent', credit: 'Francis Odeyemi' },
+    { src: 'https://images.unsplash.com/photo-1510932742089-bef92acabb5b?auto=format&fit=crop&w=800&q=75', alt: 'Une femme embrasse un homme sur la tête', credit: 'Justin Follis' },
+    { src: 'https://images.unsplash.com/photo-1644042282339-767092de616b?auto=format&fit=crop&w=800&q=75', alt: 'Un couple sourit dans la rue', credit: 'Francis Odeyemi' },
+    { src: 'https://images.unsplash.com/photo-1710897537655-4934864e5c63?auto=format&fit=crop&w=800&q=75', alt: 'Un homme et une femme côte à côte', credit: 'Jeferson Santu' },
+  ],
+  credits: 'Photos sur Unsplash : Nathan Dumlao, Bob Oh, Iwaria, Francis Odeyemi, Justin Follis, Jeferson Santu. Vidéo : Mixkit.',
 };
