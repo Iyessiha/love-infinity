@@ -45,7 +45,7 @@ export default async function Verification() {
       </div>
       <div className="sp"></div>
       {profil?.account_status === 'active'
-        ? <div className="alert">Ton compte est actif. La découverte des profils arrive bientôt.</div>
+        ? <Link className="btn gold" href="/decouvrir">Découvrir des profils</Link>
         : <p className="small" style={{ textAlign: 'center' }}>Ton compte sera activé dès que tes photos seront validées. Nous te prévenons par email.</p>}
     </main>
   );
