@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { supabaseBrowser } from '@/lib/supabase/client';
+import { Check, Chevron } from '@/components/Icons';
 
 export default function Connexion() {
   const router = useRouter();
@@ -27,7 +28,7 @@ export default function Connexion() {
 
   return (
     <main className="ph">
-      <Link className="back" href="/">‹ Retour</Link>
+      <Link className="back" href="/"><Chevron /> Retour</Link>
       <h1>Content de te revoir</h1>
       <form onSubmit={entrer} className="col" style={{ gap: 14 }}>
         <div className="field"><label className="lbl" htmlFor="email">Email</label><input id="email" className="in" type="email" autoComplete="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} /></div>

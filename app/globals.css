@@ -103,3 +103,8 @@ textarea.in{height:112px;padding:12px 14px;line-height:1.4;resize:none;align-ite
 .carte-entree{animation:entree .25s ease-out}
 @keyframes entree{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.carte-entree{animation:none}.btn,.chip{transition:none}}
+.back{min-height:44px}
+.in:focus-visible{outline:3px solid #D4A24C;outline-offset:1px;border-color:#4A0E2E}
+.in.ok{border-color:#236B43}
+.lvl .n.g{background:#236B43;color:#FBF6EE}
+.photos .f,.photos>div{cursor:pointer}

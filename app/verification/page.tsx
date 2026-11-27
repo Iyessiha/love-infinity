@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { requireUser } from '@/lib/auth';
+import { Check, Chevron } from '@/components/Icons';
 
 type V = { kind: string; status: string; reason: string | null; created_at: string };
 
@@ -32,7 +33,7 @@ export default async function Verification() {
           return (
             <div key={n.kind} className="card col" style={{ gap: 8 }}>
               <div className="lvl">
-                <div className={`n${fait ? ' g' : ''}`}>{fait ? '✓' : n.n}</div>
+                <div className={`n${fait ? ' g' : ''}`}>{fait ? <Check /> : n.n}</div>
                 <div><b>{n.titre}</b><span>{n.texte}</span></div>
               </div>
               {attente && <p className="small">En cours de vérification (sous 24 heures).</p>}

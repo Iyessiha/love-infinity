@@ -1,3 +1,4 @@
+import { Chevron } from '@/components/Icons';
 import Link from 'next/link';
 import { requireUser } from '@/lib/auth';
 
@@ -12,7 +13,7 @@ export default async function Matchs() {
 
   return (
     <main className="ph">
-      <Link className="back" href="/decouvrir">Retour à découvrir</Link>
+      <Link className="back" href="/decouvrir"><Chevron /> Découvrir</Link>
       <h1>Mes matchs</h1>
       {liste.length === 0 && <p className="sub">Pas encore de match. Continue à découvrir des profils.</p>}
       <div className="col">

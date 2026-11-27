@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { supabaseBrowser } from '@/lib/supabase/client';
 import { DOCS, extension, MAX_IMAGE, type DocType } from '@/lib/verification';
+import { Check, Chevron } from '@/components/Icons';
 
 export default function Document() {
   const router = useRouter();
@@ -54,12 +55,12 @@ export default function Document() {
       </div>
       <div className="row" style={{ gap: 12, alignItems: 'stretch' }}>
         <label className={`drop${recto ? ' done' : ''}`} style={{ flex: 1, cursor: 'pointer' }}>
-          <b>{recto ? '✓ ' : ''}{doc.recto}</b><span>{recto ? recto.name : 'Touche pour photographier'}</span>
+          <b>{recto ? <><Check /> </> : null}{doc.recto}</b><span>{recto ? recto.name : 'Touche pour photographier'}</span>
           <input type="file" accept="image/jpeg,image/png,image/webp" capture="environment" hidden onChange={choix(setRecto)} />
         </label>
         {doc.verso && (
           <label className={`drop${verso ? ' done' : ''}`} style={{ flex: 1, cursor: 'pointer' }}>
-            <b>{verso ? '✓ ' : ''}Verso</b><span>{verso ? verso.name : 'Touche pour photographier'}</span>
+            <b>{verso ? <><Check /> </> : null}Verso</b><span>{verso ? verso.name : 'Touche pour photographier'}</span>
             <input type="file" accept="image/jpeg,image/png,image/webp" capture="environment" hidden onChange={choix(setVerso)} />
           </label>
         )}

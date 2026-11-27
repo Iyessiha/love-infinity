@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Logo } from '@/components/Logo';
+import { Check, Chevron } from '@/components/Icons';
 
 export default function Accueil() {
   return (
@@ -12,9 +13,9 @@ export default function Accueil() {
         </p>
       </div>
       <div className="col" style={{ gap: 14, marginTop: 16 }}>
-        <div className="lvl"><div className="n g">✓</div><div><b>Chaque profil est vérifié</b><span>Selfie vidéo et pièce d'identité, contrôlés par notre équipe.</span></div></div>
-        <div className="lvl"><div className="n g">✓</div><div><b>Des prix clairs en FCFA</b><span>Pas de pièces qui expirent. Remboursement automatique en cas de problème.</span></div></div>
-        <div className="lvl"><div className="n g">✓</div><div><b>Jusqu'au premier rendez-vous</b><span>Des rencontres sérieuses, à Abidjan d'abord.</span></div></div>
+        <div className="lvl"><div className="n g"><Check /></div><div><b>Chaque profil est vérifié</b><span>Selfie vidéo et pièce d'identité, contrôlés par notre équipe.</span></div></div>
+        <div className="lvl"><div className="n g"><Check /></div><div><b>Des prix clairs en FCFA</b><span>Pas de pièces qui expirent. Remboursement automatique en cas de problème.</span></div></div>
+        <div className="lvl"><div className="n g"><Check /></div><div><b>Jusqu'au premier rendez-vous</b><span>Des rencontres sérieuses, à Abidjan d'abord.</span></div></div>
       </div>
       <div className="col" style={{ marginTop: 20 }}>
         <Link className="btn" href="/inscription">Créer mon compte</Link>

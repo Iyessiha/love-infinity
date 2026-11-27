@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useRef, useState } from 'react';
 import { Turnstile } from '@/components/Turnstile';
 import { passwordRules, passwordStrength } from '@/lib/password';
+import { Check, Chevron } from '@/components/Icons';
 
 export default function Inscription() {
   const router = useRouter();
@@ -48,7 +49,7 @@ export default function Inscription() {
 
   return (
     <main className="ph">
-      <Link className="back" href="/">‹ Retour</Link>
+      <Link className="back" href="/"><Chevron /> Retour</Link>
       <div className="bar"><i className="on"></i><i></i><i></i><i></i><i></i></div>
       <h1>Crée ton compte</h1>
       <form onSubmit={envoyer} className="col" style={{ gap: 14 }} noValidate>
@@ -62,9 +63,9 @@ export default function Inscription() {
           <input id="pw" className="in" type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
           <div className="meter" aria-hidden="true">{[1, 2, 3, 4].map((i) => <i key={i} className={force >= i ? 'on' : ''} />)}</div>
           <div className="rules">
-            <span>{regles.longueur ? <b>✓</b> : '•'} 8 caractères minimum</span>
-            <span>{regles.lettre ? <b>✓</b> : '•'} Une lettre</span>
-            <span>{regles.chiffre ? <b>✓</b> : '•'} Un chiffre</span>
+            <span>{regles.longueur ? <b><Check size={14} /></b> : '•'} 8 caractères minimum</span>
+            <span>{regles.lettre ? <b><Check size={14} /></b> : '•'} Une lettre</span>
+            <span>{regles.chiffre ? <b><Check size={14} /></b> : '•'} Un chiffre</span>
           </div>
         </div>
         <div className="field">
