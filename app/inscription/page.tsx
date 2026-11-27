@@ -78,7 +78,7 @@ export default function Inscription() {
         </div>
         <label className="check">
           <input type="checkbox" checked={cgu} onChange={(e) => setCgu(e.target.checked)} />
-          <span>J'ai 18 ans ou plus et j'accepte les conditions d'utilisation et la politique de confidentialité.</span>
+          <span>J'ai 18 ans ou plus et j'accepte les <Link href="/conditions" target="_blank" className="link" style={{ fontSize: 14 }}>conditions d'utilisation</Link> et la <Link href="/confidentialite" target="_blank" className="link" style={{ fontSize: 14 }}>politique de confidentialité</Link>.</span>
         </label>
         <Turnstile onToken={onToken} />
         {erreur && <div className="alert" role="alert">{erreur}</div>}

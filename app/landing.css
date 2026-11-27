@@ -109,7 +109,6 @@
 .lp-final h2{color:var(--creme);margin-inline:auto;max-width:18ch}
 .lp-final .lp-actions{justify-content:center}
 .lp-pied{background:var(--prune-deep);color:#CDB9B4;font-size:14px;padding-block:28px}
-.lp-pied .lp-wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px}
 
 @media (max-width:860px){
   .lp-hero-grille,.lp-verif,.lp-prix,.lp-ville-grille{grid-template-columns:1fr}
@@ -120,3 +119,86 @@
   .lp-section{padding-block:64px}
 }
 @media (max-width:480px){.lp-etapes{grid-template-columns:1fr}.lp-btn{width:100%}.lp-actions{flex-direction:column;align-items:stretch;text-align:center}}
+
+/* Navigation et pied de page partagés */
+.lp-nav-liens{display:flex;align-items:center;gap:22px}
+.lp-nav-lien{font-weight:700;font-size:15px;text-decoration:none;min-height:44px;display:inline-flex;align-items:center;color:var(--creme)}
+.lp-nav-lien:hover{text-decoration:underline;text-underline-offset:4px}
+.lp-pied{padding-block:48px 36px}
+.lp-pied-grille{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:32px}
+.lp-pied-grille>div{display:flex;flex-direction:column;gap:6px}
+.lp-pied-grille a{text-decoration:none;min-height:32px;display:inline-flex;align-items:center}
+.lp-pied-grille a:hover{color:var(--creme);text-decoration:underline;text-underline-offset:4px}
+.lp-pied-titre{font:700 18px 'Playfair Display',Georgia,serif;color:var(--creme);margin-bottom:6px}
+
+/* Pages d'information */
+.lp-doc-tete{background:linear-gradient(160deg,var(--prune),var(--prune-deep));color:var(--creme);padding-block:max(28px,env(safe-area-inset-top,0px)) 56px}
+.lp-doc-tete h1{font-size:clamp(34px,5vw,56px);line-height:1.08;margin-top:44px}
+.lp-doc-intro{font-size:18px;color:#EBDDD3;max-width:58ch;margin-top:14px}
+.lp-doc-maj{font-size:14px;color:#D9C5C0;margin-top:14px}
+.lp-doc{max-width:760px;padding-block:56px 72px}
+.lp-doc p,.lp-doc li{color:var(--encre);max-width:68ch}
+.lp-doc p{margin-top:10px}
+.lp-doc ul{margin:10px 0 0;padding-left:22px;display:flex;flex-direction:column;gap:6px}
+.lp-doc a{color:var(--prune);font-weight:700;text-underline-offset:3px}
+.lp-doc-h2{font-size:clamp(22px,3vw,28px);color:var(--prune);margin-top:40px}
+.lp-doc-h2:first-child{margin-top:0}
+.lp-pas{list-style:none;margin:0;padding:0;counter-reset:pas;display:flex;flex-direction:column;gap:26px}
+.lp-pas li{counter-increment:pas;display:block;position:relative;padding-left:60px}
+.lp-pas li::before{content:counter(pas);position:absolute;left:0;top:0;width:44px;height:44px;border-radius:50%;background:var(--prune);color:var(--creme);display:grid;place-items:center;font:700 19px 'Playfair Display',Georgia,serif}
+.lp-pas li:last-child::before{background:var(--vert)}
+.lp-pas h2,.lp-pas h3{font-size:22px;color:var(--prune);padding-top:7px}
+.lp-plans{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.lp-plan{background:#fff;border:1px solid var(--trait);border-radius:20px;padding:26px}
+.lp-plan.fort{background:var(--prune);color:var(--creme);border-color:var(--prune)}
+.lp-plan h2{font-size:26px;color:inherit}
+.lp-plan.fort li{color:var(--creme)}
+.lp-plan ul{margin-top:14px}
+
+/* Landing marketing */
+.lp-hero-sous-liens{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:22px;font-size:15px;color:#D9C5C0}
+.lp-confiance{background:#fff;border-bottom:1px solid var(--trait)}
+.lp-confiance .lp-wrap{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px 28px;padding-block:20px}
+.lp-confiance span{display:inline-flex;align-items:center;gap:8px;font-weight:800;color:var(--prune);font-size:15px}
+.lp-confiance .c{width:22px;height:22px;border-radius:50%;background:var(--vert);color:var(--creme);display:grid;place-items:center;flex:none}
+.lp-bloc{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;padding-block:80px}
+.lp-bloc.inverse>:first-child{order:2}
+.lp-bloc h2{font-size:clamp(28px,3.8vw,42px);line-height:1.12;color:var(--prune);max-width:18ch}
+.lp-bloc p{color:var(--doux);font-size:18px;max-width:46ch;margin-top:16px}
+.lp-bloc .lp-lien{display:inline-block;margin-top:20px;color:var(--prune)}
+.lp-visuel{justify-self:center;width:100%;max-width:380px}
+.lp-chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.lp-chips span{background:#fff;border:1px solid var(--trait);border-radius:24px;padding:10px 18px;font-weight:800;color:var(--prune)}
+.lp-chips span.on{background:var(--prune);border-color:var(--prune);color:var(--creme)}
+.lp-signe{background:var(--prune);color:var(--creme);text-align:center;padding-block:96px}
+.lp-signe h2{font-size:clamp(36px,6vw,72px);line-height:1.06;max-width:16ch;margin-inline:auto;color:var(--creme)}
+.lp-signe p{color:#EBDDD3;font-size:18px;max-width:52ch;margin:22px auto 0}
+.lp-trois{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:44px;list-style:none;padding:0}
+.lp-trois li{border-top:3px solid var(--or);padding-top:16px}
+.lp-trois h3{font-size:22px;color:var(--prune)}
+.lp-trois p{color:var(--doux);margin-top:6px}
+.lp-section-centre{text-align:center}
+.lp-section-centre h2{margin-inline:auto}
+.lp-section-centre .lp-lien{display:inline-block;margin-top:28px;color:var(--prune)}
+.lp-ville-note{font-size:14px;color:#D9C5C0;margin-top:14px}
+
+@media (max-width:860px){
+  .lp-bloc{grid-template-columns:1fr;gap:32px;padding-block:56px}
+  .lp-bloc.inverse>:first-child{order:0}
+  .lp-trois{grid-template-columns:1fr;gap:24px}
+  .lp-pied-grille{grid-template-columns:1fr 1fr}
+  .lp-pied-grille>div:first-child{grid-column:1/-1}
+  .lp-plans{grid-template-columns:1fr}
+  .lp-doc-tete h1{margin-top:28px}
+  .lp-signe{padding-block:64px}
+}
+@media (max-width:480px){.lp-nav-lien{display:none}.lp-confiance .lp-wrap{flex-direction:column;align-items:flex-start}}
+
+/* Médias de la landing */
+.lp-hero{position:relative;overflow:hidden}
+.lp-hero-media{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.28}
+.lp-hero-media video{width:100%;height:100%;object-fit:cover;display:block}
+.lp-hero-contenu{position:relative;z-index:1}
+.lp-photo-grande{width:100%;max-width:380px;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:26px;box-shadow:0 30px 60px -30px rgba(74,14,46,.45)}
+.lp-bloc-fond{background:#fff;border-block:1px solid var(--trait)}
+.lp-credits{border-top:1px solid rgba(251,246,238,.15);margin-top:28px;padding-top:16px;font-size:13px;color:#B8A29E}
