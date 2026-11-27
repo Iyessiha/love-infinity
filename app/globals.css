@@ -108,3 +108,9 @@ textarea.in{height:112px;padding:12px 14px;line-height:1.4;resize:none;align-ite
 .in.ok{border-color:#236B43}
 .lvl .n.g{background:#236B43;color:#FBF6EE}
 .photos .f,.photos>div{cursor:pointer}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.fil{flex:1;min-height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px 2px}
+.bulle{max-width:80%;padding:10px 14px;border-radius:18px;font-size:15px;line-height:1.4;overflow-wrap:anywhere;white-space:pre-wrap}
+.bulle.moi{align-self:flex-end;background:#4A0E2E;color:#FBF6EE;border-bottom-right-radius:6px}
+.bulle.autre{align-self:flex-start;background:#fff;border:1px solid #E6D6CC;border-bottom-left-radius:6px}
+.bulle .heure{display:block;font-size:11px;opacity:.75;margin-top:2px}

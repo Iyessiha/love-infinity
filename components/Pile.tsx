@@ -44,7 +44,7 @@ export function Pile({ cartes, restants }: { cartes: Carte[]; restants: number |
       <div className="col center" style={{ flex: 1, justifyContent: 'center', gap: 16 }}>
         <div className="ok-badge" aria-hidden="true"><svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3 5.5 6.2 5.5c2 0 3.3 1.1 4.1 2.4l1.7 2.4 1.7-2.4c.8-1.3 2.1-2.4 4.1-2.4 3.2 0 5 3.1 3.7 6.3C19.5 16.4 12 21 12 21z"/></svg></div>
         <h1 style={{ textAlign: 'center' }}>C'est un match !</h1>
-        <p className="sub" style={{ textAlign: 'center' }}>Toi et {match.prenom} vous êtes plu. Vous pourrez bientôt vous écrire.</p>
+        <p className="sub" style={{ textAlign: 'center' }}>Toi et {match.prenom} vous êtes plu. Vous pouvez maintenant vous écrire.</p>
         <button className="btn" onClick={() => setMatch(null)}>Continuer</button>
         <Link className="link" href="/matchs">Voir mes matchs</Link>
       </div>

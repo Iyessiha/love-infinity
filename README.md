@@ -33,6 +33,8 @@ Accueil, inscription (email et mot de passe choisi, CAPTCHA, piège à robots, l
 
 Trois niveaux : photos (1), selfie vidéo avec geste tiré au hasard par la base (2), pièce d'identité recto/verso (3). Les fichiers de vérification sont dans un bucket privé, lisibles seulement par l'administrateur, et supprimés dès la décision. Les photos de profil sont conservées.
 
+Messagerie : réservée aux matchs. Il faut un compte actif et au moins le niveau 2 (selfie vidéo) pour écrire, 20 messages par minute au maximum. Chaque conversation permet de bloquer ou de signaler ; les signalements sont lus par les administrateurs sur `/admin/signalements`.
+
 Pour te donner les droits d'administrateur, après ta première inscription, exécute dans l'éditeur SQL de Supabase :
 
 ```sql
