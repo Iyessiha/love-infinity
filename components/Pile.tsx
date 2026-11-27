@@ -76,7 +76,7 @@ export function Pile({ cartes, restants }: { cartes: Carte[]; restants: number |
           <div className="wrap">{c.interets.map((x) => <span key={x} className="chip">{x}</span>)}</div>
         </div>
       </div>
-      {erreur && <div className="alert" role="alert">{erreur}</div>}
+      {erreur && <div className="alert" role="alert">{erreur}{erreur.includes('abonnement') && <> <Link className="link" href="/abonnement">Voir les offres</Link></>}</div>}
       <div className="actions">
         <button className="btn ghost" disabled={envoi} onClick={() => agir('pass')} aria-label={`Passer ${c.prenom}`}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg> Passer</button>
         <button className="btn gold" disabled={envoi} onClick={() => agir('like')} aria-label={`Aimer ${c.prenom}`}><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3 5.5 6.2 5.5c2 0 3.3 1.1 4.1 2.4l1.7 2.4 1.7-2.4c.8-1.3 2.1-2.4 4.1-2.4 3.2 0 5 3.1 3.7 6.3C19.500 16.400 12 21 12 21z"/></svg> J'aime</button>
