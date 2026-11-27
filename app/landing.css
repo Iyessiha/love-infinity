@@ -212,3 +212,5 @@
 .lp-mosaique .m4{grid-column:span 2}
 .lp-mosaique .m5{grid-column:span 2}
 @media (max-width:860px){.lp-mosaique{grid-template-columns:1fr 1fr;grid-auto-rows:150px}.lp-mosaique .m1,.lp-mosaique .m3{grid-column:span 1;grid-row:span 2}.lp-mosaique .m2,.lp-mosaique .m4,.lp-mosaique .m5{grid-column:span 1}.lp-mosaique .m5{grid-column:span 2}}
+.lp-langue{font-size:13px;border:1.5px solid rgba(251,246,238,.5);border-radius:14px;padding:0 10px;min-height:32px;text-decoration:none}
+.lp-langue:hover{background:rgba(251,246,238,.12);text-decoration:none}
