@@ -87,3 +87,30 @@ button.chip.on{color:#FBF6EE}
 select.in{appearance:auto}
 textarea.in{height:112px;padding:12px 14px;line-height:1.4;resize:none;align-items:flex-start}
 .field,.in{min-width:0}
+
+/* Découverte — accessibilité et finition */
+.btn,.chip,.back,.link{transition:background-color .2s,border-color .2s,color .2s,opacity .2s}
+.btn:hover:not(:disabled){opacity:.92}
+.btn:focus-visible,.chip:focus-visible,.link:focus-visible,.back:focus-visible,a:focus-visible,button:focus-visible{outline:3px solid #D4A24C;outline-offset:2px}
+.btn:disabled{opacity:.7}
+.profil-photo{position:relative;height:min(58vh,420px);background:linear-gradient(160deg,#E8B4B8,#D4A24C);overflow:hidden}
+.profil-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.profil-photo::after{content:"";position:absolute;inset:auto 0 0 0;height:90px;background:linear-gradient(transparent,rgba(43,27,34,.55));pointer-events:none}
+.badge-verif{position:absolute;left:12px;top:12px;z-index:1;display:inline-flex;align-items:center;gap:6px;background:#236B43;color:#FBF6EE;border-radius:14px;padding:5px 11px;font-size:12px;font-weight:800}
+.profil-nom{position:absolute;left:14px;bottom:10px;z-index:1;color:#FBF6EE;font:700 26px 'Playfair Display',serif;text-shadow:0 1px 6px rgba(0,0,0,.35)}
+.actions{display:flex;gap:12px}
+.actions .btn{height:56px;gap:8px}
+.carte-entree{animation:entree .25s ease-out}
+@keyframes entree{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.carte-entree{animation:none}.btn,.chip{transition:none}}
+.back{min-height:44px}
+.in:focus-visible{outline:3px solid #D4A24C;outline-offset:1px;border-color:#4A0E2E}
+.in.ok{border-color:#236B43}
+.lvl .n.g{background:#236B43;color:#FBF6EE}
+.photos .f,.photos>div{cursor:pointer}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.fil{flex:1;min-height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px 2px}
+.bulle{max-width:80%;padding:10px 14px;border-radius:18px;font-size:15px;line-height:1.4;overflow-wrap:anywhere;white-space:pre-wrap}
+.bulle.moi{align-self:flex-end;background:#4A0E2E;color:#FBF6EE;border-bottom-right-radius:6px}
+.bulle.autre{align-self:flex-start;background:#fff;border:1px solid #E6D6CC;border-bottom-left-radius:6px}
+.bulle .heure{display:block;font-size:11px;opacity:.75;margin-top:2px}

@@ -33,6 +33,8 @@ Accueil, inscription (email et mot de passe choisi, CAPTCHA, piège à robots, l
 
 Trois niveaux : photos (1), selfie vidéo avec geste tiré au hasard par la base (2), pièce d'identité recto/verso (3). Les fichiers de vérification sont dans un bucket privé, lisibles seulement par l'administrateur, et supprimés dès la décision. Les photos de profil sont conservées.
 
+Messagerie : réservée aux matchs. Il faut un compte actif et au moins le niveau 2 (selfie vidéo) pour écrire, 20 messages par minute au maximum. Chaque conversation permet de bloquer ou de signaler ; les signalements sont lus par les administrateurs sur `/admin/signalements`.
+
 Pour te donner les droits d'administrateur, après ta première inscription, exécute dans l'éditeur SQL de Supabase :
 
 ```sql
@@ -41,3 +43,10 @@ select id from auth.users where email = 'TON_EMAIL';
 ```
 
 Après connexion, un administrateur arrive automatiquement sur `/admin` (tableau de bord : vérifications en attente, membres, lien vers le tableau de chiffres si `NEXT_PUBLIC_ADMIN_DASHBOARD_URL` est renseigné). La page de traitement des vérifications est `/admin/verifications`. Elle répond « introuvable » à tout utilisateur qui n'est pas administrateur.
+
+## Paiement (GeniusPay)
+
+1. Dans le tableau de bord GeniusPay, crée des clés **sandbox** et renseigne `GENIUSPAY_API_KEY` et `GENIUSPAY_API_SECRET`.
+2. Déclare le webhook `<SITE>/api/paiement/webhook` (événements `payment.*`), copie le secret `whsec_…` dans `GENIUSPAY_WEBHOOK_SECRET` (il n'est affiché qu'une fois).
+3. Teste un achat en sandbox, puis remplace par les clés `live`.
+Les prix sont dans la table `plans` (modifiables sans redéployer). L'abonnement s'active uniquement par le webhook signé, après vérification du montant.

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { requireUser } from '@/lib/auth';
+import { Check, Chevron } from '@/components/Icons';
 
 type V = { kind: string; status: string; reason: string | null; created_at: string };
 
@@ -32,7 +33,7 @@ export default async function Verification() {
           return (
             <div key={n.kind} className="card col" style={{ gap: 8 }}>
               <div className="lvl">
-                <div className={`n${fait ? ' g' : ''}`}>{fait ? '✓' : n.n}</div>
+                <div className={`n${fait ? ' g' : ''}`}>{fait ? <Check /> : n.n}</div>
                 <div><b>{n.titre}</b><span>{n.texte}</span></div>
               </div>
               {attente && <p className="small">En cours de vérification (sous 24 heures).</p>}
@@ -45,7 +46,7 @@ export default async function Verification() {
       </div>
       <div className="sp"></div>
       {profil?.account_status === 'active'
-        ? <div className="alert">Ton compte est actif. La découverte des profils arrive bientôt.</div>
+        ? <Link className="btn gold" href="/decouvrir">Découvrir des profils</Link>
         : <p className="small" style={{ textAlign: 'center' }}>Ton compte sera activé dès que tes photos seront validées. Nous te prévenons par email.</p>}
     </main>
   );
