@@ -42,7 +42,7 @@ export function Pile({ cartes, restants }: { cartes: Carte[]; restants: number |
   if (match) {
     return (
       <div className="col center" style={{ flex: 1, justifyContent: 'center', gap: 16 }}>
-        <div className="ok-badge" aria-hidden="true">♥</div>
+        <div className="ok-badge" aria-hidden="true"><svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3 5.5 6.2 5.5c2 0 3.3 1.1 4.1 2.4l1.7 2.4 1.7-2.4c.8-1.3 2.1-2.4 4.1-2.4 3.2 0 5 3.1 3.7 6.3C19.5 16.4 12 21 12 21z"/></svg></div>
         <h1 style={{ textAlign: 'center' }}>C'est un match !</h1>
         <p className="sub" style={{ textAlign: 'center' }}>Toi et {match.prenom} vous êtes plu. Vous pourrez bientôt vous écrire.</p>
         <button className="btn" onClick={() => setMatch(null)}>Continuer</button>
@@ -63,27 +63,25 @@ export function Pile({ cartes, restants }: { cartes: Carte[]; restants: number |
 
   return (
     <>
-      <div className="card" style={{ padding: 0, overflow: 'hidden', flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <div style={{ height: 360, background: 'linear-gradient(160deg,#E8B4B8,#D4A24C)', position: 'relative' }}>
-          {c.photo && /* eslint-disable-next-line @next/next/no-img-element */ <img src={c.photo} alt={`Photo de ${c.prenom}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
-          {c.verification_level > 0 && (
-            <span className="tag" style={{ position: 'absolute', left: 12, top: 12, background: '#2E8B57', color: '#FBF6EE' }}>✓ {NIVEAUX[c.verification_level]}</span>
-          )}
+      <div key={c.id} className="card carte-entree" style={{ padding: 0, overflow: 'hidden', flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <div className="profil-photo">
+          {c.photo && /* eslint-disable-next-line @next/next/no-img-element */ <img src={c.photo} alt={`Photo de ${c.prenom}`} loading="lazy" />}
+          {c.verification_level > 0 && <span className="badge-verif"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.500l4.500 4.500L19 7.500"/></svg> {NIVEAUX[c.verification_level]}</span>}
+          <span className="profil-nom">{c.prenom}, {c.age}</span>
         </div>
         <div className="col" style={{ padding: 16, gap: 8 }}>
-          <div className="row"><h2>{c.prenom}, {c.age}</h2><div className="sp"></div><span className="small">{c.ville}</span></div>
-          {c.profession && <span className="small">{c.profession}</span>}
-          {c.intention && <span className="chip on" style={{ alignSelf: 'flex-start' }}>{INTENTIONS[c.intention]}</span>}
+          <span className="small" style={{ color: '#5E4A53' }}>{c.ville}{c.profession ? ` · ${c.profession}` : ''}</span>
+                    {c.intention && <span className="chip on" style={{ alignSelf: 'flex-start' }}>{INTENTIONS[c.intention]}</span>}
           {c.bio && <p style={{ fontSize: 14 }}>{c.bio}</p>}
           <div className="wrap">{c.interets.map((x) => <span key={x} className="chip">{x}</span>)}</div>
         </div>
       </div>
       {erreur && <div className="alert" role="alert">{erreur}</div>}
-      <div className="row" style={{ gap: 12 }}>
-        <button className="btn ghost" disabled={envoi} onClick={() => agir('pass')}>Passer</button>
-        <button className="btn gold" disabled={envoi} onClick={() => agir('like')}>J'aime</button>
+      <div className="actions">
+        <button className="btn ghost" disabled={envoi} onClick={() => agir('pass')} aria-label={`Passer ${c.prenom}`}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg> Passer</button>
+        <button className="btn gold" disabled={envoi} onClick={() => agir('like')} aria-label={`Aimer ${c.prenom}`}><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.2C1.2 8.6 3 5.5 6.2 5.5c2 0 3.3 1.1 4.1 2.4l1.7 2.4 1.7-2.4c.8-1.3 2.1-2.4 4.1-2.4 3.2 0 5 3.1 3.7 6.3C19.500 16.400 12 21 12 21z"/></svg> J'aime</button>
       </div>
-      <p className="small" style={{ textAlign: 'center' }}>{reste === null ? 'Likes illimités' : `${reste} like${reste > 1 ? 's' : ''} restant${reste > 1 ? 's' : ''} aujourd'hui`}</p>
+      <p className="small" role="status" style={{ textAlign: 'center' }}>{reste === null ? 'Likes illimités' : `${reste} like${reste > 1 ? 's' : ''} restant${reste > 1 ? 's' : ''} aujourd'hui`}</p>
     </>
   );
 }

@@ -12,7 +12,7 @@ export default async function Matchs() {
 
   return (
     <main className="ph">
-      <Link className="back" href="/decouvrir">‹ Découvrir</Link>
+      <Link className="back" href="/decouvrir">Retour à découvrir</Link>
       <h1>Mes matchs</h1>
       {liste.length === 0 && <p className="sub">Pas encore de match. Continue à découvrir des profils.</p>}
       <div className="col">
