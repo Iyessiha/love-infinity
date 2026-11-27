@@ -21,7 +21,7 @@ export default function Connexion() {
       // Message volontairement général : on ne dit pas si l'email existe
       return setErreur(error.message.toLowerCase().includes('confirm') ? 'Confirme d’abord ton email avec le lien reçu.' : 'Email ou mot de passe incorrect.');
     }
-    router.push('/profil');
+    router.push('/espace');
     router.refresh();
   }
 

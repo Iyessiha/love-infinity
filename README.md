@@ -40,4 +40,4 @@ insert into public.admins (user_id)
 select id from auth.users where email = 'TON_EMAIL';
 ```
 
-La page d'administration est `/admin/verifications`. Elle répond « introuvable » à tout utilisateur qui n'est pas administrateur.
+Après connexion, un administrateur arrive automatiquement sur `/admin` (tableau de bord : vérifications en attente, membres, lien vers le tableau de chiffres si `NEXT_PUBLIC_ADMIN_DASHBOARD_URL` est renseigné). La page de traitement des vérifications est `/admin/verifications`. Elle répond « introuvable » à tout utilisateur qui n'est pas administrateur.

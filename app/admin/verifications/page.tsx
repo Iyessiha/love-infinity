@@ -58,6 +58,7 @@ export default async function Admin() {
 
   return (
     <main style={{ maxWidth: 960, margin: '0 auto', padding: 24, fontFamily: 'Nunito, system-ui, sans-serif', color: '#2B1B22' }}>
+      <a href="/admin" style={{ color: '#4A0E2E', fontWeight: 800 }}>← Administration</a>
       <h1 style={{ fontFamily: "'Playfair Display', serif", color: '#4A0E2E' }}>Vérifications en attente ({cartes.length})</h1>
       <p className="small">Les liens des images expirent après {LIEN_SECONDES} secondes : recharge la page si besoin. Les fichiers sont supprimés dès la décision.</p>
       {cartes.length === 0 && <p>Rien à vérifier pour le moment.</p>}
