@@ -34,6 +34,7 @@ export default function Connexion() {
         <div className="field"><label className="lbl" htmlFor="pw">Mot de passe</label><input id="pw" className="in" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} /></div>
         {erreur && <div className="alert" role="alert">{erreur}</div>}
         <button className="btn" type="submit" disabled={!email || !password || envoi}>{envoi ? 'Connexion…' : 'Me connecter'}</button>
+        <Link className="link" href="/mot-de-passe-oublie">Mot de passe oublié ?</Link>
         <Link className="link" href="/inscription">Créer un compte</Link>
       </form>
     </main>
