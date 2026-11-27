@@ -82,3 +82,8 @@ body{margin:0}
 .ok-badge{width:84px;height:84px;border-radius:42px;background:#2E8B57;display:flex;align-items:center;justify-content:center}
 .sw{display:flex;gap:12px}
 .sw div{flex:1;height:96px;border-radius:14px;padding:10px;font-size:12px;font-weight:800;display:flex;align-items:flex-end}
+button.chip{font-family:inherit;color:#2B1B22;cursor:pointer}
+button.chip.on{color:#FBF6EE}
+select.in{appearance:auto}
+textarea.in{height:112px;padding:12px 14px;line-height:1.4;resize:none;align-items:flex-start}
+.field,.in{min-width:0}
