@@ -1,14 +1,11 @@
-import { notFound, redirect } from 'next/navigation';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { hmac } from '@/lib/hash';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { supabaseServer } from '@/lib/supabase/server';
-import { requireUser } from '@/lib/auth';
+import { age, dateCourte, pays, requireAdmin, STATUT_COMPTE, nombre } from '@/lib/admin';
 import { GENRE_LABEL, NIVEAU_LABEL } from '@/lib/verification';
-
-export const dynamic = 'force-dynamic';
-
-const STATUT: Record<string, string> = { pending: 'En attente', active: 'Actif', suspended: 'Suspendu', banned: 'Banni' };
 
 const MESSAGES: Record<string, string> = {
   active: 'Compte réactivé.',
@@ -16,15 +13,18 @@ const MESSAGES: Record<string, string> = {
   banned: 'Compte banni : son numéro de téléphone est aussi bloqué pour de futures inscriptions.',
   erreur: 'Action impossible. Tu ne peux pas agir sur ton propre compte ni sur un autre administrateur, et un compte sans numéro ne peut pas être réactivé.',
 };
+const FILTRES = [['', 'Tous'], ['active', 'Actifs'], ['pending', 'En attente'], ['suspended', 'Suspendus'], ['banned', 'Bannis']] as const;
 
 async function changer(formData: FormData) {
   'use server';
   const id = String(formData.get('id'));
   const statut = String(formData.get('statut'));
+  const retour = String(formData.get('retour') || '/admin/membres');
+  const base = retour.startsWith('/admin/membres') ? retour.split('?')[0] : '/admin/membres';
   const supabase = await supabaseServer();
   const { data: profil } = await supabase.from('profiles').select('phone_e164').eq('id', id).maybeSingle();
   const { error } = await supabase.rpc('changer_statut_membre', { p_id: id, p_statut: statut });
-  if (error) redirect('/admin/membres?m=erreur');
+  if (error) redirect(`${base}?m=erreur`);
   // Bannir bloque aussi le numéro (empreinte seulement) ; réactiver le débloque.
   if (profil?.phone_e164) {
     try {
@@ -34,67 +34,92 @@ async function changer(formData: FormData) {
       else await admin.from('blocked_phones').delete().eq('phone_hash', h);
     } catch { /* HASH_SECRET absent : le statut est quand même changé */ }
   }
-  revalidatePath('/admin/membres');
-  redirect(`/admin/membres?m=${statut}`);
+  revalidatePath('/admin', 'layout');
+  redirect(`${base}?m=${statut}`);
 }
 
-export default async function Membres({ searchParams }: { searchParams: Promise<{ m?: string }> }) {
-  const { m: msg } = await searchParams;
-  const { supabase, user } = await requireUser();
-  const { data: admin } = await supabase.rpc('is_admin');
-  if (!admin) notFound();
+export default async function Membres({ searchParams }: { searchParams: Promise<{ m?: string; statut?: string; q?: string }> }) {
+  const { m: msg, statut = '', q = '' } = await searchParams;
+  const { supabase, user } = await requireAdmin();
   const { data: admins } = await supabase.from('admins').select('user_id');
   const idsAdmins = new Set((admins ?? []).map((a) => a.user_id));
 
-  const { data: membres } = await supabase
+  let req = supabase
     .from('profiles')
-    .select('id, prenom, nom, genre, birth_date, ville, phone_country, verification_level, account_status, created_at')
+    .select('id, prenom, nom, genre, birth_date, ville, phone_country, verification_level, account_status, created_at', { count: 'exact' })
     .order('created_at', { ascending: false })
     .limit(200);
+  if (['active', 'pending', 'suspended', 'banned'].includes(statut)) req = req.eq('account_status', statut);
+  const terme = q.trim().replace(/[%,()*]/g, ' ').slice(0, 40);
+  if (terme) req = req.or(`prenom.ilike.%${terme}%,nom.ilike.%${terme}%,ville.ilike.%${terme}%`);
+  const { data: membres, count } = await req;
+
+  const lienFiltre = (s: string) => `/admin/membres${s || terme ? '?' : ''}${[s ? `statut=${s}` : '', terme ? `q=${encodeURIComponent(terme)}` : ''].filter(Boolean).join('&')}`;
+  const retour = `/admin/membres${statut ? `?statut=${statut}` : ''}`;
 
   return (
-    <main style={{ maxWidth: 960, margin: '0 auto', padding: 24, fontFamily: 'Nunito, system-ui, sans-serif', color: '#2B1B22' }}>
-      <a href="/admin" style={{ color: '#4A0E2E', fontWeight: 800 }}>← Administration</a>
-      <h1 style={{ fontFamily: "'Playfair Display', serif", color: '#4A0E2E' }}>Membres inscrits ({membres?.length ?? 0})</h1>
-      <p className="small">Les 200 inscriptions les plus récentes. Les numéros de téléphone et les emails ne sont pas affichés ici.</p>
-      {msg && MESSAGES[msg] && <div className="alert" role="status" style={{ margin: '12px 0' }}>{MESSAGES[msg]}</div>}
-      {(membres ?? []).length === 0 && <p>Aucun membre pour le moment.</p>}
-      <div style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 15 }}>
-          <thead>
-            <tr style={{ textAlign: 'left', borderBottom: '2px solid #E6D6CC' }}>
-              {['Nom', 'Âge', 'Genre', 'Ville', 'Pays', 'Vérification', 'Compte', 'Inscrit le', 'Action'].map((h) => <th key={h} style={{ padding: '8px 10px', whiteSpace: 'nowrap' }}>{h}</th>)}
-            </tr>
-          </thead>
-          <tbody>
-            {(membres ?? []).map((m) => (
-              <tr key={m.id} style={{ borderBottom: '1px solid #E6D6CC' }}>
-                <td style={{ padding: '8px 10px' }}><b>{m.prenom ?? '—'}</b> {m.nom}</td>
-                <td style={{ padding: '8px 10px' }}>{m.birth_date ? Math.floor((Date.now() - new Date(m.birth_date).getTime()) / 31557600000) : '—'}</td>
-                <td style={{ padding: '8px 10px' }}>{GENRE_LABEL[m.genre ?? ''] ?? '—'}</td>
-                <td style={{ padding: '8px 10px' }}>{m.ville ?? '—'}</td>
-                <td style={{ padding: '8px 10px' }}>{m.phone_country ?? '—'}</td>
-                <td style={{ padding: '8px 10px', whiteSpace: 'nowrap' }}>Niveau {m.verification_level} · {NIVEAU_LABEL[m.verification_level]}</td>
-                <td style={{ padding: '8px 10px' }}>{STATUT[m.account_status] ?? m.account_status}</td>
-                <td style={{ padding: '8px 10px', whiteSpace: 'nowrap' }}>{new Date(m.created_at).toLocaleDateString('fr-FR')}</td>
-                <td style={{ padding: '8px 10px' }}>
-                  {m.id === user.id || idsAdmins.has(m.id) ? <span className="small">Administrateur</span> : (
-                    <form action={changer} className="row" style={{ gap: 6 }}>
-                      <input type="hidden" name="id" value={m.id} />
-                      {m.account_status === 'active' || m.account_status === 'pending'
-                        ? <>
-                            <button className="btn ghost" style={{ padding: '6px 12px', minHeight: 0, width: 'auto' }} name="statut" value="suspended">Suspendre</button>
-                            <button className="btn ghost" style={{ padding: '6px 12px', minHeight: 0, width: 'auto' }} name="statut" value="banned">Bannir</button>
-                          </>
-                        : <button className="btn" style={{ padding: '6px 12px', minHeight: 0, width: 'auto' }} name="statut" value="active">Réactiver</button>}
-                    </form>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <>
+      <header>
+        <h1>Membres inscrits</h1>
+        <p className="lede">{nombre(count)} membre(s){statut || terme ? ' correspondant à ta recherche' : ''}. Les 200 plus récents sont affichés. Les emails et numéros de téléphone ne sont pas montrés ici.</p>
+      </header>
+      {msg && MESSAGES[msg] && <div className={msg === 'erreur' ? 'adm-alert' : 'adm-ok'} role="status">{MESSAGES[msg]}</div>}
+
+      <div className="adm-row">
+        <div className="adm-chips" role="group" aria-label="Filtrer par statut">
+          {FILTRES.map(([v, l]) => <Link key={v} href={lienFiltre(v)} aria-current={statut === v}>{l}</Link>)}
+        </div>
+        <div className="adm-sp" />
+        <form method="get" className="adm-row" style={{ gap: 8 }}>
+          {statut && <input type="hidden" name="statut" value={statut} />}
+          <label className="muted" htmlFor="q">Chercher</label>
+          <input id="q" name="q" className="adm-input" defaultValue={terme} placeholder="Prénom, nom ou ville" />
+          <button className="adm-btn ghost" type="submit">Chercher</button>
+        </form>
       </div>
-    </main>
+
+      <div className="adm-card">
+        {(membres ?? []).length === 0 ? <p className="adm-empty">Aucun membre ne correspond.</p> : (
+          <div className="adm-table-wrap">
+            <table>
+              <thead>
+                <tr>{['Nom', 'Âge', 'Genre', 'Ville', 'Pays', 'Vérification', 'Compte', 'Inscrit le', 'Action'].map((h) => <th key={h}>{h}</th>)}</tr>
+              </thead>
+              <tbody>
+                {(membres ?? []).map((mb) => {
+                  const classe = mb.account_status === 'active' ? 'good' : mb.account_status === 'pending' ? 'warn' : 'bad';
+                  return (
+                    <tr key={mb.id}>
+                      <td><b>{mb.prenom ?? '—'}</b> {mb.nom}</td>
+                      <td>{age(mb.birth_date) ?? '—'}</td>
+                      <td>{GENRE_LABEL[mb.genre ?? ''] ?? '—'}</td>
+                      <td>{mb.ville ?? '—'}</td>
+                      <td>{pays(mb.phone_country)}</td>
+                      <td style={{ whiteSpace: 'nowrap' }}>Niveau {mb.verification_level} · {NIVEAU_LABEL[mb.verification_level]}</td>
+                      <td><span className={`adm-pill ${classe}`}>{STATUT_COMPTE[mb.account_status] ?? mb.account_status}</span></td>
+                      <td style={{ whiteSpace: 'nowrap' }}>{dateCourte(mb.created_at)}</td>
+                      <td>
+                        {mb.id === user.id || idsAdmins.has(mb.id) ? <span className="muted">Administrateur</span> : (
+                          <form action={changer} className="adm-row" style={{ gap: 6, flexWrap: 'nowrap' }}>
+                            <input type="hidden" name="id" value={mb.id} />
+                            <input type="hidden" name="retour" value={retour} />
+                            {mb.account_status === 'active' || mb.account_status === 'pending'
+                              ? <>
+                                  <button className="adm-btn ghost sm" name="statut" value="suspended">Suspendre</button>
+                                  <button className="adm-btn danger sm" name="statut" value="banned">Bannir</button>
+                                </>
+                              : <button className="adm-btn sm" name="statut" value="active">Réactiver</button>}
+                          </form>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </>
   );
 }

@@ -1,6 +1,6 @@
-import { notFound, redirect } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
-import { requireUser } from '@/lib/auth';
+import { requireAdmin, age as calcAge, dateHeure } from '@/lib/admin';
 import { DOCS, GENRE_LABEL, KIND_LABEL, RAISONS_PAR_TYPE, type DocType, type Kind } from '@/lib/verification';
 import { supabaseServer } from '@/lib/supabase/server';
 
@@ -30,8 +30,7 @@ async function decider(formData: FormData) {
   const chemins = (fichiers ?? []).map((f) => f.file_path);
   if (chemins.length) await supabase.storage.from('verifications').remove(chemins);
   await supabase.from('verification_files').delete().eq('verification_id', id);
-  revalidatePath('/admin/verifications');
-  revalidatePath('/admin');
+  revalidatePath('/admin', 'layout');
   redirect(`/admin/verifications?m=${decision === 'approved' ? 'approved' : 'rejected'}`);
 }
 
@@ -39,9 +38,7 @@ const ORDRE: Kind[] = ['photos', 'selfie', 'document'];
 
 export default async function Verifications({ searchParams }: { searchParams: Promise<{ m?: string }> }) {
   const { m } = await searchParams;
-  const { supabase } = await requireUser();
-  const { data: admin } = await supabase.rpc('is_admin');
-  if (!admin) notFound();
+  const { supabase } = await requireAdmin();
 
   const { data: demandes } = await supabase
     .from('verifications')
@@ -78,26 +75,27 @@ export default async function Verifications({ searchParams }: { searchParams: Pr
   );
 
   return (
-    <main style={{ maxWidth: 960, margin: '0 auto', padding: 24, fontFamily: 'Nunito, system-ui, sans-serif', color: '#2B1B22' }}>
-      <a href="/admin" style={{ color: '#4A0E2E', fontWeight: 800 }}>← Administration</a>
-      <h1 style={{ fontFamily: "'Playfair Display', serif", color: '#4A0E2E' }}>Vérifications en attente ({demandes?.length ?? 0})</h1>
-      <p className="small">{fiches.length} membre(s) à examiner. Les images restent visibles {LIEN_SECONDES / 60} minutes : recharge la page si elles disparaissent. Les fichiers sont supprimés dès la décision.</p>
-      {m && MESSAGES[m] && <div className="alert" role="status" style={{ margin: '12px 0' }}>{MESSAGES[m]}</div>}
-      {fiches.length === 0 && <p>Rien à vérifier pour le moment.</p>}
+    <>
+      <header>
+        <h1>Vérifications en attente ({demandes?.length ?? 0})</h1>
+        <p className="lede">{fiches.length} membre(s) à examiner. Les images restent visibles {LIEN_SECONDES / 60} minutes : recharge la page si elles disparaissent. Les fichiers sont supprimés dès la décision.</p>
+      </header>
+      {m && MESSAGES[m] && <div className={m === 'erreur' ? 'adm-alert' : 'adm-ok'} role="status">{MESSAGES[m]}</div>}
+      {fiches.length === 0 && <div className="adm-card"><p className="adm-empty">Rien à vérifier pour le moment.</p></div>}
 
       {fiches.map(({ userId, p, items, photos }) => {
-        const age = p?.birth_date ? Math.floor((Date.now() - new Date(p.birth_date).getTime()) / 31557600000) : null;
+        const ans = calcAge(p?.birth_date);
         return (
-          <section key={userId} className="card" style={{ margin: '20px 0', display: 'grid', gap: 14 }}>
-            <div className="row" style={{ flexWrap: 'wrap' }}>
+          <section key={userId} className="adm-card adm-fiche" aria-label={`${p?.prenom ?? ''} ${p?.nom ?? ''}`}>
+            <div className="adm-row">
               <b style={{ fontSize: 20, color: '#4A0E2E' }}>{p?.prenom} {p?.nom}</b>
-              <span className="small">{age !== null ? `${age} ans` : 'âge inconnu'} · {GENRE_LABEL[p?.genre ?? ''] ?? '—'}{p?.ville ? ` · ${p.ville}` : ''}</span>
+              <span className="muted">{ans !== null ? `${ans} ans` : 'âge inconnu'} · {GENRE_LABEL[p?.genre ?? ''] ?? '—'}{p?.ville ? ` · ${p.ville}` : ''}</span>
             </div>
             <div>
-              <div className="small" style={{ marginBottom: 6 }}>Photos du profil</div>
-              {photos.length === 0 ? <span className="small">Aucune photo.</span> : (
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                  {photos.map((u) => /* eslint-disable-next-line @next/next/no-img-element */ <img key={u} src={u} alt="Photo de profil" style={{ height: 150, borderRadius: 10 }} />)}
+              <div className="muted" style={{ marginBottom: 6 }}>Photos du profil</div>
+              {photos.length === 0 ? <span className="muted">Aucune photo.</span> : (
+                <div className="adm-photos">
+                  {photos.map((u) => /* eslint-disable-next-line @next/next/no-img-element */ <img key={u} src={u} alt="Photo de profil" style={{ height: 150 }} />)}
                 </div>
               )}
             </div>
@@ -105,31 +103,31 @@ export default async function Verifications({ searchParams }: { searchParams: Pr
             {items.map(({ d, fichiers }) => {
               const kind = d.kind as Kind;
               return (
-                <div key={d.id} style={{ borderTop: '1px solid #E6D6CC', paddingTop: 14, display: 'grid', gap: 10 }}>
-                  <div className="row">
+                <div key={d.id} className="adm-sub">
+                  <div className="adm-row">
                     <b>{KIND_LABEL[kind]}{kind === 'document' && d.doc_type ? ` : ${DOCS[d.doc_type as DocType]?.label ?? d.doc_type}` : ''}</b>
-                    <div className="sp"></div>
-                    <span className="small">{new Date(d.created_at).toLocaleString('fr-FR')}</span>
+                    <div className="adm-sp" />
+                    <span className="muted">{dateHeure(d.created_at)}</span>
                   </div>
-                  {kind === 'photos' && <p className="small" style={{ margin: 0 }}>Vérifie que les photos ci-dessus montrent une vraie personne, un visage visible, rien d’inapproprié.</p>}
-                  {d.gesture && <div className="alert">Geste demandé : <b>{d.gesture}</b></div>}
+                  {kind === 'photos' && <p className="muted" style={{ margin: 0 }}>Vérifie que les photos ci-dessus montrent une vraie personne, un visage visible, rien d’inapproprié.</p>}
+                  {d.gesture && <div className="adm-alert">Geste demandé : <b>{d.gesture}</b></div>}
                   {fichiers.length > 0 && (
-                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    <div className="adm-photos">
                       {fichiers.map((f) => f.side === 'video'
-                        ? <video key={f.url} src={f.url} controls playsInline style={{ height: 260, borderRadius: 10 }} />
+                        ? <video key={f.url} src={f.url} controls playsInline style={{ height: 260 }} />
                         // eslint-disable-next-line @next/next/no-img-element
-                        : <img key={f.url} src={f.url} alt={f.side === 'front' ? 'Recto' : 'Verso'} style={{ height: 260, borderRadius: 10 }} />)}
+                        : <img key={f.url} src={f.url} alt={f.side === 'front' ? 'Recto' : 'Verso'} style={{ height: 260 }} />)}
                     </div>
                   )}
-                  <form action={decider} className="row" style={{ flexWrap: 'wrap' }}>
+                  <form action={decider} className="adm-row">
                     <input type="hidden" name="id" value={d.id} />
                     <input type="hidden" name="kind" value={kind} />
-                    <button className="btn" style={{ width: 160 }} name="decision" value="approved">Valider</button>
-                    <label className="small" htmlFor={`r-${d.id}`} style={{ marginLeft: 8 }}>Motif si refus</label>
-                    <select id={`r-${d.id}`} className="in" name="raison" style={{ width: 260 }} defaultValue={RAISONS_PAR_TYPE[kind][0]}>
+                    <button className="adm-btn" name="decision" value="approved">Valider</button>
+                    <label className="muted" htmlFor={`r-${d.id}`}>Motif si refus</label>
+                    <select id={`r-${d.id}`} className="adm-select" name="raison" defaultValue={RAISONS_PAR_TYPE[kind][0]}>
                       {RAISONS_PAR_TYPE[kind].map((r) => <option key={r}>{r}</option>)}
                     </select>
-                    <button className="btn ghost" style={{ width: 160 }} name="decision" value="rejected">Refuser</button>
+                    <button className="adm-btn danger" name="decision" value="rejected">Refuser</button>
                   </form>
                 </div>
               );
@@ -137,6 +135,6 @@ export default async function Verifications({ searchParams }: { searchParams: Pr
           </section>
         );
       })}
-    </main>
+    </>
   );
 }
