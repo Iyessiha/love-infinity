@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { requireUser } from '@/lib/auth';
+import { requireComplet, requireUser } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -7,5 +7,7 @@ export const dynamic = 'force-dynamic';
 export default async function Espace() {
   const { supabase } = await requireUser();
   const { data: admin } = await supabase.rpc('is_admin');
-  redirect(admin ? '/admin' : '/profil');
+  if (admin) redirect('/admin');
+  await requireComplet();
+  redirect('/profil');
 }
