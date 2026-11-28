@@ -1,14 +1,26 @@
 import { InfoPage } from '@/components/InfoPage';
-import { Offres } from '@/components/Offres';
+import { Offres, type PlanPrix } from '@/components/Offres';
 import { href, tr, type Lang } from '@/lib/i18n';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
-export function Tarifs({ lang }: { lang: Lang }) {
+/** Prix lus dans la base (source unique) ; valeurs par défaut si la base est injoignable. */
+async function lirePlans(): Promise<PlanPrix[]> {
+  const defauts: PlanPrix[] = [{ code: 'essentiel', prix: 5000, jours: 30 }, { code: 'premium', prix: 9000, jours: 30 }];
+  try {
+    const { data } = await supabaseAdmin().from('plans').select('code,prix_xof,duree_jours').eq('actif', true).in('code', ['essentiel', 'premium']);
+    const lus = (data ?? []).map((p) => ({ code: p.code as PlanPrix['code'], prix: p.prix_xof as number, jours: p.duree_jours as number }));
+    return defauts.map((d) => lus.find((l) => l.code === d.code) ?? d);
+  } catch { return defauts; }
+}
+
+export async function Tarifs({ lang }: { lang: Lang }) {
   const t = tr(lang);
+  const plans = await lirePlans();
   return (
     <InfoPage lang={lang} path="/tarifs" titre={t('Tarifs', 'Pricing')} intro={t('Gratuit pour commencer. Des abonnements simples, sans pièces qui expirent.', 'Free to start. Simple subscriptions, no coins that expire.')}>
       <Offres
         lang={lang}
-        plans={[{ code: 'essentiel', prix: 5000, jours: 30 }, { code: 'premium', prix: 9000, jours: 30 }]}
+        plans={plans}
         cta={(code) => <a className={`of-cta${code === 'premium' ? ' or' : ''}`} href="/inscription">{code === 'gratuit' ? t('Commencer gratuitement', 'Start for free') : t('Créer mon compte', 'Create my account')}</a>}
       />
       <h2 className="lp-doc-h2">{t('Paiement', 'Payment')}</h2>

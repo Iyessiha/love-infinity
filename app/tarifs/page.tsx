@@ -8,6 +8,8 @@ export const metadata: Metadata = {
   alternates: alternates('fr', '/tarifs'),
 };
 
+export const revalidate = 3600;
+
 export default function Page() {
   return <Tarifs lang="fr" />;
 }
