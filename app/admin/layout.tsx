@@ -25,6 +25,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               { href: '/admin/signalements', label: 'Signalements', badge: signalements ?? 0 },
               { href: '/admin/membres', label: 'Membres' },
               { href: '/admin/paiements', label: 'Paiements' },
+              { href: '/admin/offres', label: 'Offres et promos' },
             ]}
           />
           <form action="/auth/signout" method="post"><button className="adm-out" type="submit">Me déconnecter</button></form>

@@ -32,11 +32,11 @@ export default async function Paiements() {
             <div className="adm-table-wrap"><table>
               <thead><tr><th>Formule</th><th className="num">Prix</th><th className="num">Durée</th><th>Statut</th></tr></thead>
               <tbody>{(plans ?? []).map((p) => (
-                <tr key={p.code}><td>{p.nom}</td><td className="num">{fcfa(p.prix_xof)}</td><td className="num">{p.duree_jours} j</td><td><span className={`adm-pill ${p.actif ? 'good' : ''}`}>{p.actif ? 'En vente' : 'Désactivée'}</span></td></tr>
+                <tr key={p.code}><td>{p.nom}</td><td className="num">{fcfa(p.prix_xof)} / mois</td><td className="num">{p.duree_jours} j</td><td><span className={`adm-pill ${p.actif ? 'good' : ''}`}>{p.actif ? 'En vente' : 'Désactivée'}</span></td></tr>
               ))}</tbody>
             </table></div>
           )}
-          <p className="note">Les prix sont provisoires tant que tu ne les as pas confirmés.</p>
+          <p className="note">Pour modifier les prix, les remises et les codes promo : onglet « Offres et promos ».</p>
         </section>
 
         <section className="adm-card" aria-labelledby="h-mois">

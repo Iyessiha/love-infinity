@@ -11,9 +11,25 @@ const MESSAGES: Record<string, string> = {
   active: 'Compte réactivé.',
   suspended: 'Compte suspendu : le membre ne peut plus utiliser l’application.',
   banned: 'Compte banni : son numéro de téléphone est aussi bloqué pour de futures inscriptions.',
+  offert: 'Premium offert : les jours ont été ajoutés à l’abonnement du membre.',
   erreur: 'Action impossible. Tu ne peux pas agir sur ton propre compte ni sur un autre administrateur, et un compte sans numéro ne peut pas être réactivé.',
 };
 const FILTRES = [['', 'Tous'], ['active', 'Actifs'], ['pending', 'En attente'], ['suspended', 'Suspendus'], ['banned', 'Bannis']] as const;
+
+async function offrir(formData: FormData) {
+  'use server';
+  await requireAdmin();
+  const id = String(formData.get('id'));
+  const jours = Number(formData.get('jours'));
+  const retour = String(formData.get('retour') || '/admin/membres');
+  const base = retour.startsWith('/admin/membres') ? retour.split('?')[0] : '/admin/membres';
+  if (![7, 30, 90, 365].includes(jours)) redirect(`${base}?m=erreur`);
+  const db = supabaseAdmin();
+  const { data: abo } = await db.from('subscriptions').select('expires_at').eq('user_id', id).maybeSingle();
+  const debut = Math.max(Date.now(), abo ? new Date(abo.expires_at).getTime() : 0);
+  const { error } = await db.from('subscriptions').upsert({ user_id: id, plan: 'premium', expires_at: new Date(debut + jours * 86400000).toISOString() });
+  redirect(`${base}?m=${error ? 'erreur' : 'offert'}`);
+}
 
 async function changer(formData: FormData) {
   'use server';
@@ -109,6 +125,16 @@ export default async function Membres({ searchParams }: { searchParams: Promise<
                                   <button className="adm-btn danger sm" name="statut" value="banned">Bannir</button>
                                 </>
                               : <button className="adm-btn sm" name="statut" value="active">Réactiver</button>}
+                          </form>
+                        )}
+                        {mb.id !== user.id && !idsAdmins.has(mb.id) && mb.account_status === 'active' && (
+                          <form action={offrir} className="adm-row" style={{ gap: 6, flexWrap: 'nowrap', marginTop: 6 }}>
+                            <input type="hidden" name="id" value={mb.id} />
+                            <input type="hidden" name="retour" value={retour} />
+                            <select className="adm-select" name="jours" defaultValue="30" aria-label={`Durée Premium offerte à ${mb.prenom ?? 'ce membre'}`}>
+                              <option value="7">7 jours</option><option value="30">30 jours</option><option value="90">90 jours</option><option value="365">1 an</option>
+                            </select>
+                            <button className="adm-btn ghost sm" type="submit">Offrir Premium</button>
                           </form>
                         )}
                       </td>
