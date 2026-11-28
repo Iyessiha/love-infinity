@@ -5,6 +5,8 @@ import { HeartIcon } from '@/components/Icons';
 import { requireComplet } from '@/lib/auth';
 import { urlsPhotos } from '@/lib/photos';
 import { getT } from '@/lib/lang';
+import { Stories } from '@/components/Stories';
+import { chargerStories } from '@/lib/stories';
 import '@/app/membre.css';
 
 export const dynamic = 'force-dynamic';
@@ -20,6 +22,7 @@ export default async function Likes() {
     supabase.from('profiles').select('account_status').eq('id', user.id).single(),
   ]);
   const liste = (data ?? []) as Ligne[];
+  const groupesStories = await chargerStories(supabase);
   const premium = Boolean(abo && abo.plan === 'premium' && new Date(abo.expires_at) > new Date());
   // Sans offre Premium, ni nom ni photo n’est envoyé au navigateur : le flou ne peut pas être contourné.
   const urls = premium ? await urlsPhotos(supabase, liste.map((l) => l.photo_path)) : new Map<string, string>();
@@ -31,6 +34,7 @@ export default async function Likes() {
     <>
       <main className="mb">
         <header className="mb-top"><h1>{t('likes.title')}</h1></header>
+        <Stories groupes={groupesStories} />
         {moi?.account_status !== 'active' && <div className="erreur">{t('likes.needActive')}</div>}
         {liste.length === 0 ? (
           <div className="vide">

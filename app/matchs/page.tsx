@@ -5,8 +5,8 @@ import { requireComplet } from '@/lib/auth';
 import { urlsPhotos } from '@/lib/photos';
 import { getT } from '@/lib/lang';
 import type { T } from '@/lib/dict';
-import { Stories, type StoryGroup } from '@/components/Stories';
-import { supabaseAdmin } from '@/lib/supabase/admin';
+import { Stories } from '@/components/Stories';
+import { chargerStories } from '@/lib/stories';
 import '@/app/membre.css';
 
 export const dynamic = 'force-dynamic';
@@ -28,23 +28,7 @@ export default async function Matchs() {
   const liste = (data ?? []) as Match[];
   const urls = await urlsPhotos(supabase, liste.map((m) => m.photo_path));
   const img = (m: Match) => (m.photo_path ? urls.get(m.photo_path) : undefined);
-  const { data: st } = await supabase.rpc('stories_actives');
-  type Ligne = { user_id: string; prenom: string; story_id: string; path: string; created_at: string; est_moi: boolean; kind: string; texte: string | null; fond: number };
-  const lignes = (st ?? []) as Ligne[];
-  const adm = supabaseAdmin();
-  const sign = async (bucket: string, kind: 'photo' | 'video') => {
-    const ch = lignes.filter((l) => l.path && (l.kind === 'video') === (kind === 'video')).map((l) => l.path);
-    return ch.length ? (await adm.storage.from(bucket).createSignedUrls(ch, 3600)).data ?? [] : [];
-  };
-  const signees = [...(await sign('photos', 'photo')), ...(await sign('clips', 'video'))];
-  const groupes: StoryGroup[] = [];
-  for (const l of lignes) {
-    const url = l.kind === 'texte' ? '' : signees.find((s) => s.path === l.path)?.signedUrl ?? undefined;
-    if (url === undefined) continue;
-    let g = groupes.find((x) => x.user_id === l.user_id);
-    if (!g) groupes.push((g = { user_id: l.user_id, prenom: l.prenom, est_moi: l.est_moi, items: [] }));
-    g.items.push({ id: l.story_id, url, created_at: l.created_at, kind: l.kind === 'video' ? 'video' : l.kind === 'texte' ? 'texte' : 'photo', texte: l.texte, fond: l.fond, path: l.path ?? undefined });
-  }
+  const groupes = await chargerStories(supabase);
   const nouveaux = liste.filter((m) => !m.dernier_message);
   const convs = liste.filter((m) => m.dernier_message);
 

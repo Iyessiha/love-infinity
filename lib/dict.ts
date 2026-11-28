@@ -460,3 +460,7 @@ D['me.styleOn'] = ['Tu es Premium : choisis un thème et réponds aux questions 
 D['me.styleOff'] = ['Thèmes africains, motifs Kente, Wax, Gentleman… Débloque-les avec Premium.', 'African themes, Kente, Wax and Gentleman patterns… Unlock them with Premium.'];
 D['me.styleCta'] = ['Personnaliser mon profil', 'Customise my profile'];
 D['me.styleCtaOff'] = ['Voir les thèmes', 'See the themes'];
+D['st.like'] = ['Liker {name}', 'Like {name}'];
+D['st.liked'] = ['Liké', 'Liked'];
+D['st.match'] = ['C’est un match avec {name} !', 'It’s a match with {name}!'];
+D['st.see'] = ['Voir', 'See'];

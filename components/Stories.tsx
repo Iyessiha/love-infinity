@@ -85,6 +85,21 @@ export function Stories({ groupes }: { groupes: StoryGroup[] }) {
   const [panneau, setPanneau] = useState(false);
   const [muet, setMuet] = useState(true);
   const [compose, setCompose] = useState(false);
+  const [likes, setLikes] = useState<Set<string>>(new Set());
+  const [info, setInfo] = useState<{ msg: string; lien?: string }>();
+
+  async function aimer(g: StoryGroup) {
+    setInfo(undefined);
+    try {
+      const r = await fetch('/api/swipe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ to: g.user_id, action: 'like' }) });
+      if (r.status === 401) return router.push('/connexion');
+      const j = await r.json();
+      if (!j.ok) return setInfo({ msg: j.message ?? t('c.actionErr'), lien: j.code === 'limite' ? '/abonnement' : undefined });
+      setLikes((x) => new Set(x).add(g.user_id));
+      if (j.match) setInfo({ msg: t('st.match', { name: g.prenom }), lien: j.matchId ? `/matchs/${j.matchId}` : '/matchs' });
+    } catch { setInfo({ msg: t('c.netErr') }); }
+  }
+
   const [texte, setTexte] = useState('');
   const [fond, setFond] = useState(0);
 
@@ -114,7 +129,7 @@ export function Stories({ groupes }: { groupes: StoryGroup[] }) {
     else if (ouvert.g > 0) setOuvert({ g: ouvert.g - 1, i: 0 });
   }
   useEffect(() => {
-    setVues(null); setPanneau(false);
+    setVues(null); setPanneau(false); setInfo(undefined);
     if (!it || !g) return;
     const sb = supabaseBrowser();
     if (g.est_moi) {
@@ -188,6 +203,12 @@ export function Stories({ groupes }: { groupes: StoryGroup[] }) {
           {it.kind === 'video' && <button type="button" className="st-son" onClick={() => setMuet((m) => !m)} aria-label={t(muet ? 'st.soundOn' : 'st.soundOff')}>{muet ? '🔇' : '🔊'}</button>}
           <button type="button" className="st-z st-g" onClick={precedent} aria-label="‹" />
           <button type="button" className="st-z st-d" onClick={suivant} aria-label="›" />
+          {!g.est_moi && (
+            <div className="st-pied">
+              <button type="button" className={`st-like${likes.has(g.user_id) ? ' on' : ''}`} disabled={likes.has(g.user_id)} onClick={() => aimer(g)}>♥ {likes.has(g.user_id) ? t('st.liked') : t('st.like', { name: g.prenom })}</button>
+            </div>
+          )}
+          {info && <div className="st-info" role="status">{info.msg}{info.lien && <> <Link href={info.lien}>{t('st.see')}</Link></>}</div>}
           {g.est_moi && (
             <div className="st-pied">
               <button type="button" className="st-vues" onClick={() => setPanneau((v) => !v)} aria-expanded={panneau}>👁 {t.n('st.viewsN', vues?.nb ?? 0)}</button>

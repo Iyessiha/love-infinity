@@ -6,6 +6,8 @@ import { supabaseAdmin } from '@/lib/supabase/admin';
 import { MemberNav } from '@/components/MemberNav';
 import { urlsPhotos } from '@/lib/photos';
 import { getT } from '@/lib/lang';
+import { Stories } from '@/components/Stories';
+import { chargerStories } from '@/lib/stories';
 import '@/app/membre.css';
 
 export const dynamic = 'force-dynamic';
@@ -52,6 +54,7 @@ export default async function Decouvrir({ searchParams }: { searchParams: Promis
   type Ligne = Omit<Carte, 'photos'> & { photos: string[] | null };
   const liste = (profils ?? []) as Ligne[];
   const urls = await urlsPhotos(supabase, [...liste.flatMap((p) => p.photos ?? []), moiPhoto?.[0]?.path]);
+  const groupesStories = await chargerStories(supabase);
   const cartes: Carte[] = liste.map((p) => ({
     ...p,
     interets: p.interets ?? [],
@@ -62,7 +65,7 @@ export default async function Decouvrir({ searchParams }: { searchParams: Promis
   return (
     <>
       <main className="mb" style={{ height: '100dvh' }}>
-        <Pile cartes={cartes} restants={restants ?? null} filtres={f} moi={{ prenom: moiProfil?.prenom ?? '', photo: moiPhoto?.[0]?.path ? urls.get(moiPhoto[0].path) ?? null : null }} peutEcrire={(moiProfil?.verification_level ?? 0) >= 2} />
+        <Pile cartes={cartes} restants={restants ?? null} filtres={f} moi={{ prenom: moiProfil?.prenom ?? '', photo: moiPhoto?.[0]?.path ? urls.get(moiPhoto[0].path) ?? null : null }} peutEcrire={(moiProfil?.verification_level ?? 0) >= 2} stories={<Stories groupes={groupesStories} />} />
       </main>
       <MemberNav actif="decouvrir" />
     </>

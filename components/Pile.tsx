@@ -18,8 +18,8 @@ type Action = 'like' | 'pass';
 
 const SEUIL = 110;
 
-export function Pile({ cartes, restants, moi, filtres, peutEcrire }: {
-  cartes: Carte[]; restants: number | null; moi: { prenom: string; photo: string | null }; filtres: Filtres; peutEcrire: boolean;
+export function Pile({ cartes, restants, moi, filtres, peutEcrire, stories }: {
+  cartes: Carte[]; restants: number | null; moi: { prenom: string; photo: string | null }; filtres: Filtres; peutEcrire: boolean; stories?: React.ReactNode;
 }) {
   const router = useRouter();
   const t = useT();
@@ -122,6 +122,7 @@ export function Pile({ cartes, restants, moi, filtres, peutEcrire }: {
   }
 
   const haut = (
+    <>
     <header className="mb-top">
       <span className="mb-marque">{t('pile.title')}</span>
       <span className="sp" />
@@ -129,6 +130,8 @@ export function Pile({ cartes, restants, moi, filtres, peutEcrire }: {
         <SlidersIcon />{nbFiltres > 0 && <span className="pt">{nbFiltres}</span>}
       </button>
     </header>
+    {stories}
+    </>
   );
 
   const overlays = (

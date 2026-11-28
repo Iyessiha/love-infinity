@@ -343,3 +343,8 @@
 .moi-motifs{display:flex;gap:6px;position:relative;z-index:1}
 .moi-motifs i{width:34px;height:34px;border-radius:10px;border:2px solid rgba(255,255,255,.25)}
 .theme b{color:#2B1B22}
+
+.st-like{background:var(--or);color:#33081F;border:0;border-radius:999px;padding:12px 24px;min-height:48px;font-weight:800;cursor:pointer}
+.st-like.on{background:rgba(255,255,255,.2);color:#fff}
+.st-info{position:absolute;left:12px;right:12px;bottom:84px;z-index:6;background:rgba(0,0,0,.75);color:#fff;border-radius:14px;padding:12px 14px;font-size:14.5px}
+.st-info a{color:#F6C453;font-weight:800}
