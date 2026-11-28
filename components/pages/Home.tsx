@@ -1,116 +1,115 @@
 import Link from 'next/link';
-import { Check } from '@/components/Icons';
+import { Check, HeartIcon, MsgIcon, ShieldIcon, XIcon, PinIcon } from '@/components/Icons';
 import { SiteFooter, SiteNav } from '@/components/SiteChrome';
-import { HeroVideo } from '@/components/HeroVideo';
-import { MEDIA } from '@/lib/media';
+import { Offres } from '@/components/Offres';
 import { href, tr, type Lang } from '@/lib/i18n';
+
+const Silhouette = () => <svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="78" r="38" fill="#FBF6EE" opacity=".9" /><path d="M20 200c0-46 36-74 80-74s80 28 80 74z" fill="#FBF6EE" opacity=".9" /></svg>;
 
 export function Home({ lang }: { lang: Lang }) {
   const t = tr(lang);
   return (
-    <main className="lp">
-      <header className="lp-hero">
-        <HeroVideo src={MEDIA.heroVideo} poster={MEDIA.heroPoster} />
-        <div className="lp-wrap lp-hero-contenu">
+    <main className="lp lp2">
+      <header className="lp2-hero">
+        <div className="lp-wrap">
           <SiteNav lang={lang} path="/" />
-          <div className="lp-hero-grille">
-            <div>
+          <div className="lp2-hero-grille">
+            <div className="lp2-hero-txt">
               <h1>{t('Ici, tout le monde est vrai.', 'Here, everyone is real.')}</h1>
-              <p className="lp-sous">{t('Rencontre quelqu’un qui cherche la même chose que toi, près de chez toi, sans faux profils ni mauvaises surprises.', 'Meet someone who wants the same things as you, near you, with no fake profiles and no bad surprises.')}</p>
+              <p className="lp2-sous">{t('L’application de rencontres où chaque profil est vérifié : photos, selfie vidéo, pièce d’identité. Fini les faux comptes et les arnaques.', 'The dating app where every profile is verified: photos, video selfie, ID. No more fake accounts and scams.')}</p>
               <div className="lp-actions">
                 <Link href="/inscription" className="lp-btn or">{t('Créer mon compte gratuit', 'Create my free account')}</Link>
                 <Link href={href(lang, '/comment-ca-marche')} className="lp-lien">{t('Voir comment ça marche', 'See how it works')}</Link>
               </div>
-              <p className="lp-note">{t('Gratuit pour commencer. Réservé aux personnes de 18 ans et plus.', 'Free to start. For people aged 18 and over.')}</p>
+              <ul className="lp2-garanties">
+                <li><Check size={15} /> {t('Gratuit pour commencer', 'Free to start')}</li>
+                <li><Check size={15} /> {t('Nom et numéro privés', 'Name and number private')}</li>
+                <li><Check size={15} /> {t('Mobile Money et carte', 'Mobile Money and card')}</li>
+              </ul>
             </div>
-            <svg className="lp-boucles" viewBox="-75 -50 150 100" role="img" aria-label={t('Deux boucles d’infini qui se croisent sur un badge de vérification', 'Two infinity loops crossing on a verification badge')}>
-              <path className="g g1" pathLength="1" d="M0,0 C-20,-30 -66,-30 -66,0 C-66,30 -20,30 0,0" />
-              <path className="g g2" pathLength="1" d="M0,0 C20,-30 66,-30 66,0 C66,30 20,30 0,0" />
-              <circle className="pt" cx="0" cy="0" r="12" />
-              <path className="v" d="M-5,0.5 L-1.5,4 L5.5,-4" />
-            </svg>
+
+            <div className="lp2-scene" aria-label={t('Aperçu de l’application', 'App preview')}>
+              <div className="lp2-tel">
+                <div className="lp2-ecran">
+                  <div className="lp2-haut"><b>{t('Découvrir', 'Discover')}</b><span /></div>
+                  <div className="lp2-profil">
+                    <div className="lp2-portrait"><Silhouette /></div>
+                    <span className="lp2-badge"><ShieldIcon size={13} /> {t('Identité vérifiée', 'Identity verified')}</span>
+                    <div className="lp2-info">
+                      <b>Aïcha <em>27</em></b>
+                      <span><PinIcon size={14} /> Abidjan · {t('Architecte', 'Architect')}</span>
+                      <div><i>{t('Relation sérieuse', 'Serious relationship')}</i><i>{t('Cuisine', 'Cooking')}</i><i>{t('Voyages', 'Travel')}</i></div>
+                    </div>
+                  </div>
+                  <div className="lp2-actions"><span className="x"><XIcon size={22} /></span><span className="m"><MsgIcon size={20} /></span><span className="c"><HeartIcon size={26} /></span></div>
+                </div>
+              </div>
+              <div className="lp2-flotte f1"><span className="ok"><Check size={14} /></span><div><b>{t('Selfie vérifié', 'Selfie verified')}</b><small>{t('Par notre équipe', 'By our team')}</small></div></div>
+              <div className="lp2-flotte f2"><span className="coeur"><HeartIcon size={16} /></span><div><b>{t('C’est un match !', 'It’s a match!')}</b><small>{t('Aïcha et Moussa', 'Aïcha and Moussa')}</small></div></div>
+              <div className="lp2-flotte f3"><small>{t('Mon dimanche idéal…', 'My ideal Sunday…')}</small><b>{t('Marché, attiéké poisson, plage.', 'Market, grilled fish, beach.')}</b></div>
+            </div>
           </div>
         </div>
       </header>
 
-      <div className="lp-confiance">
+      <section className="lp2-section" aria-labelledby="d1">
         <div className="lp-wrap">
-          <span><i className="c"><Check size={13} /></i> {t('Profils vérifiés par notre équipe', 'Profiles verified by our team')}</span>
-          <span><i className="c"><Check size={13} /></i> {t('Ton nom et ton numéro restent privés', 'Your name and number stay private')}</span>
-          <span><i className="c"><Check size={13} /></i> {t('Mobile Money et carte', 'Mobile Money and card')}</span>
-          <Link href={href(lang, '/securite')} className="lp-lien">{t('Notre vérification', 'How we verify')}</Link>
-        </div>
-      </div>
-
-      <section className="lp-wrap lp-bloc" aria-labelledby="t1">
-        <div>
-          <h2 id="t1">{t('Des rencontres qui mènent quelque part', 'Dating that leads somewhere')}</h2>
-          <p>{t('Tu dis ce que tu cherches : relation sérieuse, mariage, amitié ou simple découverte. On te présente des personnes qui cherchent la même chose, près de chez toi.', 'You say what you want: a serious relationship, marriage, friendship or simply discovery. We show you people who want the same, close to you.')}</p>
-          <Link href={href(lang, '/comment-ca-marche')} className="lp-lien">{t('Comment ça marche', 'How it works')}</Link>
-        </div>
-        <img className="lp-visuel lp-photo-grande" src={MEDIA.photoPlage1.src} alt={t(MEDIA.photoPlage1.alt, 'A couple holding hands at the water’s edge at sunset')} loading="lazy" width={900} height={1125} />
-      </section>
-
-      <section className="lp-bloc-fond">
-        <div className="lp-wrap lp-bloc inverse" aria-labelledby="t2">
-          <div>
-            <h2 id="t2">{t('Pas de faux profils, pas d’arnaques', 'No fake profiles, no scams')}</h2>
-            <p>{t('Photos contrôlées, selfie vidéo, pièce d’identité : chaque badge sur un profil a été vérifié pour de vrai. Et si quelqu’un se comporte mal, tu le bloques en un geste.', 'Checked photos, video selfie, ID: every badge on a profile was really verified. And if someone behaves badly, you block them in one tap.')}</p>
-            <Link href={href(lang, '/securite')} className="lp-lien">{t('Voir la vérification', 'See verification')}</Link>
-          </div>
-          <div className="lp-carte lp-visuel" aria-label={t('Exemple de profil', 'Sample profile')}>
-            <div className="lp-photo">
-              <span className="lp-ex">{t('Exemple', 'Example')}</span>
-              <svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="78" r="38" fill="#FBF6EE" opacity=".85" /><path d="M20 200c0-46 36-74 80-74s80 28 80 74z" fill="#FBF6EE" opacity=".85" /></svg>
-            </div>
-            <div className="lp-carte-corps">
-              <b>Aïcha, 27</b>
-              <span style={{ color: '#5E4A53', fontSize: 14 }}>{t('Relation sérieuse', 'Serious relationship')}</span>
-              <div className="lp-pastilles">
-                <span className="lp-pastille"><Check size={13} /> {t('Photos', 'Photos')}</span>
-                <span className="lp-pastille"><Check size={13} /> {t('Selfie', 'Selfie')}</span>
-                <span className="lp-pastille"><Check size={13} /> {t('Identité', 'Identity')}</span>
-              </div>
-            </div>
+          <h2 id="d1" className="lp2-h2">{t('Ce qu’on fait autrement', 'What we do differently')}</h2>
+          <p className="lp-intro">{t('Pas de faux profils, pas de messages vides. Chaque détail est pensé pour que tu rencontres des personnes réelles, et que la conversation démarre bien.', 'No fake profiles, no empty messages. Every detail is built so you meet real people and the conversation starts well.')}</p>
+          <div className="lp2-bento">
+            <article className="b a">
+              <h3>{t('Chaque profil est vérifié', 'Every profile is verified')}</h3>
+              <p>{t('Les badges se gagnent, ils ne se déclarent pas. Une personne sans vérification ne peut pas t’écrire.', 'Badges are earned, not claimed. Someone without verification can’t message you.')}</p>
+              <ol className="lp2-echelle">
+                <li><span><Check size={14} /></span><b>{t('Photos contrôlées', 'Photos checked')}</b><small>{t('Pour entrer', 'To get in')}</small></li>
+                <li><span><Check size={14} /></span><b>{t('Selfie vidéo', 'Video selfie')}</b><small>{t('Pour écrire', 'To message')}</small></li>
+                <li><span><Check size={14} /></span><b>{t('Pièce d’identité', 'ID document')}</b><small>{t('Le badge le plus fort', 'The strongest badge')}</small></li>
+              </ol>
+            </article>
+            <article className="b">
+              <h3>{t('Des questions qui font parler', 'Questions that get people talking')}</h3>
+              <p>{t('Réponds à tes questions signature : ton premier message s’écrit presque tout seul.', 'Answer your signature questions: your first message almost writes itself.')}</p>
+              <div className="lp2-qa"><small>{t('Ce qui me fait rire…', 'What makes me laugh…')}</small><b>{t('Les imitations de ma grand-mère.', 'My grandmother’s impressions.')}</b></div>
+            </article>
+            <article className="b">
+              <h3>{t('Un profil à ton image', 'A profile that looks like you')}</h3>
+              <p>{t('Thèmes Premium : Nuit d’Abidjan, Or royal, Soleil, Lagune.', 'Premium themes: Abidjan Night, Royal gold, Sunshine, Lagoon.')}</p>
+              <div className="lp2-themes"><i className="t1" /><i className="t2" /><i className="t3" /><i className="t4" /></div>
+            </article>
+            <article className="b">
+              <h3>{t('Un message avec ton like', 'A message with your like')}</h3>
+              <p>{t('Si c’est réciproque, ton message devient le début de la conversation.', 'If it’s mutual, your message becomes the start of the conversation.')}</p>
+              <div className="lp2-bulle">{t('Ton profil m’a fait sourire. Ta semaine ?', 'Your profile made me smile. How’s your week?')}</div>
+            </article>
+            <article className="b">
+              <h3>{t('Stories de 24 h', '24-hour Stories')} <em>{t('Bientôt', 'Soon')}</em></h3>
+              <p>{t('Montre ton quotidien en photo ou en vidéo courte. Ça disparaît tout seul.', 'Share your day in a photo or short video. It disappears on its own.')}</p>
+              <div className="lp2-stories"><i /><i /><i /><i /></div>
+            </article>
           </div>
         </div>
       </section>
 
-      <section className="lp-wrap lp-bloc" aria-labelledby="t3">
-        <div>
-          <h2 id="t3">{t('Pensé pour ton quotidien, payé comme chez toi', 'Built for your daily life, paid the way you do')}</h2>
-          <p>{t('Mobile Money ou carte, dans la monnaie de ton pays. Pas de pièces qui expirent, pas de renouvellement caché. Commence gratuitement, décide ensuite.', 'Mobile Money or card, in your country’s currency. No coins that expire, no hidden renewal. Start free, decide later.')}</p>
-          <Link href={href(lang, '/tarifs')} className="lp-lien">{t('Voir les tarifs', 'See pricing')}</Link>
-        </div>
-        <img className="lp-visuel lp-photo-grande" src={MEDIA.photoPlage2.src} alt={t(MEDIA.photoPlage2.alt, 'A couple walking hand in hand on the beach')} loading="lazy" width={900} height={1125} />
-      </section>
-
-      <section className="lp-section lp-galerie" aria-labelledby="tg">
+      <section className="lp2-sombre" aria-labelledby="d2">
         <div className="lp-wrap">
-          <h2 id="tg">{t('D’où que tu viennes, l’important est d’être vrai', 'Wherever you are from, what matters is being real')}</h2>
-          <p className="lp-intro">{t('Africain(e), européen(ne), asiatique, de la diaspora : Love Infinity réunit des personnes de toutes origines qui cherchent une vraie histoire.', 'African, European, Asian, from the diaspora: Love Infinity brings together people of every origin who are looking for a real story.')}</p>
-          <div className="lp-mosaique">
-            {MEDIA.galerie.map((g, i) => <img key={i} src={g.src} alt={t(g.alt, g.altEn)} loading="lazy" className={`m${i + 1}`} />)}
-          </div>
-        </div>
-      </section>
-
-      <section className="lp-signe" aria-label={t('Notre promesse', 'Our promise')}>
-        <div className="lp-wrap">
-          <h2>{t('Ici, tout le monde est vrai.', 'Here, everyone is real.')}</h2>
-          <p>{t('Parce qu’une belle histoire commence par la confiance.', 'Because a great story starts with trust.')}</p>
-        </div>
-      </section>
-
-      <section className="lp-section" aria-labelledby="t4">
-        <div className="lp-wrap lp-section-centre">
-          <h2 id="t4">{t('Trois minutes pour te lancer', 'Three minutes to get started')}</h2>
-          <ol className="lp-trois">
-            <li><h3>{t('Crée ton profil', 'Create your profile')}</h3><p>{t('Photos, âge, ville, ce que tu cherches.', 'Photos, age, city, what you are looking for.')}</p></li>
-            <li><h3>{t('Fais-toi vérifier', 'Get verified')}</h3><p>{t('Notre équipe contrôle, tu gagnes tes badges.', 'Our team checks, you earn your badges.')}</p></li>
-            <li><h3>{t('Rencontre', 'Meet')}</h3><p>{t('Like, match, puis écris-vous.', 'Like, match, then start chatting.')}</p></li>
+          <h2 id="d2" className="lp2-h2">{t('Trois étapes, et tu es dedans', 'Three steps and you’re in')}</h2>
+          <ol className="lp2-etapes">
+            <li><b>1</b><h3>{t('Crée ton profil', 'Create your profile')}</h3><p>{t('Âge, ville, ce que tu cherches : relation sérieuse, mariage, amitié ou découverte.', 'Age, city, what you’re looking for: serious relationship, marriage, friendship or discovery.')}</p></li>
+            <li><b>2</b><h3>{t('Fais-toi vérifier', 'Get verified')}</h3><p>{t('Tes photos, un selfie vidéo, une pièce d’identité. Notre équipe contrôle, puis supprime la vidéo et la pièce.', 'Your photos, a video selfie, an ID. Our team checks, then deletes the video and the ID.')}</p></li>
+            <li><b>3</b><h3>{t('Rencontre', 'Meet')}</h3><p>{t('Fais défiler, like, écris. Quand c’est réciproque, la conversation s’ouvre.', 'Swipe, like, write. When it’s mutual, the conversation opens.')}</p></li>
           </ol>
-          <Link href={href(lang, '/comment-ca-marche')} className="lp-lien">{t('Le détail, étape par étape', 'The details, step by step')}</Link>
+          <Link href={href(lang, '/securite')} className="lp-lien">{t('Comment nous vérifions', 'How we verify')}</Link>
+        </div>
+      </section>
+
+      <section className="lp2-section" aria-labelledby="d3">
+        <div className="lp-wrap">
+          <h2 id="d3" className="lp2-h2">{t('Gratuit pour commencer. Premium pour te démarquer.', 'Free to start. Premium to stand out.')}</h2>
+          <p className="lp-intro">{t('Mobile Money ou carte. Pas de pièces qui expirent, pas de renouvellement caché.', 'Mobile Money or card. No coins that expire, no hidden renewal.')}</p>
+          <div style={{ marginTop: 40 }}>
+            <Offres lang={lang} plans={[{ code: 'essentiel', prix: 5000, jours: 30 }, { code: 'premium', prix: 9000, jours: 30 }]}
+              cta={(code) => <Link className={`of-cta${code === 'premium' ? ' or' : ''}`} href="/inscription">{code === 'gratuit' ? t('Commencer gratuitement', 'Start for free') : t('Créer mon compte', 'Create my account')}</Link>} />
+          </div>
         </div>
       </section>
 
@@ -118,12 +117,12 @@ export function Home({ lang }: { lang: Lang }) {
         <div className="lp-wrap lp-ville-grille">
           <div>
             <h2 id="t5">{t('Une communauté qui s’agrandit', 'A growing community')}</h2>
-            <p className="lp-intro">{t('Nous ouvrons pays par pays et ville par ville, pour que chaque profil trouve de vraies personnes près de lui. Crée ton compte : tu es prévenu(e) dès l’ouverture chez toi.', 'We open country by country and city by city, so every profile finds real people nearby. Create your account and we will let you know as soon as we open where you live.')}</p>
+            <p className="lp-intro">{t('Nous ouvrons pays par pays et ville par ville. Crée ton compte : tu es prévenu(e) dès l’ouverture chez toi.', 'We open country by country and city by city. Create your account and we’ll let you know as soon as we open where you live.')}</p>
             <div className="lp-actions" style={{ marginTop: 28 }}><Link href="/inscription" className="lp-btn or">{t('Rejoindre Love Infinity', 'Join Love Infinity')}</Link></div>
           </div>
           <div className="lp-pays" aria-label={t('Pays', 'Countries')}>
             <span className="on">{t('Côte d’Ivoire · ouvert', 'Côte d’Ivoire · open')}</span>
-            <span>{t('Burkina Faso', 'Burkina Faso')}</span><span>{t('Sénégal', 'Senegal')}</span><span>Mali</span><span>Togo</span><span>{t('Bénin', 'Benin')}</span><span>Ghana</span><span>Nigeria</span><span>{t('Cameroun', 'Cameroon')}</span><span>{t('Diaspora', 'Diaspora')}</span>
+            <span>Burkina Faso</span><span>{t('Sénégal', 'Senegal')}</span><span>Mali</span><span>Togo</span><span>{t('Bénin', 'Benin')}</span><span>Ghana</span><span>Nigeria</span><span>{t('Cameroun', 'Cameroon')}</span><span>{t('Diaspora', 'Diaspora')}</span>
           </div>
         </div>
       </section>
@@ -138,7 +137,7 @@ export function Home({ lang }: { lang: Lang }) {
         </div>
       </section>
 
-      <SiteFooter lang={lang} path="/" credits={MEDIA.credits} />
+      <SiteFooter lang={lang} path="/" />
     </main>
   );
 }
