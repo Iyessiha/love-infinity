@@ -73,7 +73,7 @@ export function Home({ lang }: { lang: Lang }) {
             </article>
             <article className="b">
               <h3>{t('Un profil à ton image', 'A profile that looks like you')}</h3>
-              <p>{t('Thèmes Premium : Nuit d’Abidjan, Or royal, Soleil, Lagune.', 'Premium themes: Abidjan Night, Royal gold, Sunshine, Lagoon.')}</p>
+              <p>{t('Thèmes Premium inspirés d’Afrique : Kente, Wax, Bogolan, Nuit d’Abidjan, Gentleman…', 'Premium themes inspired by Africa: Kente, Wax, Bogolan, Abidjan Night, Gentleman…')}</p>
               <div className="lp2-themes"><i className="t1" /><i className="t2" /><i className="t3" /><i className="t4" /></div>
             </article>
             <article className="b">
@@ -82,8 +82,8 @@ export function Home({ lang }: { lang: Lang }) {
               <div className="lp2-bulle">{t('Ton profil m’a fait sourire. Ta semaine ?', 'Your profile made me smile. How’s your week?')}</div>
             </article>
             <article className="b">
-              <h3>{t('Stories de 24 h', '24-hour Stories')} <em>{t('Bientôt', 'Soon')}</em></h3>
-              <p>{t('Montre ton quotidien en photo ou en vidéo courte. Ça disparaît tout seul.', 'Share your day in a photo or short video. It disappears on its own.')}</p>
+              <h3>{t('Stories de 24 h', '24-hour Stories')}</h3>
+              <p>{t('Montre ton quotidien en photo, en vidéo de 10 s ou en texte. Ça disparaît tout seul.', 'Share your day in a photo, a 10 s video or text. It disappears on its own.')}</p>
               <div className="lp2-stories"><i /><i /><i /><i /></div>
             </article>
           </div>

@@ -12,9 +12,11 @@ const LIGNES: Ligne[] = [
   { fr: 'Message d’intro avec ton like', en: 'Intro message with your like', gratuit: true, essentiel: true, premium: true },
   { fr: 'Voir qui t’a liké', en: 'See who liked you', gratuit: false, essentiel: false, premium: true },
   { fr: 'Boost : en tête de la découverte', en: 'Boost: top of discovery', gratuit: false, essentiel: false, premium: true, bientot: true },
-  { fr: 'Thèmes de profil exclusifs', en: 'Exclusive profile themes', gratuit: false, essentiel: false, premium: true, bientot: true },
-  { fr: 'Stories de 24 h', en: '24-hour Stories', gratuit: '1', essentiel: '3', premium: '10', bientot: true },
-  { fr: 'Qui a vu mes stories', en: 'Who viewed my stories', gratuit: false, essentiel: false, premium: true, bientot: true },
+  { fr: 'Thèmes de profil (Kente, Wax, Bogolan, Gentleman…)', en: 'Profile themes (Kente, Wax, Bogolan, Gentleman…)', gratuit: false, essentiel: false, premium: true },
+  { fr: 'Profil mis en avant dans la découverte', en: 'Profile shown first in discovery', gratuit: false, essentiel: false, premium: true },
+  { fr: 'Badge Premium sur ton profil', en: 'Premium badge on your profile', gratuit: false, essentiel: false, premium: true },
+  { fr: 'Stories de 24 h (photo, vidéo 10 s, texte)', en: '24-hour Stories (photo, 10 s video, text)', gratuit: '1', essentiel: '3', premium: '10' },
+  { fr: 'Qui a vu mes stories', en: 'Who viewed my stories', gratuit: false, essentiel: false, premium: true },
 ];
 
 const PLANS = {
