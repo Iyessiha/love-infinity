@@ -17,7 +17,7 @@ export function Acheter({ plan, libelle, gold }: { plan: 'essentiel' | 'premium'
   }
   return (
     <>
-      <button className={`btn${gold ? ' gold' : ''}`} onClick={payer} disabled={envoi}>{envoi ? t('ab.redirect') : libelle}</button>
+      <button className={`of-cta${gold ? ' or' : ''}`} onClick={payer} disabled={envoi}>{envoi ? t('ab.redirect') : libelle}</button>
       {err && <div className="alert" role="alert">{err}</div>}
     </>
   );

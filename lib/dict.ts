@@ -389,3 +389,7 @@ D['ab.adv.e2'] = ['Messages avec tous tes matchs', 'Messages with all your match
 D['ab.adv.p1'] = ['Tout Essentiel', 'Everything in Essential'];
 D['ab.adv.p2'] = ['Profil mis en avant', 'Boosted profile'];
 D['ab.adv.p3'] = ['Voir qui t’a liké', 'See who liked you'];
+D['ab.heroT'] = ['Choisis comment tu veux être vu', 'Choose how you want to be seen'];
+D['ab.heroP'] = ['Des profils vérifiés pour tout le monde. Les offres te donnent plus de visibilité, plus de likes et des outils pour te démarquer.', 'Verified profiles for everyone. Plans give you more visibility, more likes and tools to stand out.'];
+D['ab.free'] = ['Inclus', 'Included'];
+D['ab.current'] = ['Ton offre actuelle', 'Your current plan'];

@@ -1,28 +1,16 @@
 import { InfoPage } from '@/components/InfoPage';
+import { Offres } from '@/components/Offres';
 import { href, tr, type Lang } from '@/lib/i18n';
 
 export function Tarifs({ lang }: { lang: Lang }) {
   const t = tr(lang);
   return (
     <InfoPage lang={lang} path="/tarifs" titre={t('Tarifs', 'Pricing')} intro={t('Gratuit pour commencer. Des abonnements simples, sans pièces qui expirent.', 'Free to start. Simple subscriptions, no coins that expire.')}>
-      <div className="lp-plans">
-        <section className="lp-plan">
-          <h2>{t('Gratuit', 'Free')}</h2>
-          <ul>
-            <li>{t('Inscription et vérification', 'Sign-up and verification')}</li>
-            <li>{t('Découverte de profils', 'Profile discovery')}</li>
-            <li>{t('5 likes par jour', '5 likes per day')}</li>
-            <li>{t('Réception de tes matchs', 'Receiving your matches')}</li>
-          </ul>
-        </section>
-        <section className="lp-plan fort">
-          <h2>{t('Abonnement', 'Subscription')}</h2>
-          <ul>
-            <li>{t('Likes illimités', 'Unlimited likes')}</li>
-            <li>{t('Les offres Essentiel et Premium sont affichées dans l’application, une fois connecté(e), avec leur prix dans la monnaie de ton pays', 'The Essential and Premium plans are shown in the app once you are logged in, with their price in your country’s currency')}</li>
-          </ul>
-        </section>
-      </div>
+      <Offres
+        lang={lang}
+        plans={[{ code: 'essentiel', prix: 5000, jours: 30 }, { code: 'premium', prix: 9000, jours: 30 }]}
+        cta={(code) => <a className={`of-cta${code === 'premium' ? ' or' : ''}`} href="/inscription">{code === 'gratuit' ? t('Commencer gratuitement', 'Start for free') : t('Créer mon compte', 'Create my account')}</a>}
+      />
       <h2 className="lp-doc-h2">{t('Paiement', 'Payment')}</h2>
       <p>{t('Mobile Money (Wave, Orange Money, MTN, Moov) ou carte, sur la page de paiement sécurisée de notre partenaire GeniusPay. Les moyens proposés dépendent de ton pays. Nous ne voyons jamais ton code secret ni ton numéro de carte.', 'Mobile Money (Wave, Orange Money, MTN, Moov) or card, on the secure payment page of our partner GeniusPay. The options offered depend on your country. We never see your PIN or your card number.')}</p>
       <h2 className="lp-doc-h2">{t('Renouvellement', 'Renewal')}</h2>
