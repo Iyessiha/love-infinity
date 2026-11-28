@@ -24,12 +24,14 @@ export default async function Dossier({ params, searchParams }: { params: Promis
   const { m, kind: filtre = '' } = await searchParams;
   const { supabase } = await requireAdmin();
 
-  const [{ data: p }, { data: photos }, { data: demandes }, { count: restants }] = await Promise.all([
+  const [{ data: p }, { data: photosPubliees }, { data: demandes }, { count: restants }, { data: photosAttente }] = await Promise.all([
     supabase.from('profiles').select('prenom, nom, birth_date, genre, ville, phone_country, verification_level, created_at').eq('id', userId).maybeSingle(),
     supabase.from('profile_photos').select('path').eq('user_id', userId).order('position'),
     supabase.from('verifications').select('id, kind, doc_type, gesture, created_at').eq('user_id', userId).eq('status', 'pending').order('created_at'),
     supabase.from('verifications').select('user_id', { count: 'exact', head: true }).eq('status', 'pending').neq('user_id', userId),
+    supabase.from('photos_en_attente').select('path').eq('user_id', userId).order('created_at'),
   ]);
+  const photos = [...(photosPubliees ?? []), ...(photosAttente ?? [])];
   if (!p) notFound();
 
   if (!demandes || demandes.length === 0) {
@@ -44,7 +46,7 @@ export default async function Dossier({ params, searchParams }: { params: Promis
   }
 
   const signer = async (bucket: string, path: string) => (await supabase.storage.from(bucket).createSignedUrl(path, LIEN_SECONDES)).data?.signedUrl;
-  const urlsPhotos = (await Promise.all((photos ?? []).map((x) => signer('photos', x.path)))).filter(Boolean) as string[];
+  const urlsPhotos = (await Promise.all(photos.map((x) => signer('photos', x.path)))).filter(Boolean) as string[];
   const items = await Promise.all(
     [...demandes].sort((a, b) => ORDRE.indexOf(a.kind as Kind) - ORDRE.indexOf(b.kind as Kind)).map(async (d) => {
       const { data: fichiers } = await supabase.from('verification_files').select('side, file_path').eq('verification_id', d.id);

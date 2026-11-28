@@ -5,6 +5,7 @@ import { ChevronLeft } from '@/components/Icons';
 import { requireComplet } from '@/lib/auth';
 import { urlsPhotos } from '@/lib/photos';
 import { getT } from '@/lib/lang';
+import type { PhotoItem } from '@/components/GestionPhotos';
 import '@/app/membre.css';
 
 export const dynamic = 'force-dynamic';
@@ -12,14 +13,18 @@ export const dynamic = 'force-dynamic';
 export default async function Modifier() {
   const { supabase, user } = await requireComplet();
   const t = await getT();
-  const [{ data: p }, { data: photos }, { data: abo }] = await Promise.all([
+  const [{ data: p }, { data: photos }, { data: abo }, { data: attente }] = await Promise.all([
     supabase.from('profiles').select('bio,profession,taille_cm,etudes,langues,intention,enfants,tabac,alcool,religion,interets,theme,prompts').eq('id', user.id).single(),
     supabase.from('profile_photos').select('path').eq('user_id', user.id).order('position'),
     supabase.from('subscriptions').select('plan,expires_at').eq('user_id', user.id).maybeSingle(),
+    supabase.from('photos_en_attente').select('path').eq('user_id', user.id).order('created_at'),
   ]);
   const premium = Boolean(abo && abo.plan === 'premium' && new Date(abo.expires_at) > new Date());
-  const urls = await urlsPhotos(supabase, (photos ?? []).map((x) => x.path));
-  const liste = (photos ?? []).map((x) => urls.get(x.path)).filter((x): x is string => !!x);
+  const urls = await urlsPhotos(supabase, [...(photos ?? []), ...(attente ?? [])].map((x) => x.path));
+  const liste: PhotoItem[] = [
+    ...(photos ?? []).map((x) => ({ path: x.path, url: urls.get(x.path) ?? '', attente: false })),
+    ...(attente ?? []).map((x) => ({ path: x.path, url: urls.get(x.path) ?? '', attente: true })),
+  ].filter((x) => x.url);
 
   return (
     <>

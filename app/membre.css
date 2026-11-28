@@ -348,3 +348,13 @@
 .st-like.on{background:rgba(255,255,255,.2);color:#fff}
 .st-info{position:absolute;left:12px;right:12px;bottom:84px;z-index:6;background:rgba(0,0,0,.75);color:#fff;border-radius:14px;padding:12px 14px;font-size:14.5px}
 .st-info a{color:#F6C453;font-weight:800}
+.gp>div{position:relative}
+.gp-main{position:absolute;top:6px;left:6px;background:var(--prune);color:#fff;font:800 11px Nunito,sans-serif;border-radius:10px;padding:3px 8px}
+.gp-main.att{background:#D4A24C;color:#33081F}
+.gp-att img{opacity:.7}
+.gp-act{position:absolute;left:0;right:0;bottom:0;display:flex;justify-content:space-between;padding:6px;background:linear-gradient(transparent,rgba(0,0,0,.65))}
+.gp-act button{width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,.9);color:var(--prune);font-size:18px;line-height:1;cursor:pointer}
+.gp-act button:disabled{opacity:.35;cursor:default}
+.gp-add{aspect-ratio:3/4;border:2px dashed var(--or);border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--prune);cursor:pointer;text-align:center;padding:6px}
+.gp-add span{font-size:28px;line-height:1}
+.gp-add small{font-size:12px}

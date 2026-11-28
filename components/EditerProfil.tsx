@@ -5,12 +5,13 @@ import { useState } from 'react';
 import { Chips } from '@/components/Chips';
 import { ENFANTS, ETUDES, FREQ, INTENTIONS, INTERETS, LANGUES, RELIGIONS } from '@/lib/profile';
 import { sauverEtape } from '@/lib/save';
+import { GestionPhotos, type PhotoItem } from '@/components/GestionPhotos';
 import { useT } from '@/components/I18n';
 import { StyleProfil, type Prompt } from '@/components/StyleProfil';
 
 type Init = { bio: string; profession: string; taille: string; etudes: string; langues: string[]; intention: string; enfants: string; tabac: string; alcool: string; religion: string; interets: string[] };
 
-export function EditerProfil({ init, photos, theme, prompts, premium }: { init: Init; photos: string[]; theme: string; prompts: Prompt[]; premium: boolean }) {
+export function EditerProfil({ init, photos, theme, prompts, premium }: { init: Init; photos: PhotoItem[]; theme: string; prompts: Prompt[]; premium: boolean }) {
   const router = useRouter();
   const t = useT();
   const [f, setF] = useState<Init>({
@@ -42,7 +43,7 @@ export function EditerProfil({ init, photos, theme, prompts, premium }: { init: 
     <form className="ed" onSubmit={enregistrer}>
       <section>
         <span className="lib">{t('ed.photos')}</span>
-        <div className="ed-photos">{photos.map((p, i) => <div key={p}>{/* eslint-disable-next-line @next/next/no-img-element */}<img src={p} alt={t('ed.photoN', { n: i + 1 })} /></div>)}</div>
+        <GestionPhotos items={photos} />
         <Link className="cta ghost" style={{ height: 46, fontSize: 15 }} href="/verification">{t('ed.managePhotos')}</Link>
       </section>
 

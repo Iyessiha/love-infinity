@@ -615,3 +615,15 @@ D['blk.note'] = ['Débloquer ne recrée pas de match : la personne pourra de nou
 D['e.contact'] = ['Pour ta sécurité, les numéros, liens et réseaux sociaux ne sont autorisés qu’après quelques échanges.', 'For your safety, phone numbers, links and social handles are only allowed after a few messages.'];
 D['e.scam'] = ['Ce message n’est pas autorisé : les demandes d’argent ou de crypto sont interdites.', 'This message isn’t allowed: requests for money or crypto are prohibited.'];
 D['chat.live'] = ['En ligne', 'Live'];
+// Gestion des photos
+D['ph.addBtn'] = ['Ajouter une photo', 'Add a photo'];
+D['ph.left'] = ['Déplacer vers la gauche', 'Move left'];
+D['ph.right'] = ['Déplacer vers la droite', 'Move right'];
+D['ph.del'] = ['Supprimer la photo', 'Delete photo'];
+D['ph.main'] = ['Principale', 'Main'];
+D['ph.pending'] = ['En attente', 'Pending'];
+D['ph.pendingP'] = ['Les nouvelles photos sont visibles par les autres après validation de notre équipe (en général sous 24 h). Toi, tu les vois déjà.', 'New photos become visible to others once our team approves them (usually within 24 h). You can already see them.'];
+D['ph.min'] = ['Garde au moins 2 photos validées.', 'Keep at least 2 approved photos.'];
+D['ph.max'] = ['6 photos maximum.', '6 photos maximum.'];
+D['ph.err'] = ['Action impossible. Réessaie.', 'Couldn’t do that. Try again.'];
+D['ph.hint'] = ['La première photo est celle qu’on voit en premier.', 'The first photo is the one people see first.'];
