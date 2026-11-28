@@ -441,3 +441,7 @@ D['st.viewsN.n'] = ['{n} vues', '{n} views'];
 D['st.seenBy'] = ['Vu par', 'Seen by'];
 D['st.premiumSee'] = ['Découvre qui a vu ta story avec Premium', 'See who viewed your story with Premium'];
 D['st.noViews'] = ['Pas encore de vue.', 'No views yet.'];
+D['st.errBig'] = ['Vidéo trop lourde (12 Mo maximum).', 'Video too large (12 MB max).'];
+D['st.errLong'] = ['Vidéo trop longue (10 secondes maximum).', 'Video too long (10 seconds max).'];
+D['st.soundOn'] = ['Activer le son', 'Turn sound on'];
+D['st.soundOff'] = ['Couper le son', 'Turn sound off'];

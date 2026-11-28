@@ -5,10 +5,24 @@ import { useEffect, useState } from 'react';
 import { supabaseBrowser } from '@/lib/supabase/client';
 import { useT } from '@/components/I18n';
 
-export type StoryItem = { id: string; url: string; created_at: string };
+export type StoryItem = { id: string; url: string; created_at: string; kind: 'photo' | 'video' };
 export type StoryGroup = { user_id: string; prenom: string; est_moi: boolean; items: StoryItem[] };
 
 /** Réduit la photo à 1080 px max, en JPEG : stockage léger et envoi rapide. */
+const MAX_VIDEO = 12 * 1024 * 1024;
+const DUREE_MAX = 10.5;
+
+function dureeVideo(f: File): Promise<number> {
+  return new Promise((ok, ko) => {
+    const v = document.createElement('video');
+    const u = URL.createObjectURL(f);
+    v.preload = 'metadata';
+    v.onloadedmetadata = () => { URL.revokeObjectURL(u); ok(v.duration); };
+    v.onerror = () => { URL.revokeObjectURL(u); ko(new Error('video')); };
+    v.src = u;
+  });
+}
+
 async function reduire(f: File): Promise<Blob> {
   const bmp = await createImageBitmap(f);
   const k = Math.min(1, 1080 / Math.max(bmp.width, bmp.height));
@@ -16,6 +30,11 @@ async function reduire(f: File): Promise<Blob> {
   c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
   c.getContext('2d')!.drawImage(bmp, 0, 0, c.width, c.height);
   return await new Promise((ok, ko) => c.toBlob((b) => (b ? ok(b) : ko(new Error('blob'))), 'image/jpeg', 0.82));
+}
+
+function Mini({ it }: { it: StoryItem }) {
+  // eslint-disable-next-line @next/next/no-img-element
+  return it.kind === 'video' ? <video src={`${it.url}#t=0.1`} muted playsInline preload="metadata" /> : <img src={it.url} alt="" />;
 }
 
 export function Stories({ groupes }: { groupes: StoryGroup[] }) {
@@ -36,16 +55,22 @@ export function Stories({ groupes }: { groupes: StoryGroup[] }) {
       const sb = supabaseBrowser();
       const { data: { user } } = await sb.auth.getUser();
       if (!user) return router.push('/connexion');
-      const path = `${user.id}/stories/${crypto.randomUUID()}.jpg`;
-      const up = await sb.storage.from('photos').upload(path, await reduire(f), { contentType: 'image/jpeg' });
+      const video = f.type.startsWith('video/');
+      if (video) {
+        if (f.size > MAX_VIDEO) return setErreur(t('st.errBig'));
+        if ((await dureeVideo(f)) > DUREE_MAX) return setErreur(t('st.errLong'));
+      }
+      const bucket = video ? 'clips' : 'photos';
+      const ext = video ? (f.type === 'video/webm' ? 'webm' : f.type === 'video/quicktime' ? 'mov' : 'mp4') : 'jpg';
+      const path = `${user.id}/stories/${crypto.randomUUID()}.${ext}`;
+      const up = await sb.storage.from(bucket).upload(path, video ? f : await reduire(f), { contentType: video ? f.type : 'image/jpeg' });
       if (up.error) throw up.error;
-      const { error } = await sb.rpc('ajouter_story', { p_path: path });
+      const { error } = await sb.rpc('ajouter_story', { p_path: path, p_kind: video ? 'video' : 'photo' });
       if (error) {
-        await sb.storage.from('photos').remove([path]);
+        await sb.storage.from(bucket).remove([path]);
         setErreur(error.message.includes('limite_stories') ? t('st.limit') : t('st.err'));
       } else router.refresh();
-    } catch { setErreur(t('st.err')); }
-    setEnvoi(false);
+    } catch { setErreur(t('st.err')); } finally { setEnvoi(false); }
   }
 
   async function supprimer(id: string) {
@@ -55,6 +80,7 @@ export function Stories({ groupes }: { groupes: StoryGroup[] }) {
 
   const [vues, setVues] = useState<{ nb: number; noms: { id: string; prenom: string }[] } | null>(null);
   const [panneau, setPanneau] = useState(false);
+  const [muet, setMuet] = useState(true);
 
   const g = ouvert ? groupes[ouvert.g] : null;
   const it = g && ouvert ? g.items[ouvert.i] : null;
@@ -85,10 +111,10 @@ export function Stories({ groupes }: { groupes: StoryGroup[] }) {
 
   useEffect(() => {
     if (!it || panneau) return;
-    const tm = setTimeout(suivant, 6000);
+    const tm = it.kind === 'video' ? undefined : setTimeout(suivant, 6000);
     const key = (e: KeyboardEvent) => { if (e.key === 'Escape') setOuvert(null); if (e.key === 'ArrowRight') suivant(); if (e.key === 'ArrowLeft') precedent(); };
     window.addEventListener('keydown', key);
-    return () => { clearTimeout(tm); window.removeEventListener('keydown', key); };
+    return () => { if (tm) clearTimeout(tm); window.removeEventListener('keydown', key); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ouvert, panneau]);
 
@@ -97,19 +123,18 @@ export function Stories({ groupes }: { groupes: StoryGroup[] }) {
       <div className="st-rail">
         <div className="st-item">
           <button type="button" className={`st-ring${moi ? ' vu' : ' ajout'}`} onClick={() => (moi ? setOuvert({ g: groupes.indexOf(moi), i: 0 }) : undefined)} aria-label={t('st.add')} disabled={!moi}>
-            {moi ? /* eslint-disable-next-line @next/next/no-img-element */ <img src={moi.items[0].url} alt="" /> : <span>+</span>}
+            {moi ? <Mini it={moi.items[0]} /> : <span>+</span>}
           </button>
           <label className="st-plus" aria-label={t('st.addP')}>
             {envoi ? '…' : '+'}
-            <input type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={ajouter} disabled={envoi} />
+            <input type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm,video/quicktime" hidden onChange={ajouter} disabled={envoi} />
           </label>
           <small>{envoi ? t('st.sending') : t('st.add')}</small>
         </div>
         {autres.map((a) => (
           <div className="st-item" key={a.user_id}>
             <button type="button" className="st-ring" onClick={() => setOuvert({ g: groupes.indexOf(a), i: 0 })} aria-label={a.prenom}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={a.items[0].url} alt="" />
+              <Mini it={a.items[0]} />
             </button>
             <small>{a.prenom}</small>
           </div>
@@ -118,11 +143,13 @@ export function Stories({ groupes }: { groupes: StoryGroup[] }) {
       {erreur && <div className="alert" role="alert">{erreur}</div>}
       {it && g && ouvert && (
         <div className="st-view" role="dialog" aria-modal="true" aria-label={g.prenom}>
-          <div className="st-bars">{g.items.map((_, k) => <i key={k} className={k < ouvert.i ? 'fait' : k === ouvert.i ? 'cours' : ''} />)}</div>
+          <div className="st-bars">{g.items.map((_, k) => <i key={k} className={k < ouvert.i ? 'fait' : k === ouvert.i ? (it.kind === 'video' ? 'cours video' : 'cours') : ''} />)}</div>
           <div className="st-head"><b>{g.est_moi ? t('st.add') : g.prenom}</b><small>{t('st.hint')}</small>
             <button type="button" onClick={() => setOuvert(null)} aria-label={t('st.close')}>✕</button></div>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img key={it.id} src={it.url} alt="" />
+          {it.kind === 'video'
+            ? <video key={it.id} src={it.url} autoPlay playsInline muted={muet} onEnded={suivant} />
+            : /* eslint-disable-next-line @next/next/no-img-element */ <img key={it.id} src={it.url} alt="" />}
+          {it.kind === 'video' && <button type="button" className="st-son" onClick={() => setMuet((m) => !m)} aria-label={t(muet ? 'st.soundOn' : 'st.soundOff')}>{muet ? '🔇' : '🔊'}</button>}
           <button type="button" className="st-z st-g" onClick={precedent} aria-label="‹" />
           <button type="button" className="st-z st-d" onClick={suivant} aria-label="›" />
           {g.est_moi && (

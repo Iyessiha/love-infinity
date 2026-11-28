@@ -1,0 +1,3 @@
+-- 0013 : stories vidéo (10 s, 12 Mo) — appliquée via MCP.
+-- Bucket privé `clips` (mp4/webm/mov), colonne stories.kind, stories_actives() renvoie kind,
+-- ajouter_story(path, kind) et purger_stories() renvoie (path, kind).

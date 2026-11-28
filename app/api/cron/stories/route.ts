@@ -10,7 +10,10 @@ export async function GET(req: Request) {
   const admin = supabaseAdmin();
   const { data, error } = await admin.rpc('purger_stories');
   if (error) return NextResponse.json({ ok: false }, { status: 500 });
-  const chemins = (data ?? []) as string[];
-  if (chemins.length) await admin.storage.from('photos').remove(chemins);
-  return NextResponse.json({ ok: true, supprimees: chemins.length });
+  const lignes = (data ?? []) as { path: string; kind: string }[];
+  const photos = lignes.filter((l) => l.kind !== 'video').map((l) => l.path);
+  const clips = lignes.filter((l) => l.kind === 'video').map((l) => l.path);
+  if (photos.length) await admin.storage.from('photos').remove(photos);
+  if (clips.length) await admin.storage.from('clips').remove(clips);
+  return NextResponse.json({ ok: true, supprimees: lignes.length });
 }
