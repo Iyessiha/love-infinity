@@ -51,12 +51,13 @@ export default async function Decouvrir({ searchParams }: { searchParams: Promis
     vf: sp.vf === '1',
   };
 
-  const [{ data: profils }, { data: restants }, { data: moiPhoto }, { data: moiProfil }, { data: abo }] = await Promise.all([
+  const [{ data: profils }, { data: restants }, { data: moiPhoto }, { data: moiProfil }, { data: abo }, { data: boostEtat }] = await Promise.all([
     supabase.rpc('decouvrir', { p_limit: 15, p_age_min: f.age_min, p_age_max: f.age_max, p_ville: f.ville || null, p_intention: f.intention || null, p_taille_min: f.tmin ?? null, p_taille_max: f.tmax ?? null, p_etudes: f.etu ?? null, p_enfants: f.enf ?? null, p_religion: f.rel ?? null, p_verif_min: f.vf ? 2 : null }),
     supabase.rpc('likes_restants'),
     supabase.from('profile_photos').select('path').eq('user_id', user.id).order('position').limit(1),
     supabase.from('profiles').select('prenom,verification_level').eq('id', user.id).single(),
     supabase.from('subscriptions').select('plan,expires_at').eq('user_id', user.id).maybeSingle(),
+    supabase.rpc('etat_boost'),
   ]);
   const premium = Boolean(abo && abo.plan === 'premium' && new Date(abo.expires_at) > new Date());
 
@@ -74,7 +75,7 @@ export default async function Decouvrir({ searchParams }: { searchParams: Promis
   return (
     <>
       <main className="mb" style={{ height: '100dvh' }}>
-        <Pile cartes={cartes} restants={restants ?? null} filtres={f} moi={{ prenom: moiProfil?.prenom ?? '', photo: moiPhoto?.[0]?.path ? urls.get(moiPhoto[0].path) ?? null : null }} peutEcrire={(moiProfil?.verification_level ?? 0) >= 2} stories={<Stories groupes={groupesStories} />} premium={premium} />
+        <Pile cartes={cartes} restants={restants ?? null} filtres={f} moi={{ prenom: moiProfil?.prenom ?? '', photo: moiPhoto?.[0]?.path ? urls.get(moiPhoto[0].path) ?? null : null }} peutEcrire={(moiProfil?.verification_level ?? 0) >= 2} stories={<Stories groupes={groupesStories} />} premium={premium} boost={(boostEtat ?? [])[0] ?? undefined} />
       </main>
       <MemberNav actif="decouvrir" />
     </>

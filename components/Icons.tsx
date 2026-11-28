@@ -29,3 +29,5 @@ export const ChevronRight = ({ size = 22 }: P) => <svg {...s} width={size} heigh
 export function CrownIcon({ size = 16 }: { size?: number }) {
   return (<svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5L3 8z" /></svg>);
 }
+export const UndoIcon = ({ size = 22 }: P) => <svg {...s} width={size} height={size}><path d="M9 14 4 9l5-5" /><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11" /></svg>;
+export const BoltIcon = ({ size = 18 }: P) => <svg {...s} width={size} height={size}><path d="M13 2 4 14h7l-1 8 9-12h-7z" /></svg>;

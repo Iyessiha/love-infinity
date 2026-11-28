@@ -4,8 +4,9 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ENFANTS, ETUDES, RELIGIONS } from '@/lib/profile';
 import { FicheProfil } from '@/components/FicheProfil';
-import { CrownIcon, HeartIcon, InfoIcon, MsgIcon, PinIcon, ShieldIcon, SlidersIcon, XIcon, SendIcon } from '@/components/Icons';
+import { LockIcon, CrownIcon, HeartIcon, InfoIcon, MsgIcon, PinIcon, ShieldIcon, SlidersIcon, XIcon, SendIcon, UndoIcon, BoltIcon } from '@/components/Icons';
 import { useT } from '@/components/I18n';
+import { supabaseBrowser } from '@/lib/supabase/client';
 import '@/app/membre.css';
 
 export type Carte = {
@@ -19,8 +20,8 @@ type Action = 'like' | 'pass';
 
 const SEUIL = 110;
 
-export function Pile({ cartes, restants, moi, filtres, peutEcrire, stories, premium }: {
-  cartes: Carte[]; restants: number | null; moi: { prenom: string; photo: string | null }; filtres: Filtres; peutEcrire: boolean; stories?: React.ReactNode; premium?: boolean;
+export function Pile({ cartes, restants, moi, filtres, peutEcrire, stories, premium, boost }: {
+  cartes: Carte[]; restants: number | null; moi: { prenom: string; photo: string | null }; filtres: Filtres; peutEcrire: boolean; stories?: React.ReactNode; premium?: boolean; boost?: { actif_jusqua: string | null; prochain: string | null };
 }) {
   const router = useRouter();
   const t = useT();
@@ -35,6 +36,8 @@ export function Pile({ cartes, restants, moi, filtres, peutEcrire, stories, prem
   const [filtreOuvert, setFiltreOuvert] = useState(false);
   const [dx, setDx] = useState(0);
   const [mode, setMode] = useState<'' | 'glisse' | 'vole' | 'retour'>('');
+  const [boostJusqua, setBoostJusqua] = useState(boost?.actif_jusqua ?? null);
+  const [boostOccupe, setBoostOccupe] = useState(false);
   const depart = useRef<{ x: number } | null>(null);
   const bouge = useRef(false);
   const c = cartes[i];
@@ -62,6 +65,28 @@ export function Pile({ cartes, restants, moi, filtres, peutEcrire, stories, prem
       setEnvoi(false);
     }
   }, [c, envoi, router, t]);
+
+  async function annuler() {
+    if (i === 0 || envoi) return;
+    if (!premium) { router.push('/abonnement#choix'); return; }
+    setEnvoi(true); setErreur(undefined);
+    const { error } = await supabaseBrowser().rpc('annuler_swipe', { p_to: cartes[i - 1].id });
+    setEnvoi(false);
+    if (error) return setErreur({ message: error.message.includes('match_existe') ? t('pile.undoMatch') : t('pile.undoErr') });
+    setI((n) => n - 1); setPhoto(0); setMatch(null);
+  }
+
+  async function lancerBoost() {
+    if (!premium) { router.push('/abonnement#choix'); return; }
+    setBoostOccupe(true); setErreur(undefined);
+    const { error } = await supabaseBrowser().rpc('lancer_boost');
+    setBoostOccupe(false);
+    if (error) return setErreur({ message: t('boost.err') });
+    setBoostJusqua(new Date(Date.now() + 30 * 60000).toISOString());
+    router.refresh();
+  }
+  const boostActif = Boolean(boostJusqua && new Date(boostJusqua) > new Date());
+  const boostAttente = Boolean(boost?.prochain && new Date(boost.prochain) > new Date());
 
   /** Fait sortir la carte puis enregistre le choix ; si la base refuse, la carte revient. */
   const envoler = useCallback(async (action: Action) => {
@@ -127,6 +152,9 @@ export function Pile({ cartes, restants, moi, filtres, peutEcrire, stories, prem
     <header className="mb-top">
       <span className="mb-marque">{t('pile.title')}</span>
       <span className="sp" />
+      {boostActif
+        ? <span className="bst-chip on" role="status"><BoltIcon size={15} />{t('pile.boostOn', { time: t.time(boostJusqua!) })}</span>
+        : <button type="button" className={`bst-chip${premium && boostAttente ? ' off' : ''}`} onClick={lancerBoost} disabled={boostOccupe || Boolean(premium && boostAttente)} aria-label={t('boost.t')}><BoltIcon size={15} />{premium && boostAttente ? t('pile.boostWait') : t('pile.boost')}{!premium && <LockIcon size={13} />}</button>}
       <button className="mb-ico" onClick={() => setFiltreOuvert(true)} aria-label={t('pile.filters')}>
         <SlidersIcon />{nbFiltres > 0 && <span className="pt">{nbFiltres}</span>}
       </button>
@@ -201,6 +229,7 @@ export function Pile({ cartes, restants, moi, filtres, peutEcrire, stories, prem
         </div>
       )}
       <div className="dk-actions">
+        <button className="rond undo" disabled={envoi || i === 0} onClick={annuler} aria-label={t(premium ? 'pile.undo' : 'pile.undoLock')}><UndoIcon size={22} />{!premium && <span className="undo-lock"><LockIcon size={11} /></span>}</button>
         <button className="rond pass" disabled={envoi} onClick={() => envoler('pass')} aria-label={t('pile.passAria', { name: c.prenom })}><XIcon size={28} /></button>
         <button className="rond msg" disabled={envoi} onClick={() => setEcrire(true)} aria-label={t('pile.writeAria', { name: c.prenom })}><MsgIcon size={24} /></button>
         <button className="rond like" disabled={envoi} onClick={() => envoler('like')} aria-label={t('pile.likeAria', { name: c.prenom })}><HeartIcon size={34} /></button>

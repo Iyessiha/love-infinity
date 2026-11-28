@@ -396,3 +396,10 @@
 .force-liste a{display:flex;justify-content:space-between;gap:10px;align-items:center;min-height:36px;color:#4A0E2E;font-weight:700;font-size:14px;text-decoration:none;border-top:1px solid rgba(74,14,46,.1)}
 .force-liste i{font-style:normal;font-weight:800;color:#B35A12;background:#FFF1DC;border-radius:10px;padding:2px 8px;font-size:12px}
 .force:has(.force-liste){align-items:flex-start}
+
+.rond.undo{position:relative;width:46px;height:46px;background:#fff;color:#E8873A;border:2px solid #F6DDC0;box-shadow:0 6px 16px -8px rgba(0,0,0,.35)}
+.undo-lock{position:absolute;right:-4px;top:-4px;width:20px;height:20px;border-radius:50%;background:#4A0E2E;color:#F7B042;display:grid;place-items:center}
+.bst-chip{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 14px;border-radius:19px;border:0;font:800 13.5px Nunito,sans-serif;cursor:pointer;background:linear-gradient(135deg,#F7B042,#E8873A);color:#33081F}
+.bst-chip.on{background:#1F6B41;color:#fff;cursor:default}
+.bst-chip.off,.bst-chip:disabled{opacity:.6;cursor:default}
+.bst-chip:focus-visible{outline:3px solid #4A0E2E;outline-offset:2px}
