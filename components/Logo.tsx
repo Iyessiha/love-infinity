@@ -1,16 +1,10 @@
-export function Logo({ width = 240 }: { width?: number }) {
-  return (
-    <svg viewBox="0 0 240 230" width={width} height={(width * 230) / 240} role="img" aria-label="Logo Love Infinity">
-      <defs>
-<linearGradient id="li-p" x1="30" y1="40" x2="170" y2="190" gradientUnits="userSpaceOnUse"><stop offset="0" stopColor="#8A2470"/><stop offset=".45" stopColor="#5E1A5C"/><stop offset="1" stopColor="#E0662B"/></linearGradient>
-<linearGradient id="li-q" x1="210" y1="40" x2="80" y2="200" gradientUnits="userSpaceOnUse"><stop offset="0" stopColor="#F6C453"/><stop offset=".6" stopColor="#F0993A"/><stop offset="1" stopColor="#DC6A2B"/></linearGradient>
-<mask id="li-m" maskUnits="userSpaceOnUse" x="0" y="0" width="240" height="230"><rect width="240" height="230" fill="#fff"/>
-<path d="M96 118 C108 106 116 98 124 90 C136 76 146 62 160 52" fill="none" stroke="#000" strokeWidth="38" strokeLinecap="butt"/></mask>
-</defs>
-<g fill="none" strokeLinecap="butt" strokeLinejoin="round" strokeWidth="28">
-<path mask="url(#li-m)" stroke="url(#li-p)" d="M172 142 C156 128 136 110 116 90 C96 68 80 44 52 44 C22 46 20 92 44 124 C60 146 90 176 118 202"/>
-<path strokeLinecap="round" stroke="url(#li-q)" d="M68 144 C84 130 104 110 124 90 C144 68 160 44 188 44 C218 46 220 92 196 124 C180 146 150 176 122 202"/>
-</g>
-    </svg>
-  );
+/* eslint-disable @next/next/no-img-element */
+/** Marque Love Infinity (cœur-ruban). `blanc` pour les fonds colorés. */
+export function Logo({ width = 54, blanc = false }: { width?: number; blanc?: boolean }) {
+  return <img src={blanc ? '/brand/mark-blanc.png' : '/brand/mark.png'} width={width} height={Math.round(width * 0.875)} alt="Love Infinity" decoding="async" />;
+}
+
+/** Marque + nom et signature. `clair` : texte crème pour les fonds sombres. */
+export function Wordmark({ height = 44, clair = false }: { height?: number; clair?: boolean }) {
+  return <img src={clair ? '/brand/wordmark-clair.png' : '/brand/wordmark.png'} height={height} width={Math.round(height * 900 / 206)} alt="Love Infinity – l’amour sans limites" decoding="async" />;
 }

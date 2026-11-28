@@ -75,7 +75,7 @@ export default async function Verification() {
             ].map(([t, s, etat]) => (
               <li key={t} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
                 <span aria-hidden="true" style={{ width: 26, height: 26, borderRadius: 13, flex: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 13,
-                  background: etat === 'fait' ? '#236B43' : etat === 'cours' ? '#D4A24C' : '#E6D6CC', color: etat === 'attente' ? '#5E4A53' : '#fff' }}>
+                  background: etat === 'fait' ? '#236B43' : etat === 'cours' ? '#E8873A' : '#E6D6CC', color: etat === 'attente' ? '#5E4A53' : '#fff' }}>
                   {etat === 'fait' ? <Check /> : etat === 'cours' ? '…' : ''}
                 </span>
                 <div><b>{t}</b><div className="small">{s}</div></div>

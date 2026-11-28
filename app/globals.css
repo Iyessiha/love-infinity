@@ -32,7 +32,7 @@ body{margin:0}
 .rules{display:flex;flex-direction:column;gap:4px;font-size:13px;color:#5E4A53;margin-top:8px}
 .rules b{color:#1F6B41}
 .btn{display:flex;align-items:center;justify-content:center;height:54px;border-radius:27px;border:0;background:#4A0E2E;color:#FBF6EE;font:800 17px Nunito,system-ui,sans-serif;width:100%;cursor:pointer;text-decoration:none}
-.btn.gold{background:#D4A24C;color:#2B1B22}
+.btn.gold{background:#E8873A;color:#2B1B22}
 .btn.ghost{background:transparent;color:#4A0E2E;border:1.5px solid #4A0E2E}
 .btn.dis{background:#D8CBC6;color:#5E4A53}
 .link{color:#4A0E2E;font-weight:800;text-decoration:underline;text-align:center;font-size:15px}
@@ -52,14 +52,14 @@ body{margin:0}
 .wrap{display:flex;flex-wrap:wrap;gap:8px}
 .photos{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .photos div{aspect-ratio:3/4;border-radius:12px;background:#EFE2DA;border:1.5px dashed #8E7A82;display:flex;align-items:center;justify-content:center;font-size:28px;color:#4A0E2E;font-weight:700}
-.photos div.f{background:linear-gradient(160deg,#E8B4B8,#D4A24C);border:0}
+.photos div.f{background:linear-gradient(160deg,#E8B4B8,#E8873A);border:0}
 .lvl{display:flex;gap:12px;align-items:flex-start}
 .lvl .n{width:34px;height:34px;border-radius:17px;background:#4A0E2E;color:#FBF6EE;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
 .lvl .n.g{background:#2E8B57}
 .lvl b{display:block;font-size:16px}
 .lvl span{font-size:14px;color:#5E4A53;line-height:1.4}
 .cam{flex:1;border-radius:22px;background:#2B1B22;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.cam .oval{width:210px;height:280px;border:3px dashed #D4A24C;border-radius:50%}
+.cam .oval{width:210px;height:280px;border:3px dashed #E8873A;border-radius:50%}
 .cam .gesture{position:absolute;left:16px;right:16px;bottom:16px;background:#FBF6EE;border-radius:14px;padding:12px 14px;font-size:15px;font-weight:800;color:#4A0E2E;text-align:center}
 .cam .rec{position:absolute;top:14px;left:14px;display:flex;gap:6px;align-items:center;color:#FBF6EE;font-size:13px;font-weight:700}
 .cam .rec i{width:10px;height:10px;border-radius:5px;background:#E5484D}
@@ -68,12 +68,12 @@ body{margin:0}
 .drop b{font-size:15px;color:#4A0E2E}
 .drop span{font-size:13px;color:#5E4A53}
 .plan{background:#fff;border:1.5px solid #E6D6CC;border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:8px}
-.plan.best{border:2.5px solid #D4A24C}
+.plan.best{border:2.5px solid #E8873A}
 .plan .price{font:700 28px 'Playfair Display',Georgia,serif;color:#4A0E2E}
 .plan .price small{font:600 14px Nunito,sans-serif;color:#5E4A53}
 .plan ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:5px;font-size:14px}
 .plan li:before{content:"✓ ";color:#1F6B41;font-weight:800}
-.tag{align-self:flex-start;background:#D4A24C;color:#2B1B22;border-radius:12px;padding:3px 10px;font-size:12px;font-weight:800}
+.tag{align-self:flex-start;background:#E8873A;color:#2B1B22;border-radius:12px;padding:3px 10px;font-size:12px;font-weight:800}
 .pay{display:flex;align-items:center;gap:12px;height:60px;border:1.5px solid #8E7A82;border-radius:14px;background:#fff;padding:0 14px;font-size:16px;font-weight:700}
 .pay.on{border:2.5px solid #4A0E2E}
 .pay .dot{width:20px;height:20px;border-radius:10px;border:2px solid #4A0E2E;display:flex;align-items:center;justify-content:center}
@@ -91,9 +91,9 @@ textarea.in{height:112px;padding:12px 14px;line-height:1.4;resize:none;align-ite
 /* Découverte — accessibilité et finition */
 .btn,.chip,.back,.link{transition:background-color .2s,border-color .2s,color .2s,opacity .2s}
 .btn:hover:not(:disabled){opacity:.92}
-.btn:focus-visible,.chip:focus-visible,.link:focus-visible,.back:focus-visible,a:focus-visible,button:focus-visible{outline:3px solid #D4A24C;outline-offset:2px}
+.btn:focus-visible,.chip:focus-visible,.link:focus-visible,.back:focus-visible,a:focus-visible,button:focus-visible{outline:3px solid #E8873A;outline-offset:2px}
 .btn:disabled{opacity:.7}
-.profil-photo{position:relative;height:min(58vh,420px);background:linear-gradient(160deg,#E8B4B8,#D4A24C);overflow:hidden}
+.profil-photo{position:relative;height:min(58vh,420px);background:linear-gradient(160deg,#E8B4B8,#E8873A);overflow:hidden}
 .profil-photo img{width:100%;height:100%;object-fit:cover;display:block}
 .profil-photo::after{content:"";position:absolute;inset:auto 0 0 0;height:90px;background:linear-gradient(transparent,rgba(43,27,34,.55));pointer-events:none}
 .badge-verif{position:absolute;left:12px;top:12px;z-index:1;display:inline-flex;align-items:center;gap:6px;background:#236B43;color:#FBF6EE;border-radius:14px;padding:5px 11px;font-size:12px;font-weight:800}
@@ -104,7 +104,7 @@ textarea.in{height:112px;padding:12px 14px;line-height:1.4;resize:none;align-ite
 @keyframes entree{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.carte-entree{animation:none}.btn,.chip{transition:none}}
 .back{min-height:44px}
-.in:focus-visible{outline:3px solid #D4A24C;outline-offset:1px;border-color:#4A0E2E}
+.in:focus-visible{outline:3px solid #E8873A;outline-offset:1px;border-color:#4A0E2E}
 .in.ok{border-color:#236B43}
 .lvl .n.g{background:#236B43;color:#FBF6EE}
 .photos .f,.photos>div{cursor:pointer}
@@ -119,15 +119,15 @@ textarea.in{height:112px;padding:12px 14px;line-height:1.4;resize:none;align-ite
 .langsw{display:inline-flex;align-self:center;background:#F3ECE6;border-radius:24px;padding:4px;gap:2px}
 .langsw button{border:0;background:none;font:800 14px Nunito,system-ui,sans-serif;color:#6F5A63;height:36px;padding:0 16px;border-radius:20px;cursor:pointer}
 .langsw button.on{background:#4A0E2E;color:#FBF6EE}
-.langsw button:focus-visible{outline:3px solid #D4A24C;outline-offset:2px}
+.langsw button:focus-visible{outline:3px solid #E8873A;outline-offset:2px}
 
 
 /* Pages d'état (404, erreur) */
 .etat{min-height:100dvh;display:grid;place-items:center;padding:24px;background:radial-gradient(120% 80% at 50% 0%,#6B1744 0%,#33081F 70%);color:#FBF6EE;text-align:center}
 .etat-in{max-width:420px;display:flex;flex-direction:column;align-items:center;gap:14px}
-.etat .etat-code{font:700 84px/1 'Playfair Display',Georgia,serif;color:#F6C453;margin:0}
+.etat .etat-code{font:700 84px/1 'Playfair Display',Georgia,serif;color:#F7B042;margin:0}
 .etat h1{font:700 28px/1.2 'Playfair Display',Georgia,serif;margin:0;color:#FBF6EE}
 .etat p{margin:0;line-height:1.5;color:#EBD9DF}
 .etat-actions{display:flex;flex-direction:column;gap:10px;width:100%;margin-top:8px}
-.etat-actions a,.etat-actions button{display:flex;align-items:center;justify-content:center;min-height:52px;border-radius:999px;font:800 16px Nunito,sans-serif;text-decoration:none;border:0;cursor:pointer;background:#F6C453;color:#33081F}
+.etat-actions a,.etat-actions button{display:flex;align-items:center;justify-content:center;min-height:52px;border-radius:999px;font:800 16px Nunito,sans-serif;text-decoration:none;border:0;cursor:pointer;background:#F7B042;color:#33081F}
 .etat-actions .ghost{background:transparent;color:#FBF6EE;border:1.5px solid rgba(251,246,238,.5)}

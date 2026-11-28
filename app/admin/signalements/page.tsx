@@ -66,7 +66,7 @@ export default async function Signalements({ searchParams }: { searchParams: Pro
             </div>
             <div>Membre signalé : <b>{lib(r.reported_id)}</b>{p ? <span className="muted"> · compte {STATUT_COMPTE[p.account_status]?.toLowerCase()}</span> : null}</div>
             <div className="muted">Signalé par {lib(r.reporter_id)}</div>
-            {r.details ? <blockquote style={{ margin: 0, padding: '10px 14px', background: '#FBF6EE', borderLeft: '3px solid #D4A24C', borderRadius: 8 }}>{r.details}</blockquote> : <p className="muted" style={{ margin: 0 }}>Aucun message joint.</p>}
+            {r.details ? <blockquote style={{ margin: 0, padding: '10px 14px', background: '#FBF6EE', borderLeft: '3px solid #E8873A', borderRadius: 8 }}>{r.details}</blockquote> : <p className="muted" style={{ margin: 0 }}>Aucun message joint.</p>}
             <form action={traiter} className="adm-row">
               <input type="hidden" name="id" value={r.id} />
               <button className="adm-btn" name="action" value="classer">Classer comme traité</button>

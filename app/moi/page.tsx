@@ -60,14 +60,14 @@ export default async function Moi() {
           <h2>{t('me.styleT')}</h2>
           <p>{actif && abo?.plan === 'premium' ? t('me.styleOn') : t('me.styleOff')}</p>
           <div className="moi-motifs" aria-hidden="true">
-            {['#C8372D', '#F6C453', '#1B7F4B', '#0F5E73', '#D8C48A'].map((c) => <i key={c} style={{ background: c }} />)}
+            {['#C8372D', '#F7B042', '#1B7F4B', '#0F5E73', '#D8C48A'].map((c) => <i key={c} style={{ background: c }} />)}
           </div>
           <Link className="cta" href={actif && abo?.plan === 'premium' ? '/moi/style' : '/abonnement'}>{actif && abo?.plan === 'premium' ? t('me.styleCta') : t('me.styleCtaOff')}</Link>
         </section>
 
         {force < 100 && (
           <Link href="/moi/modifier" className="force">
-            <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r={R} fill="none" stroke="rgba(74,14,46,.12)" strokeWidth="6" /><circle cx="32" cy="32" r={R} fill="none" stroke="#D4A24C" strokeWidth="6" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={C * (1 - force / 100)} transform="rotate(-90 32 32)" /></svg>
+            <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r={R} fill="none" stroke="rgba(74,14,46,.12)" strokeWidth="6" /><circle cx="32" cy="32" r={R} fill="none" stroke="#E8873A" strokeWidth="6" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={C * (1 - force / 100)} transform="rotate(-90 32 32)" /></svg>
             <div><b>{t('me.strength', { n: force })}</b><span>{t('me.strengthTip')}</span></div>
             <ChevronRight />
           </Link>

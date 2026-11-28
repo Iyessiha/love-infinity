@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Logo } from '@/components/Logo';
+import { Logo, Wordmark } from '@/components/Logo';
 import { LangSetter } from '@/components/LangSetter';
 import { SITE } from '@/lib/site';
 import { href, tr, type Lang } from '@/lib/i18n';
@@ -11,7 +11,7 @@ export function SiteNav({ lang, path, sombre = false }: { lang: Lang; path: stri
   return (
     <nav className={`lp-nav${sombre ? ' sombre' : ''}`} aria-label={t('Principal', 'Main')}>
       <LangSetter lang={lang} />
-      <Link href={href(lang, '/')} className="lp-marque"><Logo width={54} /> {SITE.nom}</Link>
+      <Link href={href(lang, '/')} className="lp-marque" aria-label={SITE.nom}><Logo width={48} /><Wordmark height={40} clair /></Link>
       <div className="lp-nav-liens">
         <Link href={href(lang, '/comment-ca-marche')} className="lp-nav-lien">{t('Comment ça marche', 'How it works')}</Link>
         <Link href={href(autre, path)} className="lp-nav-lien lp-langue" hrefLang={autre} lang={autre} aria-label={autre === 'en' ? 'Read in English' : 'Lire en français'}>{autre.toUpperCase()}</Link>

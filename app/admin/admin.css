@@ -4,13 +4,13 @@
 .adm-top{background:#33081F;color:#FBF6EE;position:sticky;top:0;z-index:20}
 .adm-top-in{max-width:1120px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .adm-brand{font:700 20px 'Playfair Display',Georgia,serif;color:#FBF6EE;text-decoration:none;margin-right:8px;white-space:nowrap}
-.adm-brand small{font:700 11px Nunito,system-ui,sans-serif;color:#D4A24C;margin-left:8px;letter-spacing:.04em}
+.adm-brand small{font:700 11px Nunito,system-ui,sans-serif;color:#E8873A;margin-left:8px;letter-spacing:.04em}
 .adm-nav{display:flex;gap:4px;overflow-x:auto;flex:1;min-width:0;scrollbar-width:none}
 .adm-nav::-webkit-scrollbar{display:none}
 .adm-nav a{display:flex;align-items:center;gap:8px;padding:9px 14px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;color:#E8D9DD;white-space:nowrap;min-height:44px}
 .adm-nav a:hover{background:rgba(255,255,255,.08)}
 .adm-nav a[aria-current=page]{background:#FBF6EE;color:#4A0E2E}
-.adm-badge{min-width:22px;height:22px;padding:0 7px;border-radius:11px;background:#D4A24C;color:#33081F;font-size:12px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+.adm-badge{min-width:22px;height:22px;padding:0 7px;border-radius:11px;background:#E8873A;color:#33081F;font-size:12px;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
 .adm-out{background:none;border:1px solid rgba(255,255,255,.35);color:#FBF6EE;border-radius:10px;padding:9px 14px;font:700 14px Nunito,system-ui,sans-serif;cursor:pointer;min-height:44px}
 .adm-out:hover{background:rgba(255,255,255,.1)}
 .adm-wrap{max-width:1120px;margin:0 auto;padding:28px 20px 72px;display:flex;flex-direction:column;gap:24px}
@@ -50,7 +50,7 @@ a.adm-tile:hover{border-color:#4A0E2E}
 .adm-btn.sm{min-height:38px;padding:0 12px;font-size:13.5px}
 .adm-select{height:44px;border:1.5px solid #8E7A82;border-radius:10px;background:#fff;padding:0 12px;font:600 14.5px Nunito,system-ui,sans-serif;color:#2B1B22;min-width:0;max-width:100%}
 .adm-input{height:44px;border:1.5px solid #8E7A82;border-radius:10px;background:#fff;padding:0 12px;font:600 14.5px Nunito,system-ui,sans-serif;color:#2B1B22;min-width:0;width:260px;max-width:100%}
-.adm :focus-visible{outline:3px solid #D4A24C;outline-offset:2px}
+.adm :focus-visible{outline:3px solid #E8873A;outline-offset:2px}
 .adm-chips{display:flex;gap:8px;flex-wrap:wrap}
 .adm-chips a{padding:8px 14px;border-radius:20px;border:1.5px solid #E6D6CC;background:#fff;text-decoration:none;font-weight:700;font-size:14px;min-height:40px;display:inline-flex;align-items:center}
 .adm-chips a[aria-current=true]{background:#4A0E2E;color:#fff;border-color:#4A0E2E}
