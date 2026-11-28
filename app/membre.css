@@ -317,3 +317,29 @@
 .st-pub{background:var(--or);color:var(--prune2);border:0;border-radius:999px;padding:12px 22px;min-height:44px;font-weight:700;cursor:pointer}
 .st-pub:disabled{opacity:.5;cursor:default}
 .st-annule{background:none;color:#fff;border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:12px 18px;min-height:44px;cursor:pointer}
+
+/* ===== Thèmes à motifs (Premium) ===== */
+.fiche[data-theme=kente],.theme[data-theme=kente]{--prune:#F6C453;--creme:#1B120A;--txt:#FBEFD5;--mute:#C9B58E;--ligne:#4A3A1E;--carte:#2A1D10;--or:#F6C453;
+ --motif:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M20 3l17 17-17 17L3 20z' fill='none' stroke='%23F6C453' stroke-opacity='.22' stroke-width='2'/%3E%3Cpath d='M20 12l8 8-8 8-8-8z' fill='%23C8372D' fill-opacity='.16'/%3E%3Crect x='0' y='0' width='40' height='3' fill='%231B7F4B' fill-opacity='.28'/%3E%3C/svg%3E")}
+.fiche[data-theme=bogolan],.theme[data-theme=bogolan]{--prune:#5A3A1E;--creme:#F1E4CC;--txt:#2E2014;--mute:#7A6446;--ligne:#D9C39D;--carte:#FAF2E2;--or:#B5651D;
+ --motif:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Cg stroke='%233B2A1A' stroke-opacity='.16' stroke-width='3' stroke-linecap='round' fill='none'%3E%3Cpath d='M22 9v26M9 22h26'/%3E%3Cpath d='M4 4h6M34 4h6M4 40h6M34 40h6'/%3E%3C/g%3E%3Ccircle cx='22' cy='22' r='3' fill='%233B2A1A' fill-opacity='.18'/%3E%3C/svg%3E")}
+.fiche[data-theme=wax],.theme[data-theme=wax]{--prune:#0F5E73;--creme:#FFF3DC;--txt:#2A1B18;--mute:#7A5D4E;--ligne:#F2CFA0;--carte:#FFFBF2;--or:#E8602C;
+ --motif:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Ccircle cx='32' cy='32' r='26' fill='none' stroke='%23E8602C' stroke-opacity='.18' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='17' fill='none' stroke='%230F5E73' stroke-opacity='.18' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='8' fill='%23D6336C' fill-opacity='.16'/%3E%3C/svg%3E")}
+.fiche[data-theme=gentleman],.theme[data-theme=gentleman]{--prune:#D8C48A;--creme:#0E1014;--txt:#EDEAE2;--mute:#9A978D;--ligne:#2A2D34;--carte:#16191F;--or:#C9B27C;
+ --motif:repeating-linear-gradient(90deg,rgba(216,196,138,.10) 0 1px,transparent 1px 12px)}
+.fiche[data-theme=kente] .fiche-corps,.fiche[data-theme=bogolan] .fiche-corps,.fiche[data-theme=wax] .fiche-corps,.fiche[data-theme=gentleman] .fiche-corps,
+.theme[data-theme=kente] .theme-demo,.theme[data-theme=bogolan] .theme-demo,.theme[data-theme=wax] .theme-demo,.theme[data-theme=gentleman] .theme-demo{background-image:var(--motif)}
+.fiche[data-theme=kente] .rond.pass,.fiche[data-theme=gentleman] .rond.pass{background:#2A2D34;color:#fff;border-color:transparent}
+.fiche[data-theme=gentleman] .fiche-nom,.fiche[data-theme=gentleman] .qa-bloc p{letter-spacing:.02em}
+
+/* Badge Premium */
+.badge-prem{display:inline-flex;align-items:center;gap:4px;margin-left:10px;vertical-align:middle;font:800 11.5px Nunito,sans-serif;font-style:normal;letter-spacing:.02em;color:#33081F;background:linear-gradient(135deg,#F6C453,#D4A24C);border-radius:999px;padding:4px 10px;box-shadow:0 2px 8px rgba(212,162,76,.45)}
+.moi-prem{position:absolute;top:14px;left:14px;z-index:3;margin:0}
+.moi-style{display:flex;flex-direction:column;gap:10px;border-radius:22px;padding:18px;background:linear-gradient(135deg,#33081F,#6B1744);color:#FBF6EE;position:relative;overflow:hidden}
+.moi-style::after{content:"";position:absolute;right:-30px;top:-30px;width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,rgba(246,196,83,.45),transparent 70%)}
+.moi-style h2{font:700 20px 'Playfair Display',serif;color:#F6C453}
+.moi-style p{font-size:14.5px;line-height:1.45;color:#EBD9DF;margin:0}
+.moi-style .cta{background:#F6C453;color:#33081F;height:46px;font-size:15px;position:relative;z-index:1}
+.moi-motifs{display:flex;gap:6px;position:relative;z-index:1}
+.moi-motifs i{width:34px;height:34px;border-radius:10px;border:2px solid rgba(255,255,255,.25)}
+.theme b{color:#2B1B22}

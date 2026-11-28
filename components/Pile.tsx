@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FicheProfil } from '@/components/FicheProfil';
-import { HeartIcon, InfoIcon, MsgIcon, PinIcon, ShieldIcon, SlidersIcon, XIcon, SendIcon } from '@/components/Icons';
+import { CrownIcon, HeartIcon, InfoIcon, MsgIcon, PinIcon, ShieldIcon, SlidersIcon, XIcon, SendIcon } from '@/components/Icons';
 import { useT } from '@/components/I18n';
 import '@/app/membre.css';
 
@@ -11,7 +11,7 @@ export type Carte = {
   id: string; prenom: string; age: number; ville: string; bio: string | null; intention: string | null;
   profession: string | null; interets: string[]; langues: string[]; verification_level: number;
   taille_cm: number | null; etudes: string | null; membre_depuis: string; photos: string[];
-  theme?: string; prompts?: { q: string; a: string }[];
+  theme?: string; prompts?: { q: string; a: string }[]; premium?: boolean;
 };
 export type Filtres = { age_min: number; age_max: number; ville: string; intention: string };
 type Action = 'like' | 'pass';
@@ -180,7 +180,7 @@ export function Pile({ cartes, restants, moi, filtres, peutEcrire }: {
           <span className="dk-stamp l" style={{ opacity: dx > 0 ? p : 0 }}>{t('pile.like')}</span>
           <span className="dk-stamp p" style={{ opacity: dx < 0 ? p : 0 }}>{t('pile.pass')}</span>
           <div className="dk-info">
-            <div className="dk-nom">{c.prenom}<span>{c.age}</span></div>
+            <div className="dk-nom">{c.prenom}<span>{c.age}</span>{c.premium && <em className="badge-prem"><CrownIcon size={12} />{t('badge.premium')}</em>}</div>
             <div className="dk-ligne"><PinIcon size={15} />{c.ville}{c.profession ? ` · ${c.profession}` : ''}</div>
             <div className="dk-chips">
               {c.intention && <span>{t.v(c.intention)}</span>}

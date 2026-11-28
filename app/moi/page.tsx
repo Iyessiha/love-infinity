@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { MemberNav } from '@/components/MemberNav';
-import { ShieldIcon, HeartIcon, UserIcon, LockIcon, FlagIcon, SettingsIcon, ChevronRight } from '@/components/Icons';
+import { CrownIcon, ShieldIcon, HeartIcon, UserIcon, LockIcon, FlagIcon, SettingsIcon, ChevronRight } from '@/components/Icons';
 import { requireComplet } from '@/lib/auth';
 import { urlsPhotos } from '@/lib/photos';
 import { getT } from '@/lib/lang';
@@ -38,6 +38,7 @@ export default async function Moi() {
         <div className="moi-carte">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           {photo && <img src={photo} alt={t('me.mainPhoto')} />}
+          {actif && abo?.plan === 'premium' && <em className="badge-prem moi-prem"><CrownIcon size={13} />{t('badge.premium')}</em>}
           <div className="t">
             <b>{p?.prenom}{age ? `, ${age}` : ''}</b>
             <span style={{ fontSize: 14, fontWeight: 700 }}>{[p?.ville, p?.profession].filter(Boolean).join(' · ')}</span>
@@ -49,6 +50,15 @@ export default async function Moi() {
           <div><b>{(likes ?? []).length}</b><span>{t('me.likesIn')}</span></div>
           <div><b>{restants === null ? '∞' : restants}</b><span>{t('me.likesLeft')}</span></div>
         </div>
+
+        <section className="moi-style" aria-label={t('me.styleT')}>
+          <h2>{t('me.styleT')}</h2>
+          <p>{actif && abo?.plan === 'premium' ? t('me.styleOn') : t('me.styleOff')}</p>
+          <div className="moi-motifs" aria-hidden="true">
+            {['#C8372D', '#F6C453', '#1B7F4B', '#0F5E73', '#D8C48A'].map((c) => <i key={c} style={{ background: c }} />)}
+          </div>
+          <Link className="cta" href={actif && abo?.plan === 'premium' ? '/moi/style' : '/abonnement'}>{actif && abo?.plan === 'premium' ? t('me.styleCta') : t('me.styleCtaOff')}</Link>
+        </section>
 
         {force < 100 && (
           <Link href="/moi/modifier" className="force">

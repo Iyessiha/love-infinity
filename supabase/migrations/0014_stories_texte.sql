@@ -1,0 +1,1 @@
+-- 0014 : stories texte (kind='texte', texte ≤200 car., fond 0-5, sans numéro/lien) — appliquée via MCP.

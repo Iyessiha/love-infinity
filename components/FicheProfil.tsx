@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { supabaseBrowser } from '@/lib/supabase/client';
-import { BriefcaseIcon, CapIcon, FlagIcon, GlobeIcon, HeartIcon, MsgIcon, PinIcon, RulerIcon, ShieldIcon, TargetIcon, XIcon } from '@/components/Icons';
+import { BriefcaseIcon, CapIcon, CrownIcon, FlagIcon, GlobeIcon, HeartIcon, MsgIcon, PinIcon, RulerIcon, ShieldIcon, TargetIcon, XIcon } from '@/components/Icons';
 import { useT } from '@/components/I18n';
 import type { Carte } from '@/components/Pile';
 
@@ -50,7 +50,7 @@ export function FicheProfil({ c, occupe, onClose, onPass, onLike, onMessage, onS
         <div className="fiche-ph">{/* eslint-disable-next-line @next/next/no-img-element */ premiere && <img src={premiere} alt={t('pile.photoN', { n: 1, name: c.prenom })} />}</div>
         <div className="fiche-corps">
           <div>
-            <div className="fiche-nom">{c.prenom}<span>{c.age}</span></div>
+            <div className="fiche-nom">{c.prenom}<span>{c.age}</span>{c.premium && <em className="badge-prem"><CrownIcon size={13} />{t('badge.premium')}</em>}</div>
             <div className="fiche-sous"><PinIcon />{c.ville}</div>
           </div>
 

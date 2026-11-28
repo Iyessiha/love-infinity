@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { supabaseServer } from '@/lib/supabase/server';
 
 const Body = z.object({
-  theme: z.enum(['classique', 'nuit', 'or', 'soleil', 'lagune']),
+  theme: z.enum(['classique', 'nuit', 'or', 'soleil', 'lagune', 'kente', 'bogolan', 'wax', 'gentleman']),
   prompts: z.array(z.object({ q: z.string().max(20), a: z.string().trim().min(1).max(160) })).max(3),
 });
 

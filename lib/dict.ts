@@ -396,7 +396,7 @@ D['ab.current'] = ['Ton offre actuelle', 'Your current plan'];
 
 // Questions signature et thèmes
 export const QUESTIONS = ['dimanche', 'rire', 'simple', 'voyage', 'plat', 'qualite', 'fierte', 'rdv'] as const;
-export const THEMES = ['classique', 'nuit', 'or', 'soleil', 'lagune'] as const;
+export const THEMES = ['classique', 'nuit', 'or', 'soleil', 'lagune', 'kente', 'bogolan', 'wax', 'gentleman'] as const;
 D['q.dimanche'] = ['Mon dimanche idéal…', 'My ideal Sunday…'];
 D['q.rire'] = ['Ce qui me fait rire…', 'What makes me laugh…'];
 D['q.simple'] = ['Une chose simple qui me rend heureux(se)…', 'A simple thing that makes me happy…'];
@@ -450,3 +450,13 @@ D['st.textPh'] = ['Écris quelque chose…', 'Write something…'];
 D['st.bg'] = ['Fond', 'Background'];
 D['st.publish'] = ['Publier', 'Post'];
 D['st.errContact'] = ['Pas de numéro, lien ou identifiant dans une story.', 'No phone number, link or handle in a story.'];
+D['th.kente'] = ['Kente', 'Kente'];
+D['th.bogolan'] = ['Bogolan', 'Bogolan'];
+D['th.wax'] = ['Wax', 'Wax'];
+D['th.gentleman'] = ['Gentleman', 'Gentleman'];
+D['badge.premium'] = ['Premium', 'Premium'];
+D['me.styleT'] = ['Mon style', 'My style'];
+D['me.styleOn'] = ['Tu es Premium : choisis un thème et réponds aux questions signature pour te démarquer.', 'You’re Premium: pick a theme and answer the signature questions to stand out.'];
+D['me.styleOff'] = ['Thèmes africains, motifs Kente, Wax, Gentleman… Débloque-les avec Premium.', 'African themes, Kente, Wax and Gentleman patterns… Unlock them with Premium.'];
+D['me.styleCta'] = ['Personnaliser mon profil', 'Customise my profile'];
+D['me.styleCtaOff'] = ['Voir les thèmes', 'See the themes'];

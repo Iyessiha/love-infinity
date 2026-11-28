@@ -1,0 +1,2 @@
+-- 0015 : thèmes à motifs (kente, bogolan, wax, gentleman), decouvrir() renvoie `premium`
+-- et place les profils Premium en tête — appliquée via MCP.
