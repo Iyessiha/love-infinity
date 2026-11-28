@@ -9,13 +9,14 @@ import '@/app/membre.css';
 export const dynamic = 'force-dynamic';
 
 export default async function Reglages() {
-  const { user } = await requireComplet();
+  const { supabase, user } = await requireComplet();
+  const { data: pr } = await supabase.from('profiles').select('en_pause').eq('id', user.id).single();
   const t = await getT();
   return (
     <>
       <main className="mb">
         <header className="mb-top"><Link className="mb-ico" href="/moi" aria-label={t('c.back')}><ChevronLeft /></Link><h1 style={{ fontSize: 24 }}>{t('set.title')}</h1></header>
-        <Parametres email={user.email ?? ''} />
+        <Parametres email={user.email ?? ''} pause={Boolean(pr?.en_pause)} />
       </main>
       <MemberNav actif="moi" />
     </>

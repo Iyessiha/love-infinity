@@ -54,6 +54,12 @@ export function Chat({ matchId, moi, prenom, autreId, initial, photo, depuis }: 
     setFini(error ? undefined : t('chat.blocked', { name: prenom }));
     if (error) setErr(t('c.actionErr'));
   }
+  const [confirme, setConfirme] = useState(false);
+  async function defaire() {
+    const { error } = await sb.rpc('defaire_match', { p_match: matchId });
+    if (error) return setErr(t('c.actionErr'));
+    setFini(t('chat.unmatched', { name: prenom }));
+  }
   async function signaler() {
     if (!raison) return;
     const { error } = await sb.rpc('signaler', { p_user: autreId, p_reason: raison });
@@ -84,6 +90,9 @@ export function Chat({ matchId, moi, prenom, autreId, initial, photo, depuis }: 
       {menu && (
         <div className="card col" style={{ gap: 10 }}>
           <button className="cta ghost" style={{ height: 44, fontSize: 15 }} onClick={bloquer}>{t('chat.block', { name: prenom })}</button>
+          {!confirme
+            ? <button className="cta ghost" style={{ height: 44, fontSize: 15 }} onClick={() => setConfirme(true)}>{t('chat.unmatch', { name: prenom })}</button>
+            : <div className="col" style={{ gap: 8 }}><p className="small" role="alert">{t('chat.unmatchAsk')}</p><button className="cta rouge" style={{ height: 44, fontSize: 15 }} onClick={defaire}>{t('chat.unmatchYes')}</button></div>}
           <label className="small" style={{ fontWeight: 800 }} htmlFor="raison">{t('chat.report', { name: prenom })}</label>
           <select id="raison" className="zone" style={{ minHeight: 48, height: 48 }} value={raison} onChange={(e) => setRaison(e.target.value)}>
             <option value="">{t('fiche.pick')}</option>

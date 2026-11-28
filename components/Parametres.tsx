@@ -1,10 +1,20 @@
 'use client';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { supabaseBrowser } from '@/lib/supabase/client';
 import { LangSwitch, useT } from '@/components/I18n';
 import '@/app/membre.css';
 
-export function Parametres({ email }: { email: string }) {
+export function Parametres({ email, pause: pause0 }: { email: string; pause: boolean }) {
   const t = useT();
+  const router = useRouter();
+  const [pause, setPause] = useState(pause0);
+  async function basculer() {
+    const nv = !pause;
+    const { error } = await supabaseBrowser().rpc('mettre_en_pause', { p_pause: nv });
+    if (!error) { setPause(nv); router.refresh(); }
+  }
   const [mot, setMot] = useState('');
   const [envoi, setEnvoi] = useState(false);
   const [err, setErr] = useState<string>();
@@ -27,6 +37,16 @@ export function Parametres({ email }: { email: string }) {
         <h2>{t('set.language')}</h2>
         <p>{t('set.languageP')}</p>
         <LangSwitch />
+      </section>
+      <section className="reglage">
+        <h2>{t('set.pauseT')} <span className="small">· {pause ? t('set.pauseOn') : t('set.pauseOff')}</span></h2>
+        <p>{t('set.pauseP')}</p>
+        <button type="button" className="cta ghost" onClick={basculer}>{pause ? t('set.pauseBtnOn') : t('set.pauseBtnOff')}</button>
+      </section>
+      <section className="reglage">
+        <h2>{t('set.blockedT')}</h2>
+        <p>{t('set.blockedP')}</p>
+        <Link className="cta ghost" href="/moi/parametres/bloques">{t('set.blockedOpen')}</Link>
       </section>
       <section className="reglage">
         <h2>{t('set.account')}</h2>
