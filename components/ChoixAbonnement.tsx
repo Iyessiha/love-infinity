@@ -32,7 +32,7 @@ export function ChoixAbonnement({ initial, mensuels, remises, labelRenew }: { in
   }, [plan, mois, code]);
 
   const f = (n: number) => n.toLocaleString(loc);
-  const mensuelRemise = (m: Mois) => Math.round((mensuels[plan] * m * (100 - remises[m])) / 100 / 100) * 100 / m;
+  const mensuelRemise = (m: Mois, p: Plan = plan) => Math.round((mensuels[p] * (100 - remises[m])) / 100);
 
   async function payer() {
     setEnvoi(true); setErr(undefined);
@@ -51,7 +51,7 @@ export function ChoixAbonnement({ initial, mensuels, remises, labelRenew }: { in
         {(['essentiel', 'premium'] as const).map((p) => (
           <button key={p} type="button" role="radio" aria-checked={plan === p} className={`pk-plan${plan === p ? ' on' : ''}`} onClick={() => setPlan(p)}>
             <b>{p === 'premium' ? t('me.premium') : t('me.essential')}</b>
-            <span>{t('pk.from', { n: f(mensuelRemise(12)) })}</span>
+            <span>{t('pk.from', { n: f(mensuelRemise(12, p)) })}</span>
           </button>
         ))}
       </div>

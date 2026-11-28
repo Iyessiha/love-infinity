@@ -34,14 +34,7 @@ export default async function Abonnement({ searchParams }: { searchParams: Promi
       {paiement === 'echec' && <div className="alert" role="alert">{t('ab.fail')}</div>}
       {actif && <div className="card">{t('ab.active', { plan: nomPlan, date: t.date(abo.expires_at, { day: 'numeric', month: 'long', year: 'numeric' }) })}</div>}
       <div id="choix"><ChoixAbonnement initial={abo?.plan === 'essentiel' ? 'essentiel' : 'premium'} mensuels={mensuels} remises={remises} labelRenew={Boolean(actif)} /></div>
-      <Offres
-        lang={t.lang}
-        plans={prix}
-        actif={actif ? (abo?.plan as 'essentiel' | 'premium') : null}
-        cta={(code) => code === 'gratuit'
-          ? <span className="of-cta" style={{ opacity: .55, cursor: 'default' }}>{actif ? t('ab.free') : t('ab.current')}</span>
-          : <a className={`of-cta${code === 'premium' ? ' or' : ''}`} href="#choix">{t('ab.choose', { plan: code === 'premium' ? t('me.premium') : t('me.essential') })}</a>}
-      />
+      <Offres lang={t.lang} plans={prix} actif={actif ? (abo?.plan as 'essentiel' | 'premium') : null} cartes={false} cta={() => null} />
       <p className="of-pay">{t('ab.methods')}</p>
     </main>
   );

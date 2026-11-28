@@ -28,7 +28,7 @@ const PLANS = {
 } as const;
 
 /** Offres Gratuit / Essentiel / Premium + tableau comparatif. `cta` fournit le bouton de chaque offre. */
-export function Offres({ lang, plans, cta, actif }: { lang: Lang; plans: PlanPrix[]; cta: (code: 'gratuit' | 'essentiel' | 'premium') => ReactNode; actif?: 'essentiel' | 'premium' | null }) {
+export function Offres({ lang, plans, cta, actif, cartes = true }: { lang: Lang; plans: PlanPrix[]; cta: (code: 'gratuit' | 'essentiel' | 'premium') => ReactNode; actif?: 'essentiel' | 'premium' | null; cartes?: boolean }) {
   const t = tr(lang);
   const loc = lang === 'en' ? 'en-GB' : 'fr-FR';
   const prix = (code: 'essentiel' | 'premium') => plans.find((p) => p.code === code)?.prix;
@@ -36,7 +36,7 @@ export function Offres({ lang, plans, cta, actif }: { lang: Lang; plans: PlanPri
 
   return (
     <div className="of">
-      <div className="of-cartes">
+      {cartes && <div className="of-cartes">
         {(['gratuit', 'essentiel', 'premium'] as const).map((code) => {
           const p = PLANS[code];
           const montant = code === 'gratuit' ? 0 : prix(code);
@@ -52,7 +52,7 @@ export function Offres({ lang, plans, cta, actif }: { lang: Lang; plans: PlanPri
             </section>
           );
         })}
-      </div>
+      </div>}
 
       <h3 className="of-titre">{t('Comparer les offres', 'Compare plans')}</h3>
       <div className="of-table" role="table" aria-label={t('Comparatif des offres', 'Plan comparison')}>
