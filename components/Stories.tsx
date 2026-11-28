@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { supabaseBrowser } from '@/lib/supabase/client';
 import { useT } from '@/components/I18n';
 
@@ -85,6 +85,8 @@ export function Stories({ groupes }: { groupes: StoryGroup[] }) {
   const [panneau, setPanneau] = useState(false);
   const [muet, setMuet] = useState(true);
   const [compose, setCompose] = useState(false);
+  const [choix, setChoix] = useState(false);
+  const fichier = useRef<HTMLInputElement>(null);
   const [likes, setLikes] = useState<Set<string>>(new Set());
   const [info, setInfo] = useState<{ msg: string; lien?: string }>();
 
@@ -154,14 +156,11 @@ export function Stories({ groupes }: { groupes: StoryGroup[] }) {
     <section aria-label={t('st.title')} className="stories">
       <div className="st-rail">
         <div className="st-item">
-          <button type="button" className={`st-ring${moi ? ' vu' : ' ajout'}`} onClick={() => (moi ? setOuvert({ g: groupes.indexOf(moi), i: 0 }) : undefined)} aria-label={t('st.add')} disabled={!moi}>
+          <button type="button" className={`st-ring${moi ? ' vu' : ' ajout'}`} onClick={() => (moi ? setOuvert({ g: groupes.indexOf(moi), i: 0 }) : setChoix(true))} aria-label={t('st.add')} disabled={envoi}>
             {moi ? <Mini it={moi.items[0]} /> : <span>+</span>}
           </button>
-          <label className="st-plus" aria-label={t('st.addP')}>
-            {envoi ? '…' : '+'}
-            <input type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm,video/quicktime" hidden onChange={ajouter} disabled={envoi} />
-          </label>
-          <button type="button" className="st-aa" onClick={() => setCompose(true)} aria-label={t('st.text')}>Aa</button>
+          <button type="button" className="st-plus" aria-label={t('st.addP')} onClick={() => setChoix(true)} disabled={envoi}>{envoi ? '…' : '+'}</button>
+          <input ref={fichier} type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm,video/quicktime" hidden onChange={ajouter} disabled={envoi} />
           <small>{envoi ? t('st.sending') : t('st.add')}</small>
         </div>
         {autres.map((a) => (
@@ -174,6 +173,16 @@ export function Stories({ groupes }: { groupes: StoryGroup[] }) {
         ))}
       </div>
       {erreur && <div className="alert" role="alert">{erreur}</div>}
+      {choix && (
+        <div className="st-choix" role="dialog" aria-modal="true" aria-label={t('st.add')} onClick={() => setChoix(false)}>
+          <div className="st-choix-bt" onClick={(e) => e.stopPropagation()}>
+            <h3>{t('st.chooseT')}</h3>
+            <button type="button" onClick={() => { setChoix(false); setCompose(true); }}><b>Aa</b><span>{t('st.chooseText')}</span></button>
+            <button type="button" onClick={() => { setChoix(false); fichier.current?.click(); }}><b>▣</b><span>{t('st.chooseMedia')}</span></button>
+            <button type="button" className="st-choix-x" onClick={() => setChoix(false)}>{t('st.close')}</button>
+          </div>
+        </div>
+      )}
       {compose && (
         <div className="st-view st-compose" role="dialog" aria-modal="true" aria-label={t('st.text')}>
           <div className={`st-texte st-fond f${fond}`}>
