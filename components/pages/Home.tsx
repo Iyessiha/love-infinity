@@ -4,8 +4,8 @@ import { SiteFooter, SiteNav } from '@/components/SiteChrome';
 import { Offres } from '@/components/Offres';
 import { href, tr, type Lang } from '@/lib/i18n';
 import { lireTarifs } from '@/lib/tarifs';
-
-const Silhouette = () => <svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="78" r="38" fill="#FBF6EE" opacity=".9" /><path d="M20 200c0-46 36-74 80-74s80 28 80 74z" fill="#FBF6EE" opacity=".9" /></svg>;
+import { HeroVideo } from '@/components/HeroVideo';
+import { MEDIA } from '@/lib/media';
 
 export async function Home({ lang }: { lang: Lang }) {
   const t = tr(lang);
@@ -13,6 +13,7 @@ export async function Home({ lang }: { lang: Lang }) {
   return (
     <main className="lp lp2">
       <header className="lp2-hero">
+        <HeroVideo src={MEDIA.heroVideo} poster={MEDIA.heroPoster} />
         <div className="lp-wrap">
           <SiteNav lang={lang} path="/" />
           <div className="lp2-hero-grille">
@@ -35,7 +36,7 @@ export async function Home({ lang }: { lang: Lang }) {
                 <div className="lp2-ecran">
                   <div className="lp2-haut"><b>{t('Découvrir', 'Discover')}</b><span /></div>
                   <div className="lp2-profil">
-                    <div className="lp2-portrait"><Silhouette /></div>
+                    <div className="lp2-portrait"><img src={MEDIA.aicha.src} alt={MEDIA.aicha.alt} width={700} height={1100} fetchPriority="high" /></div>
                     <span className="lp2-badge"><ShieldIcon size={13} /> {t('Identité vérifiée', 'Identity verified')}</span>
                     <div className="lp2-info">
                       <b>Aïcha <em>27</em></b>

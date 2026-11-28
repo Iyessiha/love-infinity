@@ -315,3 +315,10 @@
 .lp2 .lp2-etapes p{margin-top:8px}
 .lp2-portrait svg{width:125%;left:-12.5%;right:auto;bottom:-4%;opacity:.55}
 @media (max-width:900px){.lp2-flotte.f3{display:none}.lp2-flotte.f2{bottom:22%}}
+
+/* Hero : vidéo de fond et vraie photo dans la maquette */
+.lp2-hero{position:relative;isolation:isolate}
+.lp2-hero .lp-hero-media{z-index:-1;opacity:.34}
+.lp2-hero::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(42,7,25,.92) 0%,rgba(42,7,25,.62) 48%,rgba(42,7,25,.25) 100%)}
+.lp2-portrait img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 20%;display:block}
+@media (max-width:860px){.lp2-hero::before{background:linear-gradient(180deg,rgba(42,7,25,.9),rgba(42,7,25,.7))}}
