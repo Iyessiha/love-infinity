@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { supabaseBrowser } from '@/lib/supabase/client';
 import { useT } from '@/components/I18n';
 
-export type StoryItem = { id: string; url: string; created_at: string; kind: 'photo' | 'video' };
+export type StoryItem = { id: string; url: string; created_at: string; kind: 'photo' | 'video' | 'texte'; texte?: string | null; fond?: number; path?: string | null };
 export type StoryGroup = { user_id: string; prenom: string; est_moi: boolean; items: StoryItem[] };
 
 /** Réduit la photo à 1080 px max, en JPEG : stockage léger et envoi rapide. */
@@ -34,6 +34,7 @@ async function reduire(f: File): Promise<Blob> {
 
 function Mini({ it }: { it: StoryItem }) {
   // eslint-disable-next-line @next/next/no-img-element
+  if (it.kind === 'texte') return <span className={`st-fond f${it.fond ?? 0}`}>Aa</span>;
   return it.kind === 'video' ? <video src={`${it.url}#t=0.1`} muted playsInline preload="metadata" /> : <img src={it.url} alt="" />;
 }
 
@@ -73,14 +74,30 @@ export function Stories({ groupes }: { groupes: StoryGroup[] }) {
     } catch { setErreur(t('st.err')); } finally { setEnvoi(false); }
   }
 
-  async function supprimer(id: string) {
-    await supabaseBrowser().from('stories').delete().eq('id', id);
+  async function supprimer(it: StoryItem) {
+    const sb = supabaseBrowser();
+    await sb.from('stories').delete().eq('id', it.id);
+    if (it.path) await sb.storage.from(it.kind === 'video' ? 'clips' : 'photos').remove([it.path]);
     setOuvert(null); router.refresh();
   }
 
   const [vues, setVues] = useState<{ nb: number; noms: { id: string; prenom: string }[] } | null>(null);
   const [panneau, setPanneau] = useState(false);
   const [muet, setMuet] = useState(true);
+  const [compose, setCompose] = useState(false);
+  const [texte, setTexte] = useState('');
+  const [fond, setFond] = useState(0);
+
+  async function publierTexte() {
+    setEnvoi(true); setErreur(undefined);
+    const { error } = await supabaseBrowser().rpc('ajouter_story_texte', { p_texte: texte, p_fond: fond });
+    setEnvoi(false);
+    if (error) {
+      setErreur(error.message.includes('limite_stories') ? t('st.limit') : error.message.includes('contact_interdit') ? t('st.errContact') : t('st.err'));
+      return;
+    }
+    setCompose(false); setTexte(''); router.refresh();
+  }
 
   const g = ouvert ? groupes[ouvert.g] : null;
   const it = g && ouvert ? g.items[ouvert.i] : null;
@@ -129,6 +146,7 @@ export function Stories({ groupes }: { groupes: StoryGroup[] }) {
             {envoi ? '…' : '+'}
             <input type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm,video/quicktime" hidden onChange={ajouter} disabled={envoi} />
           </label>
+          <button type="button" className="st-aa" onClick={() => setCompose(true)} aria-label={t('st.text')}>Aa</button>
           <small>{envoi ? t('st.sending') : t('st.add')}</small>
         </div>
         {autres.map((a) => (
@@ -141,12 +159,30 @@ export function Stories({ groupes }: { groupes: StoryGroup[] }) {
         ))}
       </div>
       {erreur && <div className="alert" role="alert">{erreur}</div>}
+      {compose && (
+        <div className="st-view st-compose" role="dialog" aria-modal="true" aria-label={t('st.text')}>
+          <div className={`st-texte st-fond f${fond}`}>
+            <textarea value={texte} onChange={(e) => setTexte(e.target.value.slice(0, 200))} placeholder={t('st.textPh')} maxLength={200} autoFocus aria-label={t('st.text')} />
+          </div>
+          <div className="st-outils">
+            <div className="st-fonds" role="radiogroup" aria-label={t('st.bg')}>
+              {[0, 1, 2, 3, 4, 5].map((n) => <button key={n} type="button" role="radio" aria-checked={fond === n} aria-label={`${t('st.bg')} ${n + 1}`} className={`st-fond f${n}${fond === n ? ' on' : ''}`} onClick={() => setFond(n)} />)}
+            </div>
+            <small>{texte.length}/200</small>
+            <button type="button" className="st-annule" onClick={() => setCompose(false)}>{t('st.close')}</button>
+            <button type="button" className="st-pub" disabled={!texte.trim() || envoi} onClick={publierTexte}>{envoi ? t('st.sending') : t('st.publish')}</button>
+          </div>
+          {erreur && <div className="alert" role="alert" style={{ position: 'absolute', top: 12, left: 12, right: 12 }}>{erreur}</div>}
+        </div>
+      )}
       {it && g && ouvert && (
         <div className="st-view" role="dialog" aria-modal="true" aria-label={g.prenom}>
           <div className="st-bars">{g.items.map((_, k) => <i key={k} className={k < ouvert.i ? 'fait' : k === ouvert.i ? (it.kind === 'video' ? 'cours video' : 'cours') : ''} />)}</div>
           <div className="st-head"><b>{g.est_moi ? t('st.add') : g.prenom}</b><small>{t('st.hint')}</small>
             <button type="button" onClick={() => setOuvert(null)} aria-label={t('st.close')}>✕</button></div>
-          {it.kind === 'video'
+          {it.kind === 'texte'
+            ? <div key={it.id} className={`st-texte st-fond f${it.fond ?? 0}`}><p>{it.texte}</p></div>
+            : it.kind === 'video'
             ? <video key={it.id} src={it.url} autoPlay playsInline muted={muet} onEnded={suivant} />
             : /* eslint-disable-next-line @next/next/no-img-element */ <img key={it.id} src={it.url} alt="" />}
           {it.kind === 'video' && <button type="button" className="st-son" onClick={() => setMuet((m) => !m)} aria-label={t(muet ? 'st.soundOn' : 'st.soundOff')}>{muet ? '🔇' : '🔊'}</button>}
@@ -155,7 +191,7 @@ export function Stories({ groupes }: { groupes: StoryGroup[] }) {
           {g.est_moi && (
             <div className="st-pied">
               <button type="button" className="st-vues" onClick={() => setPanneau((v) => !v)} aria-expanded={panneau}>👁 {t.n('st.viewsN', vues?.nb ?? 0)}</button>
-              <button type="button" className="st-del" onClick={() => supprimer(it.id)}>{t('st.del')}</button>
+              <button type="button" className="st-del" onClick={() => supprimer(it)}>{t('st.del')}</button>
             </div>
           )}
           {g.est_moi && panneau && (

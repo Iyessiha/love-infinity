@@ -296,3 +296,24 @@
 .st-view>video{max-width:100%;max-height:100dvh;object-fit:contain}
 .st-bars i.cours.video::after{animation-duration:10s}
 .st-son{position:absolute;top:70px;right:12px;z-index:4;background:rgba(0,0,0,.5);color:#fff;border:0;width:44px;height:44px;border-radius:50%;font-size:18px;cursor:pointer}
+
+.st-fond{display:grid;place-items:center;color:#fff;font-weight:700}
+.st-fond.f0{background:linear-gradient(160deg,#6B1744,#33081F)}
+.st-fond.f1{background:linear-gradient(160deg,#D4A24C,#8A5A12)}
+.st-fond.f2{background:linear-gradient(160deg,#1E6F6A,#0B3B45)}
+.st-fond.f3{background:linear-gradient(160deg,#E2674A,#A52F4D)}
+.st-fond.f4{background:linear-gradient(160deg,#2E3A8C,#15183F)}
+.st-fond.f5{background:linear-gradient(160deg,#2B1B22,#000)}
+.st-ring .st-fond{width:100%;height:100%;border-radius:50%;font-size:18px}
+.st-texte{position:absolute;inset:0;display:grid;place-items:center;padding:90px 28px 120px}
+.st-texte p,.st-texte textarea{font:700 26px/1.3 'Playfair Display',serif;color:#fff;text-align:center;overflow-wrap:anywhere;margin:0;max-width:520px;width:100%}
+.st-texte textarea{background:none;border:0;outline:0;resize:none;height:50dvh}
+.st-texte textarea::placeholder{color:rgba(255,255,255,.65)}
+.st-aa{position:absolute;top:0;left:0;width:26px;height:26px;border-radius:50%;background:var(--or);color:var(--prune2);border:2px solid var(--creme);font:700 11px/1 'Nunito',sans-serif;display:grid;place-items:center;cursor:pointer;padding:0}
+.st-outils{position:absolute;left:0;right:0;bottom:0;z-index:6;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 16px calc(14px + env(safe-area-inset-bottom));background:rgba(0,0,0,.55);color:#fff}
+.st-fonds{display:flex;gap:8px}
+.st-fonds .st-fond{width:34px;height:34px;border-radius:50%;border:2px solid transparent;cursor:pointer;padding:0}
+.st-fonds .st-fond.on{border-color:#fff}
+.st-pub{background:var(--or);color:var(--prune2);border:0;border-radius:999px;padding:12px 22px;min-height:44px;font-weight:700;cursor:pointer}
+.st-pub:disabled{opacity:.5;cursor:default}
+.st-annule{background:none;color:#fff;border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:12px 18px;min-height:44px;cursor:pointer}
