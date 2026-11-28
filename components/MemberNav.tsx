@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { supabaseServer } from '@/lib/supabase/server';
 import { getT } from '@/lib/lang';
-import { CompassIcon, HeartIcon, MsgIcon, UserIcon } from '@/components/Icons';
+import { CrownIcon, CompassIcon, HeartIcon, MsgIcon, UserIcon } from '@/components/Icons';
 
-export type Onglet = 'decouvrir' | 'likes' | 'matchs' | 'moi';
+export type Onglet = 'decouvrir' | 'likes' | 'vip' | 'matchs' | 'moi';
 
 /** Barre de navigation du membre : Découvrir, Likes reçus, Messages, Mon profil. Les pastilles comptent likes et messages non lus. */
 export async function MemberNav({ actif }: { actif: Onglet }) {
@@ -15,6 +15,7 @@ export async function MemberNav({ actif }: { actif: Onglet }) {
   const items: { id: Onglet; href: string; label: string; icone: React.ReactNode; n: number }[] = [
     { id: 'decouvrir', href: '/decouvrir', label: t('nav.discover'), icone: <CompassIcon />, n: 0 },
     { id: 'likes', href: '/likes', label: t('nav.likes'), icone: <HeartIcon filled={false} />, n: nbLikes },
+    { id: 'vip', href: '/vip', label: t('nav.vip'), icone: <CrownIcon />, n: 0 },
     { id: 'matchs', href: '/matchs', label: t('nav.messages'), icone: <MsgIcon />, n: nbMsgs },
     { id: 'moi', href: '/moi', label: t('nav.me'), icone: <UserIcon />, n: 0 },
   ];
