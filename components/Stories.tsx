@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { supabaseBrowser } from '@/lib/supabase/client';
@@ -52,6 +53,9 @@ export function Stories({ groupes }: { groupes: StoryGroup[] }) {
     setOuvert(null); router.refresh();
   }
 
+  const [vues, setVues] = useState<{ nb: number; noms: { id: string; prenom: string }[] } | null>(null);
+  const [panneau, setPanneau] = useState(false);
+
   const g = ouvert ? groupes[ouvert.g] : null;
   const it = g && ouvert ? g.items[ouvert.i] : null;
 
@@ -67,13 +71,26 @@ export function Stories({ groupes }: { groupes: StoryGroup[] }) {
     else if (ouvert.g > 0) setOuvert({ g: ouvert.g - 1, i: 0 });
   }
   useEffect(() => {
-    if (!it) return;
+    setVues(null); setPanneau(false);
+    if (!it || !g) return;
+    const sb = supabaseBrowser();
+    if (g.est_moi) {
+      sb.rpc('vues_story', { p_story: it.id }).then(({ data }) => {
+        const l = (data ?? []) as { nb: number; viewer_id: string | null; prenom: string | null }[];
+        setVues({ nb: Number(l[0]?.nb ?? 0), noms: l.filter((x) => x.viewer_id).map((x) => ({ id: x.viewer_id!, prenom: x.prenom ?? '' })) });
+      });
+    } else void sb.rpc('marquer_story_vue', { p_story: it.id });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [it?.id]);
+
+  useEffect(() => {
+    if (!it || panneau) return;
     const tm = setTimeout(suivant, 6000);
     const key = (e: KeyboardEvent) => { if (e.key === 'Escape') setOuvert(null); if (e.key === 'ArrowRight') suivant(); if (e.key === 'ArrowLeft') precedent(); };
     window.addEventListener('keydown', key);
     return () => { clearTimeout(tm); window.removeEventListener('keydown', key); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ouvert]);
+  }, [ouvert, panneau]);
 
   return (
     <section aria-label={t('st.title')} className="stories">
@@ -108,7 +125,20 @@ export function Stories({ groupes }: { groupes: StoryGroup[] }) {
           <img key={it.id} src={it.url} alt="" />
           <button type="button" className="st-z st-g" onClick={precedent} aria-label="‹" />
           <button type="button" className="st-z st-d" onClick={suivant} aria-label="›" />
-          {g.est_moi && <button type="button" className="st-del" onClick={() => supprimer(it.id)}>{t('st.del')}</button>}
+          {g.est_moi && (
+            <div className="st-pied">
+              <button type="button" className="st-vues" onClick={() => setPanneau((v) => !v)} aria-expanded={panneau}>👁 {t.n('st.viewsN', vues?.nb ?? 0)}</button>
+              <button type="button" className="st-del" onClick={() => supprimer(it.id)}>{t('st.del')}</button>
+            </div>
+          )}
+          {g.est_moi && panneau && (
+            <div className="st-panneau">
+              <b>{t('st.seenBy')}</b>
+              {vues && vues.nb === 0 && <p>{t('st.noViews')}</p>}
+              {vues && vues.noms.length > 0 && <ul>{vues.noms.map((n) => <li key={n.id}>{n.prenom}</li>)}</ul>}
+              {vues && vues.nb > 0 && vues.noms.length === 0 && <Link href="/abonnement" className="st-up">{t('st.premiumSee')}</Link>}
+            </div>
+          )}
         </div>
       )}
     </section>
