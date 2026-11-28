@@ -1,3 +1,4 @@
+import { Logo } from '@/components/Logo';
 import { VipGrille, type VipCarte } from '@/components/VipGrille';
 import { MemberNav } from '@/components/MemberNav';
 import { requireComplet } from '@/lib/auth';
@@ -26,7 +27,7 @@ export default async function Vip() {
   return (
     <>
       <main className="mb">
-        <header className="mb-top"><h1>{t('vip.title')}</h1></header>
+        <header className="mb-top"><Logo width={34} /><h1>{t('vip.title')}</h1></header>
         <p className="vip-intro">{t('vip.intro')}</p>
         {moi?.account_status !== 'active' && <div className="erreur">{t('likes.needActive')}</div>}
         <VipGrille cartes={cartes} premium={premium} />

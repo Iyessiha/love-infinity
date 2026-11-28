@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { supabaseBrowser } from '@/lib/supabase/client';
 import { Chevron } from '@/components/Icons';
 import { LangSwitch, useT } from '@/components/I18n';
+import { LogoComplet } from '@/components/Logo';
 
 export default function Connexion() {
   const router = useRouter();
@@ -31,6 +32,7 @@ export default function Connexion() {
   return (
     <main className="ph">
       <Link className="back" href="/"><Chevron /> {t('c.back')}</Link>
+      <div className="marque-ph"><LogoComplet width={170} /></div>
       <h1>{t('auth.welcome')}</h1>
       <form onSubmit={entrer} className="col" style={{ gap: 14 }}>
         <div className="field"><label className="lbl" htmlFor="email">{t('auth.email')}</label><input id="email" className="in" type="email" autoComplete="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} /></div>

@@ -1,3 +1,4 @@
+import { Logo } from '@/components/Logo';
 import Link from 'next/link';
 import { LikesGrille, type LikeRecu } from '@/components/LikesGrille';
 import { MemberNav } from '@/components/MemberNav';
@@ -33,7 +34,7 @@ export default async function Likes() {
   return (
     <>
       <main className="mb">
-        <header className="mb-top"><h1>{t('likes.title')}</h1></header>
+        <header className="mb-top"><Logo width={34} /><h1>{t('likes.title')}</h1></header>
         <Stories groupes={groupesStories} />
         {moi?.account_status !== 'active' && <div className="erreur">{t('likes.needActive')}</div>}
         {liste.length === 0 ? (
@@ -41,7 +42,9 @@ export default async function Likes() {
             <div className="rond-deco"><HeartIcon size={38} /></div>
             <h2>{t('likes.emptyT')}</h2>
             <p>{t('likes.emptyP')}</p>
-            <Link className="cta" style={{ maxWidth: 300 }} href="/moi/modifier">{t('likes.improve')}</Link>
+            <Link className="cta" style={{ maxWidth: 300 }} href="/decouvrir">{t('likes.keepSwiping')}</Link>
+            <small className="vide-ou">{t('c.or')}</small>
+            <Link className="cta ghost" style={{ maxWidth: 300 }} href="/moi/modifier">{t('likes.improve')}</Link>
           </div>
         ) : (
           <>

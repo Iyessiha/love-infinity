@@ -385,3 +385,14 @@
 .vip-like{position:absolute;right:10px;bottom:10px;z-index:3;width:44px;height:44px;border-radius:50%;border:0;background:#fff;color:#B3261E;display:grid;place-items:center;cursor:pointer}
 .vip-like.on{background:#B3261E;color:#fff}
 .vip-like:focus-visible{outline:3px solid #F7B042;outline-offset:2px}
+
+.vide-ou{color:#8A7780;font-weight:700;margin:2px 0}
+.vide .cta.ghost{background:transparent}
+.conv.officiel .av{background:linear-gradient(160deg,#6B1744,#33081F);display:grid;place-items:center}
+.conv.officiel .av img{width:30px;height:auto;object-fit:contain}
+.conv.officiel .coche{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#E8873A;color:#fff;vertical-align:middle;margin-left:4px}
+
+.force-liste{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:4px}
+.force-liste a{display:flex;justify-content:space-between;gap:10px;align-items:center;min-height:36px;color:#4A0E2E;font-weight:700;font-size:14px;text-decoration:none;border-top:1px solid rgba(74,14,46,.1)}
+.force-liste i{font-style:normal;font-weight:800;color:#B35A12;background:#FFF1DC;border-radius:10px;padding:2px 8px;font-size:12px}
+.force:has(.force-liste){align-items:flex-start}

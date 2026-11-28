@@ -6,6 +6,7 @@ import { Turnstile } from '@/components/Turnstile';
 import { passwordRules, passwordStrength } from '@/lib/password';
 import { Check, Chevron } from '@/components/Icons';
 import { LangSwitch, useT } from '@/components/I18n';
+import { LogoComplet } from '@/components/Logo';
 import { href } from '@/lib/i18n';
 
 export default function Inscription() {
@@ -54,6 +55,7 @@ export default function Inscription() {
     <main className="ph">
       <Link className="back" href="/"><Chevron /> {t('c.back')}</Link>
       <div className="bar"><i className="on"></i><i></i><i></i><i></i><i></i></div>
+      <div className="marque-ph"><LogoComplet width={170} /></div>
       <h1>{t('su.title')}</h1>
       <form onSubmit={envoyer} className="col" style={{ gap: 14 }} noValidate>
         <div className="field">

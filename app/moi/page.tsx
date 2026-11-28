@@ -1,3 +1,4 @@
+import { Logo } from '@/components/Logo';
 import Link from 'next/link';
 import { BoostCarte } from '@/components/BoostCarte';
 import { MemberNav } from '@/components/MemberNav';
@@ -31,12 +32,23 @@ export default async function Moi() {
   const nbPhotos = (photos ?? []).length;
   const points = Math.min(3, nbPhotos) * 8 + (p?.bio ? 15 : 0) + (p?.profession ? 8 : 0) + (p?.taille_cm ? 4 : 0) + (p?.etudes ? 5 : 0) + ((p?.langues ?? []).length ? 5 : 0) + ((p?.interets ?? []).length >= 3 ? 12 : 0) + niveau * 9;
   const force = Math.min(100, points);
+  type Manque = { cle: string; n?: number; pts: number; href: string };
+  const manques: Manque[] = [
+    nbPhotos < 3 ? { cle: 'photos', n: 3 - nbPhotos, pts: (3 - nbPhotos) * 8, href: '/moi/modifier' } : null,
+    !p?.bio ? { cle: 'bio', pts: 15, href: '/moi/modifier' } : null,
+    (p?.interets ?? []).length < 3 ? { cle: 'interests', pts: 12, href: '/moi/modifier' } : null,
+    niveau < 3 ? { cle: 'verify', pts: (3 - niveau) * 9, href: '/verification' } : null,
+    !p?.profession ? { cle: 'job', pts: 8, href: '/moi/modifier' } : null,
+    !p?.etudes ? { cle: 'studies', pts: 5, href: '/moi/modifier' } : null,
+    !(p?.langues ?? []).length ? { cle: 'langs', pts: 5, href: '/moi/modifier' } : null,
+    !p?.taille_cm ? { cle: 'height', pts: 4, href: '/moi/modifier' } : null,
+  ].filter((x): x is Manque => x !== null).sort((a, b) => b.pts - a.pts).slice(0, 3);
   const R = 26, C = 2 * Math.PI * R;
 
   return (
     <>
       <main className="mb">
-        <header className="mb-top"><h1>{t('me.title')}</h1><span className="sp" /><Link className="mb-ico" href="/moi/parametres" aria-label={t('me.settings')}><SettingsIcon /></Link></header>
+        <header className="mb-top"><Logo width={34} /><h1>{t('me.title')}</h1><span className="sp" /><Link className="mb-ico" href="/moi/parametres" aria-label={t('me.settings')}><SettingsIcon /></Link></header>
 
         <div className="moi-carte">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -66,11 +78,12 @@ export default async function Moi() {
         </section>
 
         {force < 100 && (
-          <Link href="/moi/modifier" className="force">
+          <section className="force" aria-label={t('me.strength', { n: force })}>
             <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r={R} fill="none" stroke="rgba(74,14,46,.12)" strokeWidth="6" /><circle cx="32" cy="32" r={R} fill="none" stroke="#E8873A" strokeWidth="6" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={C * (1 - force / 100)} transform="rotate(-90 32 32)" /></svg>
-            <div><b>{t('me.strength', { n: force })}</b><span>{t('me.strengthTip')}</span></div>
-            <ChevronRight />
-          </Link>
+            <div><b>{t('me.strength', { n: force })}</b><span>{t('me.missing')}</span>
+              <ul className="force-liste">{manques.map((m) => <li key={m.cle}><Link href={m.href}>{t(`me.m.${m.cle}`, { n: m.n ?? 0 })} <i>+{m.pts} %</i></Link></li>)}</ul>
+            </div>
+          </section>
         )}
 
         <section className="card col" style={{ gap: 12 }}>

@@ -131,3 +131,5 @@ textarea.in{height:112px;padding:12px 14px;line-height:1.4;resize:none;align-ite
 .etat-actions{display:flex;flex-direction:column;gap:10px;width:100%;margin-top:8px}
 .etat-actions a,.etat-actions button{display:flex;align-items:center;justify-content:center;min-height:52px;border-radius:999px;font:800 16px Nunito,sans-serif;text-decoration:none;border:0;cursor:pointer;background:#F7B042;color:#33081F}
 .etat-actions .ghost{background:transparent;color:#FBF6EE;border:1.5px solid rgba(251,246,238,.5)}
+
+.marque-ph{display:flex;justify-content:center;margin:2px 0 6px}

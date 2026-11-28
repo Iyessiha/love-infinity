@@ -1,6 +1,7 @@
+import { Logo } from '@/components/Logo';
 import Link from 'next/link';
 import { MemberNav } from '@/components/MemberNav';
-import { MsgIcon } from '@/components/Icons';
+import { MsgIcon, ShieldIcon } from '@/components/Icons';
 import { requireComplet } from '@/lib/auth';
 import { urlsPhotos } from '@/lib/photos';
 import { getT } from '@/lib/lang';
@@ -35,14 +36,23 @@ export default async function Matchs() {
   return (
     <>
       <main className="mb">
-        <header className="mb-top"><h1>{t('msgs.title')}</h1></header>
+        <header className="mb-top"><Logo width={34} /><h1>{t('msgs.title')}</h1></header>
         <Stories groupes={groupes} />
+        <Link href="/faq" className="conv officiel">
+          <div className="av"><Logo width={30} blanc /></div>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <b>Love Infinity <span className="coche" aria-label={t('off.verified')}><ShieldIcon size={13} /></span></b>
+            <p className="dern">{t('off.sub')}</p>
+          </div>
+        </Link>
         {liste.length === 0 ? (
           <div className="vide">
             <div className="rond-deco"><MsgIcon size={36} /></div>
             <h2>{t('msgs.emptyT')}</h2>
             <p>{t('msgs.emptyP')}</p>
             <Link className="cta" style={{ maxWidth: 300 }} href="/decouvrir">{t('msgs.discover')}</Link>
+            <small className="vide-ou">{t('c.or')}</small>
+            <Link className="cta ghost" style={{ maxWidth: 300 }} href="/moi/modifier">{t('likes.improve')}</Link>
           </div>
         ) : (
           <>
