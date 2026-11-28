@@ -1,3 +1,4 @@
+import { getT } from '@/lib/lang';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { creerPaiement } from '@/lib/geniuspay';
@@ -9,20 +10,21 @@ const rep = (status: number, body: Record<string, unknown>) => NextResponse.json
 
 /** Le prix vient toujours de la base, jamais du navigateur. */
 export async function POST(req: Request) {
+  const t = await getT();
   const supabase = await supabaseServer();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return rep(401, { ok: false, message: 'Connecte-toi pour continuer.' });
+  if (!user) return rep(401, { ok: false, message: t('err.login') });
   const p = Body.safeParse(await req.json().catch(() => null));
-  if (!p.success) return rep(400, { ok: false, message: 'Requête invalide.' });
+  if (!p.success) return rep(400, { ok: false, message: t('err.badreq') });
 
   const { data: plan } = await supabase.from('plans').select('code,nom,prix_xof,duree_jours').eq('code', p.data.plan).single();
-  if (!plan) return rep(404, { ok: false, message: 'Offre introuvable.' });
+  if (!plan) return rep(404, { ok: false, message: t('err.plan') });
 
   const admin = supabaseAdmin();
   const { data: ligne, error } = await admin.from('paiements')
     .insert({ user_id: user.id, plan: plan.code, montant_xof: plan.prix_xof, duree_jours: plan.duree_jours })
     .select('id').single();
-  if (error || !ligne) return rep(500, { ok: false, message: 'Paiement indisponible. Réessaie.' });
+  if (error || !ligne) return rep(500, { ok: false, message: t('err.pay') });
 
   const site = process.env.NEXT_PUBLIC_SITE_URL!;
   try {
@@ -37,6 +39,6 @@ export async function POST(req: Request) {
     return rep(200, { ok: true, url });
   } catch {
     await admin.from('paiements').update({ statut: 'failed' }).eq('id', ligne.id);
-    return rep(502, { ok: false, message: 'Le service de paiement ne répond pas. Réessaie dans un instant.' });
+    return rep(502, { ok: false, message: t('err.payDown') });
   }
 }

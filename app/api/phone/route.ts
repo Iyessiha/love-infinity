@@ -1,3 +1,4 @@
+import { getT } from '@/lib/lang';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { hmac } from '@/lib/hash';
@@ -14,12 +15,13 @@ const rep = (status: number, body: Record<string, unknown>) => NextResponse.json
 
 /** Enregistre le numéro (sans SMS) : normalisé, unique, marqué « non confirmé ». */
 export async function POST(req: Request) {
+  const t = await getT();
   const supabase = await supabaseServer();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user || !user.email_confirmed_at) return rep(401, { ok: false, message: 'Confirme d’abord ton email.' });
+  if (!user || !user.email_confirmed_at) return rep(401, { ok: false, message: t('err.confirm') });
 
   const parsed = Body.safeParse(await req.json().catch(() => null));
-  if (!parsed.success) return rep(400, { ok: false, message: 'Numéro invalide.' });
+  if (!parsed.success) return rep(400, { ok: false, message: t('err.phone') });
   const { country, phone } = parsed.data;
   const admin = supabaseAdmin();
 
@@ -31,10 +33,10 @@ export async function POST(req: Request) {
   }
 
   const e164 = normalizePhone(phone, country as 'CI');
-  if (!e164) return rep(400, { ok: false, message: 'Ce numéro n’est pas valide pour ce pays.' });
+  if (!e164) return rep(400, { ok: false, message: t('err.phoneCountry') });
 
   const { data: bloque } = await admin.from('blocked_phones').select('phone_hash').eq('phone_hash', hmac(e164)).maybeSingle();
-  if (bloque) return rep(400, { ok: false, message: 'Ce numéro ne peut pas être utilisé.' });
+  if (bloque) return rep(400, { ok: false, message: t('err.phoneBlocked') });
 
   const { error } = await admin
     .from('profiles')
@@ -42,8 +44,8 @@ export async function POST(req: Request) {
     .eq('id', user.id);
 
   if (error?.code === '23505') {
-    return rep(409, { ok: false, message: 'Ce numéro est déjà utilisé. Connecte-toi ou réinitialise ton mot de passe.' });
+    return rep(409, { ok: false, message: t('err.phoneUsed') });
   }
-  if (error) return rep(500, { ok: false, message: 'Enregistrement impossible. Réessaie.' });
+  if (error) return rep(500, { ok: false, message: t('err.save') });
   return rep(200, { ok: true });
 }

@@ -3,11 +3,13 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { supabaseBrowser } from '@/lib/supabase/client';
 import { MAX_VIDEO } from '@/lib/verification';
+import { useT } from '@/components/I18n';
 
 type Etat = 'intro' | 'pret' | 'enregistre' | 'envoi';
 
 export default function Selfie() {
   const router = useRouter();
+  const t = useT();
   const video = useRef<HTMLVideoElement>(null);
   const flux = useRef<MediaStream | null>(null);
   const rec = useRef<MediaRecorder | null>(null);
@@ -17,7 +19,7 @@ export default function Selfie() {
   const [vid, setVid] = useState<string>();
   const [erreur, setErreur] = useState<string>();
 
-  useEffect(() => () => flux.current?.getTracks().forEach((t) => t.stop()), []);
+  useEffect(() => () => flux.current?.getTracks().forEach((k) => k.stop()), []);
 
   async function commencer() {
     setErreur(undefined);
@@ -27,14 +29,14 @@ export default function Selfie() {
     try {
       flux.current = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: true });
     } catch {
-      return setErreur('Autorise la caméra et le micro pour continuer.');
+      return setErreur(t('vf.sf.perm'));
     }
     if (video.current) { video.current.srcObject = flux.current; await video.current.play().catch(() => {}); }
     // Le geste est tiré au hasard par la base de données, pas par le navigateur
     const { data, error } = await supabase.from('verifications').insert({ user_id: user.id, kind: 'selfie' }).select('id, gesture').single();
     if (error || !data) {
-      flux.current?.getTracks().forEach((t) => t.stop());
-      return setErreur(error?.message.includes('trop_essais') ? 'Trop d’essais aujourd’hui. Réessaie demain.' : 'Une vérification est déjà en cours ou impossible pour le moment.');
+      flux.current?.getTracks().forEach((k) => k.stop());
+      return setErreur(error?.message.includes('trop_essais') ? t('vf.tooMany') : t('vf.sf.busy'));
     }
     setVid(data.id);
     setGeste(data.gesture ?? '');
@@ -56,13 +58,13 @@ export default function Selfie() {
 
   async function envoyer(blob: Blob, type: string) {
     setEtat('envoi');
-    flux.current?.getTracks().forEach((t) => t.stop());
-    if (blob.size > MAX_VIDEO) { setEtat('intro'); return setErreur('Vidéo trop lourde. Réessaie.'); }
+    flux.current?.getTracks().forEach((k) => k.stop());
+    if (blob.size > MAX_VIDEO) { setEtat('intro'); return setErreur(t('vf.sf.big')); }
     const supabase = supabaseBrowser();
     const { data: { user } } = await supabase.auth.getUser();
     const path = `${user!.id}/selfie-${vid}.${type === 'video/webm' ? 'webm' : 'mp4'}`;
     const up = await supabase.storage.from('verifications').upload(path, blob, { contentType: type });
-    if (up.error) { setEtat('intro'); return setErreur('Envoi impossible. Réessaie.'); }
+    if (up.error) { setEtat('intro'); return setErreur(t('vf.sendErr')); }
     await supabase.from('verification_files').insert({ verification_id: vid, side: 'video', file_path: path });
     router.push('/verification');
   }
@@ -70,19 +72,19 @@ export default function Selfie() {
   return (
     <main className="ph">
       <div className="bar"><i className="on"></i><i className="on"></i><i className="on"></i><i className="on"></i><i className="on"></i></div>
-      <h1>Selfie vidéo</h1>
+      <h1>{t('vf.sf.t')}</h1>
       <div className="cam" style={{ minHeight: 360 }}>
         <video ref={video} muted playsInline style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', transform: 'scaleX(-1)' }} />
         <div className="oval"></div>
-        {etat === 'enregistre' && <div className="rec"><i></i> Enregistrement… 8 secondes</div>}
-        {geste && etat !== 'intro' && <div className="gesture">{geste}</div>}
+        {etat === 'enregistre' && <div className="rec"><i></i> {t('vf.sf.rec')}</div>}
+        {geste && etat !== 'intro' && <div className="gesture">{t.v(geste)}</div>}
       </div>
-      {etat === 'intro' && <p className="sub">Place ton visage dans l'ovale. Nous te demanderons un geste choisi au hasard, pour prouver que c'est bien toi. La vidéo est supprimée après la décision.</p>}
+      {etat === 'intro' && <p className="sub">{t('vf.sf.intro')}</p>}
       {erreur && <div className="alert" role="alert">{erreur}</div>}
-      {etat === 'intro' && <button className="btn" style={{ flex: 'none' }} onClick={commencer}>Activer la caméra</button>}
-      {etat === 'pret' && <button className="btn gold" style={{ flex: 'none' }} onClick={enregistrer}>Je fais le geste, j'enregistre</button>}
-      {etat === 'enregistre' && <button className="btn" style={{ flex: 'none' }} onClick={() => rec.current?.stop()}>Terminer</button>}
-      {etat === 'envoi' && <p className="sub" style={{ textAlign: 'center' }}>Envoi en cours…</p>}
+      {etat === 'intro' && <button className="btn" style={{ flex: 'none' }} onClick={commencer}>{t('vf.sf.cam')}</button>}
+      {etat === 'pret' && <button className="btn gold" style={{ flex: 'none' }} onClick={enregistrer}>{t('vf.sf.go')}</button>}
+      {etat === 'enregistre' && <button className="btn" style={{ flex: 'none' }} onClick={() => rec.current?.stop()}>{t('vf.sf.stop')}</button>}
+      {etat === 'envoi' && <p className="sub" style={{ textAlign: 'center' }}>{t('vf.sf.sending')}</p>}
     </main>
   );
 }

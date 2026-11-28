@@ -1,3 +1,4 @@
+import { getT } from '@/lib/lang';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { hmac } from '@/lib/hash';
@@ -21,6 +22,7 @@ const reponse = (status: number, code: string, message: string) =>
   NextResponse.json({ ok: false, code, message }, { status });
 
 export async function POST(req: Request) {
+  const t = await getT();
   const ip = (req.headers.get('x-forwarded-for') ?? 'inconnu').split(',')[0].trim();
   const ipHash = hmac(ip);
   const admin = supabaseAdmin();
@@ -31,20 +33,20 @@ export async function POST(req: Request) {
   try {
     json = await req.json();
   } catch {
-    return reponse(400, 'requete', 'Requête invalide.');
+    return reponse(400, 'requete', t('err.badreq'));
   }
   const parsed = Body.safeParse(json);
-  if (!parsed.success) return reponse(400, 'champs', 'Vérifie ton email, ton mot de passe et les conditions.');
+  if (!parsed.success) return reponse(400, 'champs', t('err.signupFields'));
   const { email, password, website, startedAt, captchaToken } = parsed.data;
 
   // 1. Robots : champ piège rempli, ou formulaire envoyé trop vite
   if (website) {
     await noter('honeypot');
-    return reponse(400, 'requete', 'Requête invalide.');
+    return reponse(400, 'requete', t('err.badreq'));
   }
   if (Date.now() - startedAt < DELAI_MINI_MS) {
     await noter('trop_rapide');
-    return reponse(429, 'trop_rapide', 'Un instant, puis réessaie.');
+    return reponse(429, 'trop_rapide', t('err.fast'));
   }
 
   // 2. Limite par adresse IP : 5 essais par heure
@@ -55,12 +57,12 @@ export async function POST(req: Request) {
     .eq('ip_hash', ipHash)
     .gte('created_at', depuis);
   if ((count ?? 0) >= MAX_PAR_HEURE) {
-    return reponse(429, 'limite', 'Trop d’essais. Réessaie dans une heure.');
+    return reponse(429, 'limite', t('err.tooMany'));
   }
 
   // 3. Mot de passe
   if (!passwordOk(password)) {
-    return reponse(400, 'mot_de_passe', 'Mot de passe : 8 caractères minimum, avec une lettre et un chiffre.');
+    return reponse(400, 'mot_de_passe', t('err.pwd'));
   }
 
   // 4. Création du compte. Le CAPTCHA est vérifié par Supabase (réglage Authentication > Attack Protection).
@@ -77,10 +79,10 @@ export async function POST(req: Request) {
     await noter('refuse');
     if (msg.includes('email_jetable') || msg.includes('database error')) {
       // Domaine jetable ou email déjà utilisé (même canonique) : message volontairement général
-      return reponse(400, 'email', 'Cette adresse email ne peut pas être utilisée. Essaie-en une autre.');
+      return reponse(400, 'email', t('err.email'));
     }
-    if (msg.includes('captcha')) return reponse(400, 'captcha', 'Vérification anti-robot échouée. Réessaie.');
-    return reponse(400, 'inscription', 'Inscription impossible pour le moment. Réessaie.');
+    if (msg.includes('captcha')) return reponse(400, 'captcha', t('err.captcha'));
+    return reponse(400, 'inscription', t('err.signup'));
   }
 
   await noter('ok');
