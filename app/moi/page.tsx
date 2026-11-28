@@ -58,7 +58,7 @@ export default async function Moi() {
         {p?.bio && <section className="card"><h2 style={{ fontSize: 18, marginBottom: 6 }}>À propos de moi</h2><p>{p.bio}</p>{p.intention && <p className="small" style={{ marginTop: 8 }}>Je cherche : {INTENTIONS[p.intention]}</p>}</section>}
 
         <div className="liste-lien">
-          <Link href="/profil"><UserIcon size={20} /> Modifier mon profil</Link>
+          <Link href="/moi/modifier"><UserIcon size={20} /> Modifier mon profil</Link>
           <Link href="/abonnement"><HeartIcon size={20} /> Abonnement <span className="fin">{actif ? (abo?.plan === 'premium' ? 'Premium' : 'Essentiel') : 'Gratuit'}</span></Link>
           <Link href="/securite"><LockIcon size={20} /> Sécurité et confidentialité</Link>
           <Link href="/faq"><FlagIcon size={20} /> Aide et sécurité</Link>

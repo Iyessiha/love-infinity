@@ -1,8 +1,7 @@
 import { notFound } from 'next/navigation';
 import { Chat } from '@/components/Chat';
-import { Chevron } from '@/components/Icons';
 import { requireComplet } from '@/lib/auth';
-import Link from 'next/link';
+import { urlsPhotos } from '@/lib/photos';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,15 +11,17 @@ export default async function Conversation({ params }: { params: Promise<{ id: s
   const { supabase, user } = await requireComplet();
 
   const { data: matchs } = await supabase.rpc('mes_matchs');
-  const m = (matchs ?? []).find((x: { match_id: string }) => x.match_id === id) as { autre_id: string; prenom: string } | undefined;
+  const m = (matchs ?? []).find((x: { match_id: string }) => x.match_id === id) as { autre_id: string; prenom: string; photo_path: string | null; cree_le: string } | undefined;
   if (!m) notFound();
 
-  const { data: msgs } = await supabase.from('messages').select('id,sender_id,body,created_at,read_at').eq('match_id', id).order('created_at', { ascending: true }).limit(200);
+  const [{ data: msgs }, urls] = await Promise.all([
+    supabase.from('messages').select('id,sender_id,body,created_at,read_at').eq('match_id', id).order('created_at', { ascending: true }).limit(200),
+    urlsPhotos(supabase, [m.photo_path]),
+  ]);
 
   return (
-    <main className="ph" style={{ gap: 10 }}>
-      <Link className="back" href="/matchs"><Chevron /> Mes matchs</Link>
-      <Chat matchId={id} moi={user.id} prenom={m.prenom} autreId={m.autre_id} initial={msgs ?? []} />
+    <main className="mb chatpage">
+      <Chat matchId={id} moi={user.id} prenom={m.prenom} autreId={m.autre_id} initial={msgs ?? []} photo={m.photo_path ? urls.get(m.photo_path) ?? null : null} depuis={new Date(m.cree_le).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} />
     </main>
   );
 }

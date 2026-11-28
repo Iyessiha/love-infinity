@@ -1,5 +1,7 @@
 'use client';
 import Link from 'next/link';
+import { ChevronLeft, FlagIcon, SendIcon } from '@/components/Icons';
+import '@/app/membre.css';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { supabaseBrowser } from '@/lib/supabase/client';
 
@@ -17,7 +19,7 @@ const ERREURS: Record<string, string> = {
 };
 const erreur = (m: string) => Object.entries(ERREURS).find(([k]) => m.includes(k))?.[1] ?? 'Message non envoyé. Réessaie.';
 
-export function Chat({ matchId, moi, prenom, autreId, initial }: { matchId: string; moi: string; prenom: string; autreId: string; initial: Msg[] }) {
+export function Chat({ matchId, moi, prenom, autreId, initial, photo, depuis }: { matchId: string; moi: string; prenom: string; autreId: string; initial: Msg[]; photo: string | null; depuis: string }) {
   const sb = useRef(supabaseBrowser()).current;
   const [msgs, setMsgs] = useState<Msg[]>(initial);
   const [texte, setTexte] = useState('');
@@ -67,46 +69,62 @@ export function Chat({ matchId, moi, prenom, autreId, initial }: { matchId: stri
 
   if (fini) {
     return (
-      <div className="col center" style={{ flex: 1, justifyContent: 'center', gap: 16 }}>
-        <p role="status" style={{ textAlign: 'center' }}>{fini}</p>
-        <Link className="btn" href="/matchs">Retour à mes matchs</Link>
+      <div className="vide" style={{ flex: 1, justifyContent: 'center' }}>
+        <p role="status">{fini}</p>
+        <Link className="cta" style={{ maxWidth: 300 }} href="/matchs">Retour aux messages</Link>
       </div>
     );
   }
 
+  const idees = [`Salut ${prenom} ! Comment s’est passée ta journée ?`, 'Qu’est-ce qui t’a plu dans mon profil ?', 'Tu préfères un café ou une sortie en plein air pour une première rencontre ?'];
+  const jour = (iso: string) => new Date(iso).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+
   return (
     <>
-      <div className="row">
-        <h1 style={{ fontSize: 22 }}>{prenom}</h1>
-        <div className="sp"></div>
-        <button className="link" style={{ background: 'none', border: 0, cursor: 'pointer', minHeight: 44 }} aria-expanded={menu} onClick={() => setMenu((v) => !v)}>Options</button>
-      </div>
+      <header className="chat-top">
+        <Link className="mb-ico" href="/matchs" aria-label="Retour aux messages"><ChevronLeft /></Link>
+        <div className="chat-av">{/* eslint-disable-next-line @next/next/no-img-element */ photo && <img src={photo} alt="" />}</div>
+        <div style={{ minWidth: 0, flex: 1 }}><b className="chat-nom">{prenom}</b><span className="small">Match du {depuis}</span></div>
+        <button className="mb-ico" aria-expanded={menu} aria-label="Options de la conversation" onClick={() => setMenu((v) => !v)}><FlagIcon size={18} /></button>
+      </header>
       {menu && (
         <div className="card col" style={{ gap: 10 }}>
-          <button className="btn ghost" style={{ height: 44 }} onClick={bloquer}>Bloquer {prenom}</button>
-          <label className="lbl" htmlFor="raison">Signaler {prenom}</label>
-          <select id="raison" className="in" value={raison} onChange={(e) => setRaison(e.target.value)}>
+          <button className="cta ghost" style={{ height: 44, fontSize: 15 }} onClick={bloquer}>Bloquer {prenom}</button>
+          <label className="small" style={{ fontWeight: 800 }} htmlFor="raison">Signaler {prenom}</label>
+          <select id="raison" className="zone" style={{ minHeight: 48, height: 48 }} value={raison} onChange={(e) => setRaison(e.target.value)}>
             <option value="">Choisir une raison</option>
             {RAISONS.map(([k, v]) => <option key={k} value={k}>{v}</option>)}
           </select>
-          <button className="btn" style={{ height: 44 }} disabled={!raison} onClick={signaler}>Signaler et bloquer</button>
+          <button className="cta" style={{ height: 44, fontSize: 15 }} disabled={!raison} onClick={signaler}>Signaler et bloquer</button>
         </div>
       )}
-      <div className="fil" role="log" aria-live="polite" aria-label={`Conversation avec ${prenom}`}>
-        {msgs.length === 0 && <p className="small" style={{ textAlign: 'center' }}>Dis bonjour à {prenom}. Ne partage jamais d’argent ni de code reçu par message.</p>}
-        {msgs.map((m) => (
-          <div key={m.id} className={`bulle ${m.sender_id === moi ? 'moi' : 'autre'}`}>
-            {m.body}
-            <span className="heure">{new Date(m.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}{m.sender_id === moi && m.read_at ? ' · Lu' : ''}</span>
+      <div className="fil2" role="log" aria-live="polite" aria-label={`Conversation avec ${prenom}`}>
+        {msgs.length === 0 && (
+          <div className="vide" style={{ padding: '18px 4px' }}>
+            <h2>Vous vous êtes plu</h2>
+            <p>Brise la glace avec {prenom}. Ne partage jamais d’argent ni de code reçu par message.</p>
+            <div className="pastilles" style={{ justifyContent: 'center' }}>{idees.map((t) => <button key={t} className="pastille" onClick={() => setTexte(t)}>{t}</button>)}</div>
           </div>
-        ))}
+        )}
+        {msgs.map((m, n) => {
+          const nouveau = n === 0 || jour(m.created_at) !== jour(msgs[n - 1].created_at);
+          return (
+            <div key={m.id} style={{ display: 'contents' }}>
+              {nouveau && <div className="jour">{jour(m.created_at)}</div>}
+              <div className={`bulle2 ${m.sender_id === moi ? 'moi' : 'autre'}`}>
+                {m.body}
+                <span className="heure">{new Date(m.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}{m.sender_id === moi && m.read_at ? ' · Lu' : ''}</span>
+              </div>
+            </div>
+          );
+        })}
         <div ref={bas} />
       </div>
-      {err && <div className="alert" role="alert">{err}</div>}
-      <form className="row" style={{ gap: 8 }} onSubmit={envoyer}>
+      {err && <div className="erreur" role="alert">{err}</div>}
+      <form className="compo" onSubmit={envoyer}>
         <label className="sr" htmlFor="msg">Ton message</label>
-        <input id="msg" className="in" value={texte} maxLength={1000} onChange={(e) => setTexte(e.target.value)} placeholder="Écris ton message" autoComplete="off" />
-        <button className="btn gold" style={{ width: 96, flex: 'none', height: 52 }} disabled={envoi || !texte.trim()}>Envoyer</button>
+        <input id="msg" value={texte} maxLength={1000} onChange={(e) => setTexte(e.target.value)} placeholder={`Écris à ${prenom}…`} autoComplete="off" />
+        <button className="rond envoyer" disabled={envoi || !texte.trim()} aria-label="Envoyer"><SendIcon size={20} /></button>
       </form>
     </>
   );

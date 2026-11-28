@@ -35,7 +35,7 @@ export default async function Likes() {
             <div className="rond-deco"><HeartIcon size={38} /></div>
             <h2>Pas encore de like</h2>
             <p>Complète ton profil et ajoute des photos : les profils soignés reçoivent bien plus de likes.</p>
-            <Link className="cta" style={{ maxWidth: 300 }} href="/moi">Voir mon profil</Link>
+            <Link className="cta" style={{ maxWidth: 300 }} href="/moi/modifier">Améliorer mon profil</Link>
           </div>
         ) : (
           <>

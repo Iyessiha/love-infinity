@@ -22,3 +22,4 @@ export const LockIcon = ({ size = 18 }: P) => <svg {...s} width={size} height={s
 export const FlagIcon = ({ size = 18 }: P) => <svg {...s} width={size} height={size}><path d="M5 21V4M5 4h11l-2 4 2 4H5" /></svg>;
 export const SendIcon = ({ size = 20 }: P) => <svg {...s} width={size} height={size}><path d="M21 3L10 14M21 3l-7 18-4-7-7-4z" /></svg>;
 export const ChevronDown = ({ size = 20 }: P) => <svg {...s} width={size} height={size} strokeWidth={2.4}><path d="M6 9l6 6 6-6" /></svg>;
+export const ChevronLeft = ({ size = 22 }: P) => <svg {...s} width={size} height={size} strokeWidth={2.4}><path d="M15 5l-7 7 7 7" /></svg>;
