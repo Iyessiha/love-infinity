@@ -5,6 +5,8 @@ import { requireComplet } from '@/lib/auth';
 import { urlsPhotos } from '@/lib/photos';
 import { getT } from '@/lib/lang';
 import type { T } from '@/lib/dict';
+import { Stories, type StoryGroup } from '@/components/Stories';
+import { supabaseAdmin } from '@/lib/supabase/admin';
 import '@/app/membre.css';
 
 export const dynamic = 'force-dynamic';
@@ -26,6 +28,18 @@ export default async function Matchs() {
   const liste = (data ?? []) as Match[];
   const urls = await urlsPhotos(supabase, liste.map((m) => m.photo_path));
   const img = (m: Match) => (m.photo_path ? urls.get(m.photo_path) : undefined);
+  const { data: st } = await supabase.rpc('stories_actives');
+  type Ligne = { user_id: string; prenom: string; story_id: string; path: string; created_at: string; est_moi: boolean };
+  const lignes = (st ?? []) as Ligne[];
+  const signees = lignes.length ? (await supabaseAdmin().storage.from('photos').createSignedUrls(lignes.map((l) => l.path), 3600)).data ?? [] : [];
+  const groupes: StoryGroup[] = [];
+  for (const l of lignes) {
+    const url = signees.find((s) => s.path === l.path)?.signedUrl;
+    if (!url) continue;
+    let g = groupes.find((x) => x.user_id === l.user_id);
+    if (!g) groupes.push((g = { user_id: l.user_id, prenom: l.prenom, est_moi: l.est_moi, items: [] }));
+    g.items.push({ id: l.story_id, url, created_at: l.created_at });
+  }
   const nouveaux = liste.filter((m) => !m.dernier_message);
   const convs = liste.filter((m) => m.dernier_message);
 
@@ -33,6 +47,7 @@ export default async function Matchs() {
     <>
       <main className="mb">
         <header className="mb-top"><h1>{t('msgs.title')}</h1></header>
+        <Stories groupes={groupes} />
         {liste.length === 0 ? (
           <div className="vide">
             <div className="rond-deco"><MsgIcon size={36} /></div>

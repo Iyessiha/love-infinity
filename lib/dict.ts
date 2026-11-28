@@ -424,3 +424,14 @@ D['sty.unlock'] = ['Débloquer les thèmes avec Premium', 'Unlock themes with Pr
 D['sty.err'] = ['Enregistrement impossible. Réessaie.', 'Couldn’t save. Try again.'];
 D['sty.errPremium'] = ['Ce thème demande un abonnement Premium actif.', 'This theme needs an active Premium subscription.'];
 D['fiche.prompts'] = ['Questions', 'Questions'];
+// Stories
+D['st.title'] = ['Stories', 'Stories'];
+D['st.add'] = ['Ma story', 'Your story'];
+D['st.addP'] = ['Ajouter', 'Add'];
+D['st.close'] = ['Fermer', 'Close'];
+D['st.del'] = ['Supprimer', 'Delete'];
+D['st.err'] = ['Envoi impossible. Réessaie.', 'Couldn’t upload. Try again.'];
+D['st.limit'] = ['Limite de stories atteinte pour ton offre. Passe à une offre supérieure ou attends l’expiration.', 'Story limit reached for your plan. Upgrade or wait for one to expire.'];
+D['st.sending'] = ['Envoi…', 'Uploading…'];
+D['st.hint'] = ['Disparaît après 24 h', 'Disappears after 24 h'];
+D['st.empty'] = ['Aucune story pour le moment. Publie la première !', 'No stories yet. Post the first one!'];
