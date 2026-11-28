@@ -403,3 +403,28 @@
 .bst-chip.on{background:#1F6B41;color:#fff;cursor:default}
 .bst-chip.off,.bst-chip:disabled{opacity:.6;cursor:default}
 .bst-chip:focus-visible{outline:3px solid #4A0E2E;outline-offset:2px}
+
+/* --- Mobile : tout tient dans l'écran (barres Safari comprises), rien derrière la barre du bas --- */
+.dk-scene{min-height:240px}
+.dk{gap:8px}
+.dk .stories{margin:0}
+.dk .st-rail{padding:2px 2px 4px;gap:10px}
+.dk .st-item{width:58px;gap:3px}
+.dk .st-ring{width:54px;height:54px}
+.dk .st-item small{font-size:11px;max-width:58px}
+.dk .st-plus{top:36px}
+.dk-info{padding:14px 64px 14px 16px;gap:5px}
+.dk-nom{font-size:26px}.dk-nom span{font-size:21px}
+.dk-actions{gap:14px;padding-bottom:2px}
+@media (max-height:760px){
+  .rond.pass{width:54px;height:54px}.rond.like{width:64px;height:64px}.rond.msg{width:46px;height:46px}.rond.undo{width:40px;height:40px}
+  .dk-reste{font-size:12px}
+  .dk-chips span{padding:3px 9px;font-size:12px}
+}
+@media (max-height:640px){
+  .dk .stories{display:none}
+  .dk-nom{font-size:23px}
+}
+.nav-in{padding-top:4px}
+.nav a{font-size:11px;min-height:54px}
+.nav a svg{width:24px;height:24px;flex:none}

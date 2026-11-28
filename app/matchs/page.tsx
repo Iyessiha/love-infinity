@@ -25,11 +25,10 @@ function quand(iso: string, t: T) {
 export default async function Matchs() {
   const { supabase } = await requireComplet();
   const t = await getT();
-  const { data } = await supabase.rpc('mes_matchs');
+  const [{ data }, groupes] = await Promise.all([supabase.rpc('mes_matchs'), chargerStories(supabase)]);
   const liste = (data ?? []) as Match[];
   const urls = await urlsPhotos(supabase, liste.map((m) => m.photo_path));
   const img = (m: Match) => (m.photo_path ? urls.get(m.photo_path) : undefined);
-  const groupes = await chargerStories(supabase);
   const nouveaux = liste.filter((m) => !m.dernier_message);
   const convs = liste.filter((m) => m.dernier_message);
 

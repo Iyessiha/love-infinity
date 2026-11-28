@@ -16,11 +16,10 @@ export const dynamic = 'force-dynamic';
 type SP = { min?: string; max?: string; ville?: string; but?: string; tmin?: string; tmax?: string; etu?: string; enf?: string; rel?: string; vf?: string };
 
 export default async function Decouvrir({ searchParams }: { searchParams: Promise<SP> }) {
-  const { supabase, user } = await requireComplet();
+  const { supabase, user, profil } = await requireComplet();
   const sp = await searchParams;
   const t = await getT();
-  const { data: moi } = await supabase.from('profiles').select('account_status').eq('id', user.id).single();
-  if (moi?.account_status !== 'active') {
+  if (profil?.account_status !== 'active') {
     // En attente de validation : aperçu en lecture seule, seulement si les photos ont été envoyées.
     const { count: envoyees } = await supabase.from('verifications').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('kind', 'photos');
     if (!envoyees) redirect('/verification');
@@ -51,20 +50,20 @@ export default async function Decouvrir({ searchParams }: { searchParams: Promis
     vf: sp.vf === '1',
   };
 
-  const [{ data: profils }, { data: restants }, { data: moiPhoto }, { data: moiProfil }, { data: abo }, { data: boostEtat }] = await Promise.all([
+  const [{ data: profils }, { data: restants }, { data: moiPhoto }, { data: moiProfil }, { data: abo }, { data: boostEtat }, groupesStories] = await Promise.all([
     supabase.rpc('decouvrir', { p_limit: 15, p_age_min: f.age_min, p_age_max: f.age_max, p_ville: f.ville || null, p_intention: f.intention || null, p_taille_min: f.tmin ?? null, p_taille_max: f.tmax ?? null, p_etudes: f.etu ?? null, p_enfants: f.enf ?? null, p_religion: f.rel ?? null, p_verif_min: f.vf ? 2 : null }),
     supabase.rpc('likes_restants'),
     supabase.from('profile_photos').select('path').eq('user_id', user.id).order('position').limit(1),
     supabase.from('profiles').select('prenom,verification_level').eq('id', user.id).single(),
     supabase.from('subscriptions').select('plan,expires_at').eq('user_id', user.id).maybeSingle(),
     supabase.rpc('etat_boost'),
+    chargerStories(supabase),
   ]);
   const premium = Boolean(abo && abo.plan === 'premium' && new Date(abo.expires_at) > new Date());
 
   type Ligne = Omit<Carte, 'photos'> & { photos: string[] | null };
   const liste = (profils ?? []) as Ligne[];
   const urls = await urlsPhotos(supabase, [...liste.flatMap((p) => p.photos ?? []), moiPhoto?.[0]?.path]);
-  const groupesStories = await chargerStories(supabase);
   const cartes: Carte[] = liste.map((p) => ({
     ...p,
     interets: p.interets ?? [],

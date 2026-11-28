@@ -15,5 +15,5 @@ export async function requireComplet() {
   const { data: profil } = await supabase.from('profiles').select('phone_e164, account_status').eq('id', user.id).maybeSingle();
   if (profil?.account_status === 'suspended' || profil?.account_status === 'banned') redirect('/compte-suspendu');
   if (!profil?.phone_e164) redirect('/telephone');
-  return { supabase, user };
+  return { supabase, user, profil };
 }

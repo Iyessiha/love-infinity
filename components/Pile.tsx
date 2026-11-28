@@ -197,6 +197,8 @@ export function Pile({ cartes, restants, moi, filtres, peutEcrire, stories, prem
       {haut}
       <div className="dk-scene">
         {suivante && <div className="dk-next" aria-hidden="true" />}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        {suivante?.photos[0] && <img src={suivante.photos[0]} alt="" width={1} height={1} decoding="async" style={{ position: 'absolute', width: 1, height: 1, opacity: 0, pointerEvents: 'none' }} />}
         <div
           key={c.id}
           className={`dk-card ${mode} ${mode === '' ? 'arrive' : ''}`}

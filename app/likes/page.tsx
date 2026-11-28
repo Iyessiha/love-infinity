@@ -17,13 +17,13 @@ type Ligne = { id: string; prenom: string; age: number; ville: string; verificat
 export default async function Likes() {
   const { supabase, user } = await requireComplet();
   const t = await getT();
-  const [{ data }, { data: abo }, { data: moi }] = await Promise.all([
+  const [{ data }, { data: abo }, { data: moi }, groupesStories] = await Promise.all([
     supabase.rpc('likes_recus'),
     supabase.from('subscriptions').select('plan,expires_at').eq('user_id', user.id).maybeSingle(),
     supabase.from('profiles').select('account_status').eq('id', user.id).single(),
+    chargerStories(supabase),
   ]);
   const liste = (data ?? []) as Ligne[];
-  const groupesStories = await chargerStories(supabase);
   const premium = Boolean(abo && abo.plan === 'premium' && new Date(abo.expires_at) > new Date());
   // Sans offre Premium, ni nom ni photo n’est envoyé au navigateur : le flou ne peut pas être contourné.
   const urls = premium ? await urlsPhotos(supabase, liste.map((l) => l.photo_path)) : new Map<string, string>();

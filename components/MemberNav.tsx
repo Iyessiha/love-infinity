@@ -9,13 +9,14 @@ export type Onglet = 'decouvrir' | 'likes' | 'vip' | 'matchs' | 'moi';
 export async function MemberNav({ actif }: { actif: Onglet }) {
   const supabase = await supabaseServer();
   const t = await getT();
-  const [{ data: likes }, { data: matchs }] = await Promise.all([supabase.rpc('likes_recus'), supabase.rpc('mes_matchs')]);
-  const nbLikes = (likes ?? []).length;
-  const nbMsgs = ((matchs ?? []) as { non_lus: number }[]).reduce((n, m) => n + (m.non_lus ?? 0), 0);
+  const { data } = await supabase.rpc('compteurs_nav');
+  const c = (data ?? [])[0] as { likes: number; non_lus: number } | undefined;
+  const nbLikes = c?.likes ?? 0;
+  const nbMsgs = c?.non_lus ?? 0;
   const items: { id: Onglet; href: string; label: string; icone: React.ReactNode; n: number }[] = [
     { id: 'decouvrir', href: '/decouvrir', label: t('nav.discover'), icone: <CompassIcon />, n: 0 },
     { id: 'likes', href: '/likes', label: t('nav.likes'), icone: <HeartIcon filled={false} />, n: nbLikes },
-    { id: 'vip', href: '/vip', label: t('nav.vip'), icone: <CrownIcon />, n: 0 },
+    { id: 'vip', href: '/vip', label: t('nav.vip'), icone: <CrownIcon size={24} />, n: 0 },
     { id: 'matchs', href: '/matchs', label: t('nav.messages'), icone: <MsgIcon />, n: nbMsgs },
     { id: 'moi', href: '/moi', label: t('nav.me'), icone: <UserIcon />, n: 0 },
   ];

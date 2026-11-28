@@ -1,4 +1,5 @@
 'use client';
+import { reduireImage } from '@/lib/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { supabaseBrowser } from '@/lib/supabase/client';
@@ -35,8 +36,10 @@ export default function Photos() {
     if (!user) return router.push('/connexion');
 
     for (const [i, f] of fichiers.entries()) {
-      const path = `${user.id}/${crypto.randomUUID()}.${extension(f)}`;
-      const up = await supabase.storage.from('photos').upload(path, f, { contentType: f.type });
+      const path = `${user.id}/${crypto.randomUUID()}.jpg`;
+      let corps: Blob = f;
+      try { corps = await reduireImage(f); } catch { /* format non lisible par le navigateur : envoi tel quel */ }
+      const up = await supabase.storage.from('photos').upload(path, corps, { contentType: corps === f ? f.type : 'image/jpeg' });
       if (up.error) { setEnvoi(false); return setErreur(t('vf.sendErr')); }
       await supabase.from('profile_photos').insert({ user_id: user.id, path, position: i });
     }

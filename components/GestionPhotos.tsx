@@ -9,11 +9,11 @@ export type PhotoItem = { path: string; url: string; attente: boolean };
 
 async function reduire(f: File): Promise<Blob> {
   const bmp = await createImageBitmap(f);
-  const k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+  const k = Math.min(1, 1280 / Math.max(bmp.width, bmp.height));
   const c = document.createElement('canvas');
   c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
   c.getContext('2d')!.drawImage(bmp, 0, 0, c.width, c.height);
-  return await new Promise((ok, ko) => c.toBlob((b) => (b ? ok(b) : ko(new Error('blob'))), 'image/jpeg', 0.85));
+  return await new Promise((ok, ko) => c.toBlob((b) => (b ? ok(b) : ko(new Error('blob'))), 'image/jpeg', 0.82));
 }
 
 export function GestionPhotos({ items }: { items: PhotoItem[] }) {
