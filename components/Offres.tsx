@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { tr, type Lang } from '@/lib/i18n';
 import { Check } from '@/components/Icons';
+import { mensuelRemise, type Remises } from '@/lib/tarifs';
 import '@/app/offres.css';
 
 export type PlanPrix = { code: 'essentiel' | 'premium'; prix: number; jours: number };
@@ -28,7 +29,7 @@ const PLANS = {
 } as const;
 
 /** Offres Gratuit / Essentiel / Premium + tableau comparatif. `cta` fournit le bouton de chaque offre. */
-export function Offres({ lang, plans, cta, actif, cartes = true }: { lang: Lang; plans: PlanPrix[]; cta: (code: 'gratuit' | 'essentiel' | 'premium') => ReactNode; actif?: 'essentiel' | 'premium' | null; cartes?: boolean }) {
+export function Offres({ lang, plans, cta, actif, cartes = true, remises }: { lang: Lang; plans: PlanPrix[]; cta: (code: 'gratuit' | 'essentiel' | 'premium') => ReactNode; actif?: 'essentiel' | 'premium' | null; cartes?: boolean; remises?: Remises }) {
   const t = tr(lang);
   const loc = lang === 'en' ? 'en-GB' : 'fr-FR';
   const prix = (code: 'essentiel' | 'premium') => plans.find((p) => p.code === code)?.prix;
@@ -46,7 +47,8 @@ export function Offres({ lang, plans, cta, actif, cartes = true }: { lang: Lang;
               {actif === code && <span className="of-ruban actif">{t('Ton offre', 'Your plan')}</span>}
               <h3>{p[lang]}</h3>
               <p className="of-accroche">{p.accroche[lang]}</p>
-              <div className="of-prix"><b>{montant === undefined ? '…' : montant.toLocaleString(loc)}</b><span>FCFA{code !== 'gratuit' && <> / {t('30 jours', '30 days')}</>}</span></div>
+              <div className="of-prix"><b>{montant === undefined ? '…' : montant.toLocaleString(loc)}</b><span>FCFA{code !== 'gratuit' && <> / {t('mois', 'month')}</>}</span></div>
+              {code !== 'gratuit' && montant !== undefined && remises && <p className="of-dures">{t('Dès', 'From')} <b>{mensuelRemise(montant, remises[12]).toLocaleString(loc)} FCFA</b> / {t('mois', 'month')} {t('avec 12 mois', 'on a 12-month plan')} <i>−{remises[12]} %</i></p>}
               <ul>{p.points.map((x) => <li key={x.fr}><Check size={16} />{x[lang]}</li>)}</ul>
               {cta(code)}
             </section>
@@ -64,7 +66,7 @@ export function Offres({ lang, plans, cta, actif, cartes = true }: { lang: Lang;
           </div>
         ))}
       </div>
-      <p className="of-note">{t('Pas de renouvellement automatique : tu paies 30 jours, tu choisis de continuer. Les jours restants sont conservés si tu renouvelles avant la fin.', 'No automatic renewal: you pay for 30 days and choose whether to continue. Remaining days are kept if you renew before the end.')}</p>
+      <p className="of-note">{t('Choisis 1, 3, 6 ou 12 mois : plus la durée est longue, moins le mois coûte cher. Pas de renouvellement automatique, et les jours restants sont conservés si tu renouvelles avant la fin.', 'Choose 1, 3, 6 or 12 months: the longer, the cheaper per month. No automatic renewal, and remaining days are kept if you renew before the end.')}</p>
     </div>
   );
 }

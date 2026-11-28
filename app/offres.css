@@ -110,3 +110,8 @@
   .of-th>span{padding:8px 0;word-break:break-word}
   .of-titre{font-size:21px}
 }
+.of-dures{font-size:13px;line-height:1.4;color:var(--mu);margin:-4px 0 4px}
+.of-dures b{color:var(--p)}
+.of-dures i{font:800 11px Nunito,system-ui,sans-serif;font-style:normal;background:#1F6B41;color:#fff;border-radius:10px;padding:2px 8px;margin-left:4px;white-space:nowrap}
+.of-carte.premium .of-dures{color:rgba(251,246,238,.8)}
+.of-carte.premium .of-dures b{color:#fff}

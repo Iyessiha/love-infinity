@@ -3,11 +3,13 @@ import { Check, HeartIcon, MsgIcon, ShieldIcon, XIcon, PinIcon } from '@/compone
 import { SiteFooter, SiteNav } from '@/components/SiteChrome';
 import { Offres } from '@/components/Offres';
 import { href, tr, type Lang } from '@/lib/i18n';
+import { lireTarifs } from '@/lib/tarifs';
 
 const Silhouette = () => <svg viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="78" r="38" fill="#FBF6EE" opacity=".9" /><path d="M20 200c0-46 36-74 80-74s80 28 80 74z" fill="#FBF6EE" opacity=".9" /></svg>;
 
-export function Home({ lang }: { lang: Lang }) {
+export async function Home({ lang }: { lang: Lang }) {
   const t = tr(lang);
+  const tarifs = await lireTarifs();
   return (
     <main className="lp lp2">
       <header className="lp2-hero">
@@ -107,7 +109,7 @@ export function Home({ lang }: { lang: Lang }) {
           <h2 id="d3" className="lp2-h2">{t('Gratuit pour commencer. Premium pour te démarquer.', 'Free to start. Premium to stand out.')}</h2>
           <p className="lp-intro">{t('Mobile Money ou carte. Pas de pièces qui expirent, pas de renouvellement caché.', 'Mobile Money or card. No coins that expire, no hidden renewal.')}</p>
           <div style={{ marginTop: 40 }}>
-            <Offres lang={lang} plans={[{ code: 'essentiel', prix: 5000, jours: 30 }, { code: 'premium', prix: 9000, jours: 30 }]}
+            <Offres lang={lang} plans={tarifs.plans} remises={tarifs.remises}
               cta={(code) => <Link className={`of-cta${code === 'premium' ? ' or' : ''}`} href="/inscription">{code === 'gratuit' ? t('Commencer gratuitement', 'Start for free') : t('Créer mon compte', 'Create my account')}</Link>} />
           </div>
         </div>
