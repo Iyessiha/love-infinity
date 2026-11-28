@@ -6,10 +6,11 @@ import { Chips } from '@/components/Chips';
 import { ENFANTS, ETUDES, FREQ, INTENTIONS, INTERETS, LANGUES, RELIGIONS } from '@/lib/profile';
 import { sauverEtape } from '@/lib/save';
 import { useT } from '@/components/I18n';
+import { StyleProfil, type Prompt } from '@/components/StyleProfil';
 
 type Init = { bio: string; profession: string; taille: string; etudes: string; langues: string[]; intention: string; enfants: string; tabac: string; alcool: string; religion: string; interets: string[] };
 
-export function EditerProfil({ init, photos }: { init: Init; photos: string[] }) {
+export function EditerProfil({ init, photos, theme, prompts, premium }: { init: Init; photos: string[]; theme: string; prompts: Prompt[]; premium: boolean }) {
   const router = useRouter();
   const t = useT();
   const [f, setF] = useState<Init>({
@@ -37,6 +38,7 @@ export function EditerProfil({ init, photos }: { init: Init; photos: string[] })
   }
 
   return (
+    <>
     <form className="ed" onSubmit={enregistrer}>
       <section>
         <span className="lib">{t('ed.photos')}</span>
@@ -72,5 +74,7 @@ export function EditerProfil({ init, photos }: { init: Init; photos: string[] })
       {ok && <div className="ok-msg" role="status">{t('ed.saved')}</div>}
       <div className="ed-barre"><button className="cta" type="submit" disabled={!pret || envoi}>{envoi ? t('c.saving') : t('c.save')}</button></div>
     </form>
+    <StyleProfil theme={theme} prompts={prompts} premium={premium} />
+    </>
   );
 }

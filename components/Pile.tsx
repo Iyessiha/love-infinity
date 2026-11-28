@@ -11,6 +11,7 @@ export type Carte = {
   id: string; prenom: string; age: number; ville: string; bio: string | null; intention: string | null;
   profession: string | null; interets: string[]; langues: string[]; verification_level: number;
   taille_cm: number | null; etudes: string | null; membre_depuis: string; photos: string[];
+  theme?: string; prompts?: { q: string; a: string }[];
 };
 export type Filtres = { age_min: number; age_max: number; ville: string; intention: string };
 type Action = 'like' | 'pass';

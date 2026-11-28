@@ -44,7 +44,7 @@ export function FicheProfil({ c, occupe, onClose, onPass, onLike, onMessage, onS
   ].filter(Boolean) as { icone: React.ReactNode; label: string; val: string; large?: boolean }[];
 
   return (
-    <div className="fiche" role="dialog" aria-modal="true" aria-label={t('pile.profileOf', { name: c.prenom, age: c.age })}>
+    <div className="fiche" data-theme={c.theme ?? 'classique'} role="dialog" aria-modal="true" aria-label={t('pile.profileOf', { name: c.prenom, age: c.age })}>
       <button className="fiche-close" onClick={onClose} aria-label={t('fiche.close')}><XIcon size={22} /></button>
       <div className="fiche-in">
         <div className="fiche-ph">{/* eslint-disable-next-line @next/next/no-img-element */ premiere && <img src={premiere} alt={t('pile.photoN', { n: 1, name: c.prenom })} />}</div>
@@ -55,6 +55,8 @@ export function FicheProfil({ c, occupe, onClose, onPass, onLike, onMessage, onS
           </div>
 
           {c.bio && <section><h3>{t('fiche.about')}</h3><p className="fiche-bio">{c.bio}</p></section>}
+
+          {(c.prompts ?? []).length > 0 && <section><h3>{t('fiche.prompts')}</h3><div className="col" style={{ gap: 10 }}>{(c.prompts ?? []).map((p) => <div key={p.q} className="qa-bloc"><small>{t(`q.${p.q}`)}</small><p>{p.a}</p></div>)}</div></section>}
 
           <section><h3>{t('fiche.info')}</h3>
             <div className="fiche-grille">
