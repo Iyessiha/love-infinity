@@ -358,3 +358,8 @@
 .gp-add{aspect-ratio:3/4;border:2px dashed var(--or);border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--prune);cursor:pointer;text-align:center;padding:6px}
 .gp-add span{font-size:28px;line-height:1}
 .gp-add small{font-size:12px}
+.flt-adv{border-top:1px solid var(--ligne);padding-top:12px;display:flex;flex-direction:column;gap:10px}
+.flt-set{border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;min-width:0}
+.flt-set:disabled{opacity:.5}
+.flt-lock{font:800 13px Nunito,sans-serif;color:var(--prune);text-decoration:underline}
+.boost{display:flex;flex-direction:column;gap:8px}

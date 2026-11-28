@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { BoostCarte } from '@/components/BoostCarte';
 import { MemberNav } from '@/components/MemberNav';
 import { CrownIcon, ShieldIcon, HeartIcon, UserIcon, LockIcon, FlagIcon, SettingsIcon, ChevronRight } from '@/components/Icons';
 import { requireComplet } from '@/lib/auth';
@@ -12,14 +13,16 @@ export const dynamic = 'force-dynamic';
 export default async function Moi() {
   const { supabase, user } = await requireComplet();
   const t = await getT();
-  const [{ data: p }, { data: photos }, { data: abo }, { data: restants }, { data: likes }, { data: matchs }] = await Promise.all([
+  const [{ data: p }, { data: photos }, { data: abo }, { data: restants }, { data: likes }, { data: matchs }, { data: boost }] = await Promise.all([
     supabase.from('profiles').select('prenom,birth_date,ville,bio,intention,profession,verification_level,account_status,taille_cm,etudes,langues,interets').eq('id', user.id).single(),
     supabase.from('profile_photos').select('path').eq('user_id', user.id).order('position'),
     supabase.from('subscriptions').select('plan,expires_at').eq('user_id', user.id).maybeSingle(),
     supabase.rpc('likes_restants'),
     supabase.rpc('likes_recus'),
     supabase.rpc('mes_matchs'),
+    supabase.rpc('etat_boost'),
   ]);
+  const etatBoost = (boost ?? [])[0] as { actif_jusqua: string | null; prochain: string | null } | undefined;
   const urls = await urlsPhotos(supabase, (photos ?? []).map((x) => x.path));
   const photo = photos?.[0]?.path ? urls.get(photos[0].path) : undefined;
   const age = p?.birth_date ? Math.floor((Date.now() - new Date(p.birth_date).getTime()) / 31557600000) : null;
@@ -50,6 +53,8 @@ export default async function Moi() {
           <div><b>{(likes ?? []).length}</b><span>{t('me.likesIn')}</span></div>
           <div><b>{restants === null ? '∞' : restants}</b><span>{t('me.likesLeft')}</span></div>
         </div>
+
+        <BoostCarte premium={actif && abo?.plan === 'premium'} actifJusqua={etatBoost?.actif_jusqua ?? null} prochain={etatBoost?.prochain ?? null} />
 
         <section className="moi-style" aria-label={t('me.styleT')}>
           <h2>{t('me.styleT')}</h2>

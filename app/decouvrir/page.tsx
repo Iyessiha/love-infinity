@@ -6,13 +6,14 @@ import { supabaseAdmin } from '@/lib/supabase/admin';
 import { MemberNav } from '@/components/MemberNav';
 import { urlsPhotos } from '@/lib/photos';
 import { getT } from '@/lib/lang';
+import { ENFANTS, ETUDES, RELIGIONS } from '@/lib/profile';
 import { Stories } from '@/components/Stories';
 import { chargerStories } from '@/lib/stories';
 import '@/app/membre.css';
 
 export const dynamic = 'force-dynamic';
 
-type SP = { min?: string; max?: string; ville?: string; but?: string };
+type SP = { min?: string; max?: string; ville?: string; but?: string; tmin?: string; tmax?: string; etu?: string; enf?: string; rel?: string; vf?: string };
 
 export default async function Decouvrir({ searchParams }: { searchParams: Promise<SP> }) {
   const { supabase, user } = await requireComplet();
@@ -42,14 +43,22 @@ export default async function Decouvrir({ searchParams }: { searchParams: Promis
     age_max: Math.max(18, Math.min(99, parseInt(sp.max ?? '', 10) || 99)),
     ville: (sp.ville ?? '').slice(0, 60),
     intention: ['relation_serieuse', 'mariage', 'amitie', 'decouverte'].includes(sp.but ?? '') ? (sp.but as string) : '',
+    tmin: parseInt(sp.tmin ?? '', 10) >= 120 ? parseInt(sp.tmin!, 10) : undefined,
+    tmax: parseInt(sp.tmax ?? '', 10) >= 120 && parseInt(sp.tmax ?? '', 10) <= 230 ? parseInt(sp.tmax!, 10) : undefined,
+    etu: (ETUDES as readonly string[]).includes(sp.etu ?? '') ? sp.etu : undefined,
+    enf: ENFANTS.some(([k]) => k === sp.enf) ? sp.enf : undefined,
+    rel: (RELIGIONS as readonly string[]).includes(sp.rel ?? '') ? sp.rel : undefined,
+    vf: sp.vf === '1',
   };
 
-  const [{ data: profils }, { data: restants }, { data: moiPhoto }, { data: moiProfil }] = await Promise.all([
-    supabase.rpc('decouvrir', { p_limit: 15, p_age_min: f.age_min, p_age_max: f.age_max, p_ville: f.ville || null, p_intention: f.intention || null }),
+  const [{ data: profils }, { data: restants }, { data: moiPhoto }, { data: moiProfil }, { data: abo }] = await Promise.all([
+    supabase.rpc('decouvrir', { p_limit: 15, p_age_min: f.age_min, p_age_max: f.age_max, p_ville: f.ville || null, p_intention: f.intention || null, p_taille_min: f.tmin ?? null, p_taille_max: f.tmax ?? null, p_etudes: f.etu ?? null, p_enfants: f.enf ?? null, p_religion: f.rel ?? null, p_verif_min: f.vf ? 2 : null }),
     supabase.rpc('likes_restants'),
     supabase.from('profile_photos').select('path').eq('user_id', user.id).order('position').limit(1),
     supabase.from('profiles').select('prenom,verification_level').eq('id', user.id).single(),
+    supabase.from('subscriptions').select('plan,expires_at').eq('user_id', user.id).maybeSingle(),
   ]);
+  const premium = Boolean(abo && abo.plan === 'premium' && new Date(abo.expires_at) > new Date());
 
   type Ligne = Omit<Carte, 'photos'> & { photos: string[] | null };
   const liste = (profils ?? []) as Ligne[];
@@ -65,7 +74,7 @@ export default async function Decouvrir({ searchParams }: { searchParams: Promis
   return (
     <>
       <main className="mb" style={{ height: '100dvh' }}>
-        <Pile cartes={cartes} restants={restants ?? null} filtres={f} moi={{ prenom: moiProfil?.prenom ?? '', photo: moiPhoto?.[0]?.path ? urls.get(moiPhoto[0].path) ?? null : null }} peutEcrire={(moiProfil?.verification_level ?? 0) >= 2} stories={<Stories groupes={groupesStories} />} />
+        <Pile cartes={cartes} restants={restants ?? null} filtres={f} moi={{ prenom: moiProfil?.prenom ?? '', photo: moiPhoto?.[0]?.path ? urls.get(moiPhoto[0].path) ?? null : null }} peutEcrire={(moiProfil?.verification_level ?? 0) >= 2} stories={<Stories groupes={groupesStories} />} premium={premium} />
       </main>
       <MemberNav actif="decouvrir" />
     </>

@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { ENFANTS, ETUDES, RELIGIONS } from '@/lib/profile';
 import { FicheProfil } from '@/components/FicheProfil';
 import { CrownIcon, HeartIcon, InfoIcon, MsgIcon, PinIcon, ShieldIcon, SlidersIcon, XIcon, SendIcon } from '@/components/Icons';
 import { useT } from '@/components/I18n';
@@ -13,13 +14,13 @@ export type Carte = {
   taille_cm: number | null; etudes: string | null; membre_depuis: string; photos: string[];
   theme?: string; prompts?: { q: string; a: string }[]; premium?: boolean;
 };
-export type Filtres = { age_min: number; age_max: number; ville: string; intention: string };
+export type Filtres = { age_min: number; age_max: number; ville: string; intention: string; tmin?: number; tmax?: number; etu?: string; enf?: string; rel?: string; vf?: boolean };
 type Action = 'like' | 'pass';
 
 const SEUIL = 110;
 
-export function Pile({ cartes, restants, moi, filtres, peutEcrire, stories }: {
-  cartes: Carte[]; restants: number | null; moi: { prenom: string; photo: string | null }; filtres: Filtres; peutEcrire: boolean; stories?: React.ReactNode;
+export function Pile({ cartes, restants, moi, filtres, peutEcrire, stories, premium }: {
+  cartes: Carte[]; restants: number | null; moi: { prenom: string; photo: string | null }; filtres: Filtres; peutEcrire: boolean; stories?: React.ReactNode; premium?: boolean;
 }) {
   const router = useRouter();
   const t = useT();
@@ -38,7 +39,7 @@ export function Pile({ cartes, restants, moi, filtres, peutEcrire, stories }: {
   const bouge = useRef(false);
   const c = cartes[i];
   const suivante = cartes[i + 1];
-  const nbFiltres = (filtres.age_min > 18 ? 1 : 0) + (filtres.age_max < 99 ? 1 : 0) + (filtres.ville ? 1 : 0) + (filtres.intention ? 1 : 0);
+  const nbFiltres = (filtres.age_min > 18 ? 1 : 0) + (filtres.age_max < 99 ? 1 : 0) + (filtres.ville ? 1 : 0) + (filtres.intention ? 1 : 0) + (filtres.tmin ? 1 : 0) + (filtres.tmax ? 1 : 0) + (filtres.etu ? 1 : 0) + (filtres.enf ? 1 : 0) + (filtres.rel ? 1 : 0) + (filtres.vf ? 1 : 0);
 
   const agir = useCallback(async (action: Action, note?: string): Promise<boolean> => {
     if (!c || envoi) return false;
@@ -136,7 +137,7 @@ export function Pile({ cartes, restants, moi, filtres, peutEcrire, stories }: {
 
   const overlays = (
     <>
-      {filtreOuvert && <FeuilleFiltres f={filtres} onClose={() => setFiltreOuvert(false)} />}
+      {filtreOuvert && <FeuilleFiltres f={filtres} premium={Boolean(premium)} onClose={() => setFiltreOuvert(false)} />}
       {match && <EcranMatch c={match.c} moi={moi} matchId={match.id} onClose={() => setMatch(null)} />}
     </>
   );
@@ -248,13 +249,19 @@ function FeuilleMessage({ c, peutEcrire, envoi, erreur, onClose, onEnvoyer }: {
   );
 }
 
-function FeuilleFiltres({ f, onClose }: { f: Filtres; onClose: () => void }) {
+function FeuilleFiltres({ f, onClose, premium }: { f: Filtres; onClose: () => void; premium: boolean }) {
   const router = useRouter();
   const t = useT();
   const [min, setMin] = useState(String(f.age_min));
   const [max, setMax] = useState(String(f.age_max));
   const [ville, setVille] = useState(f.ville);
   const [intention, setIntention] = useState(f.intention);
+  const [tmin, setTmin] = useState(f.tmin ? String(f.tmin) : '');
+  const [tmax, setTmax] = useState(f.tmax ? String(f.tmax) : '');
+  const [etu, setEtu] = useState(f.etu ?? '');
+  const [enf, setEnf] = useState(f.enf ?? '');
+  const [rel, setRel] = useState(f.rel ?? '');
+  const [vf, setVf] = useState(Boolean(f.vf));
 
   function appliquer(reset = false) {
     const q = new URLSearchParams();
@@ -265,6 +272,15 @@ function FeuilleFiltres({ f, onClose }: { f: Filtres; onClose: () => void }) {
       if (b < 99) q.set('max', String(b));
       if (ville.trim()) q.set('ville', ville.trim());
       if (intention) q.set('but', intention);
+      if (premium) {
+        const a = parseInt(tmin, 10), b = parseInt(tmax, 10);
+        if (a >= 120) q.set('tmin', String(a));
+        if (b >= 120 && b <= 230) q.set('tmax', String(b));
+        if (etu) q.set('etu', etu);
+        if (enf) q.set('enf', enf);
+        if (rel) q.set('rel', rel);
+        if (vf) q.set('vf', '1');
+      }
     }
     onClose();
     router.push(`/decouvrir${q.size ? `?${q}` : ''}`);
@@ -289,6 +305,20 @@ function FeuilleFiltres({ f, onClose }: { f: Filtres; onClose: () => void }) {
             <button className={`pastille${intention === '' ? ' on' : ''}`} onClick={() => setIntention('')}>{t('flt.any')}</button>
             {['relation_serieuse', 'mariage', 'amitie', 'decouverte'].map((k) => <button key={k} className={`pastille${intention === k ? ' on' : ''}`} onClick={() => setIntention(k)}>{t.v(k)}</button>)}
           </div>
+        </div>
+        <div className="flt-adv">
+          <div className="row"><b className="small" style={{ fontWeight: 800 }}>{t('flt.adv')}</b><span className="sp" />{!premium && <Link className="flt-lock" href="/abonnement">{t('flt.advUnlock')}</Link>}</div>
+          <fieldset disabled={!premium} className="flt-set">
+            <label className="small" style={{ fontWeight: 800 }}>{t('flt.height')}</label>
+            <div className="champ-num"><input inputMode="numeric" value={tmin} onChange={(e) => setTmin(e.target.value.replace(/\D/g, '').slice(0, 3))} placeholder="150" aria-label={t('flt.min')} /><span>{t('flt.to')}</span><input inputMode="numeric" value={tmax} onChange={(e) => setTmax(e.target.value.replace(/\D/g, '').slice(0, 3))} placeholder="200" aria-label={t('flt.max')} /></div>
+            <span className="small" style={{ fontWeight: 800 }}>{t('flt.studies')}</span>
+            <div className="pastilles"><button type="button" className={`pastille${etu === '' ? ' on' : ''}`} onClick={() => setEtu('')}>{t('flt.any')}</button>{ETUDES.map((k) => <button type="button" key={k} className={`pastille${etu === k ? ' on' : ''}`} onClick={() => setEtu(k)}>{t.v(k)}</button>)}</div>
+            <span className="small" style={{ fontWeight: 800 }}>{t('flt.kids')}</span>
+            <div className="pastilles"><button type="button" className={`pastille${enf === '' ? ' on' : ''}`} onClick={() => setEnf('')}>{t('flt.any')}</button>{ENFANTS.map(([k, l]) => <button type="button" key={k} className={`pastille${enf === k ? ' on' : ''}`} onClick={() => setEnf(k)}>{t.v(l)}</button>)}</div>
+            <span className="small" style={{ fontWeight: 800 }}>{t('flt.religion')}</span>
+            <div className="pastilles"><button type="button" className={`pastille${rel === '' ? ' on' : ''}`} onClick={() => setRel('')}>{t('flt.any')}</button>{RELIGIONS.filter((k) => k !== 'Je préfère ne pas dire').map((k) => <button type="button" key={k} className={`pastille${rel === k ? ' on' : ''}`} onClick={() => setRel(k)}>{t.v(k)}</button>)}</div>
+            <label className="check"><input type="checkbox" checked={vf} onChange={(e) => setVf(e.target.checked)} /><span>{t('flt.verified')}</span></label>
+          </fieldset>
         </div>
         <button className="cta" onClick={() => appliquer()}>{t('flt.apply')}</button>
         <button className="cta ghost" onClick={() => appliquer(true)}>{t('flt.reset')}</button>
