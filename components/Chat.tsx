@@ -9,7 +9,7 @@ import { useT } from '@/components/I18n';
 type Msg = { id: string; sender_id: string; body: string; created_at: string; read_at: string | null };
 
 const RAISONS = ['faux_profil', 'arnaque', 'harcelement', 'contenu_inapproprie', 'mineur', 'autre'];
-const ERREURS: Record<string, string> = { verification_requise: 'e.verif', trop_vite: 'e.fast', indisponible: 'e.gone', compte_inactif: 'e.inactive' };
+const ERREURS: Record<string, string> = { verification_requise: 'e.verif', trop_vite: 'e.fast', indisponible: 'e.gone', compte_inactif: 'e.inactive', contact_externe: 'e.contact', contenu_interdit: 'e.scam' };
 
 export function Chat({ matchId, moi, prenom, autreId, initial, photo, depuis }: { matchId: string; moi: string; prenom: string; autreId: string; initial: Msg[]; photo: string | null; depuis: string }) {
   const t = useT();
@@ -32,9 +32,24 @@ export function Chat({ matchId, moi, prenom, autreId, initial, photo, depuis }: 
 
   useEffect(() => {
     charger();
-    const t = setInterval(() => { if (document.visibilityState === 'visible') charger(); }, 4000);
-    return () => clearInterval(t);
-  }, [charger]);
+    // Temps réel : un nouveau message (ou un accusé de lecture) arrive aussitôt, sans attendre.
+    const canal = sb.channel(`chat-${matchId}`)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `match_id=eq.${matchId}` }, (p) => {
+        const m = p.new as Msg;
+        setMsgs((l) => (l.some((x) => x.id === m.id) ? l : [...l, m]));
+        if (m.sender_id !== moi) void sb.rpc('marquer_lus', { p_match: matchId });
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'messages', filter: `match_id=eq.${matchId}` }, (p) => {
+        const m = p.new as Msg;
+        setMsgs((l) => l.map((x) => (x.id === m.id ? { ...x, read_at: m.read_at } : x)));
+      })
+      .subscribe();
+    // Filet de sécurité : resynchronisation lente si la connexion temps réel tombe.
+    const filet = setInterval(() => { if (document.visibilityState === 'visible') charger(); }, 30000);
+    const retour = () => { if (document.visibilityState === 'visible') charger(); };
+    document.addEventListener('visibilitychange', retour);
+    return () => { clearInterval(filet); document.removeEventListener('visibilitychange', retour); void sb.removeChannel(canal); };
+  }, [charger, sb, matchId, moi]);
   useEffect(() => { bas.current?.scrollIntoView({ block: 'end' }); }, [msgs.length]);
 
   async function envoyer(e: React.FormEvent) {
@@ -46,7 +61,7 @@ export function Chat({ matchId, moi, prenom, autreId, initial, photo, depuis }: 
     setEnvoi(false);
     if (error) return setErr(erreur(error.message));
     setTexte('');
-    charger();
+    void charger();
   }
 
   async function bloquer() {

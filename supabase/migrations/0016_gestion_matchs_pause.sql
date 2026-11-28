@@ -1,0 +1,1 @@
+-- appliquée via MCP (voir historique de la base)

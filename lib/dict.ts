@@ -612,3 +612,6 @@ D['blk.empty'] = ['Tu n’as bloqué personne.', 'You haven’t blocked anyone.'
 D['blk.unblock'] = ['Débloquer', 'Unblock'];
 D['blk.done'] = ['Débloqué', 'Unblocked'];
 D['blk.note'] = ['Débloquer ne recrée pas de match : la personne pourra de nouveau apparaître dans Découvrir.', 'Unblocking doesn’t restore a match: the person may appear in Discover again.'];
+D['e.contact'] = ['Pour ta sécurité, les numéros, liens et réseaux sociaux ne sont autorisés qu’après quelques échanges.', 'For your safety, phone numbers, links and social handles are only allowed after a few messages.'];
+D['e.scam'] = ['Ce message n’est pas autorisé : les demandes d’argent ou de crypto sont interdites.', 'This message isn’t allowed: requests for money or crypto are prohibited.'];
+D['chat.live'] = ['En ligne', 'Live'];
