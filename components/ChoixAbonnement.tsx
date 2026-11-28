@@ -32,7 +32,7 @@ export function ChoixAbonnement({ initial, mensuels, remises, labelRenew }: { in
   }, [plan, mois, code]);
 
   const f = (n: number) => n.toLocaleString(loc);
-  const mensuelRemise = (m: Mois, p: Plan = plan) => Math.round((mensuels[p] * (100 - remises[m])) / 100);
+  const mensuelRemise = (m: Mois, p: Plan = plan) => Math.round((mensuels[p] * (100 - remises[m])) / 100 / 50) * 50;
 
   async function payer() {
     setEnvoi(true); setErr(undefined);
