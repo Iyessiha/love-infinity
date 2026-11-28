@@ -5,11 +5,13 @@ import { useState } from 'react';
 import { Chips } from '@/components/Chips';
 import { ENFANTS, ETUDES, FREQ, INTENTIONS, INTERETS, LANGUES, RELIGIONS } from '@/lib/profile';
 import { sauverEtape } from '@/lib/save';
+import { useT } from '@/components/I18n';
 
 type Init = { bio: string; profession: string; taille: string; etudes: string; langues: string[]; intention: string; enfants: string; tabac: string; alcool: string; religion: string; interets: string[] };
 
 export function EditerProfil({ init, photos }: { init: Init; photos: string[] }) {
   const router = useRouter();
+  const t = useT();
   const [f, setF] = useState<Init>({
     ...init,
     langues: init.langues.filter((x) => (LANGUES as readonly string[]).includes(x)),
@@ -37,38 +39,38 @@ export function EditerProfil({ init, photos }: { init: Init; photos: string[] })
   return (
     <form className="ed" onSubmit={enregistrer}>
       <section>
-        <span className="lib">Mes photos</span>
-        <div className="ed-photos">{photos.map((p, i) => <div key={p}>{/* eslint-disable-next-line @next/next/no-img-element */}<img src={p} alt={`Ma photo ${i + 1}`} /></div>)}</div>
-        <Link className="cta ghost" style={{ height: 46, fontSize: 15 }} href="/verification">Gérer mes photos et ma vérification</Link>
+        <span className="lib">{t('ed.photos')}</span>
+        <div className="ed-photos">{photos.map((p, i) => <div key={p}>{/* eslint-disable-next-line @next/next/no-img-element */}<img src={p} alt={t('ed.photoN', { n: i + 1 })} /></div>)}</div>
+        <Link className="cta ghost" style={{ height: 46, fontSize: 15 }} href="/verification">{t('ed.managePhotos')}</Link>
       </section>
 
       <section>
-        <label className="lib" htmlFor="bio">À propos de moi</label>
-        <textarea id="bio" className="zone" maxLength={300} value={f.bio} onChange={(e) => set('bio')(e.target.value)} placeholder="Quelques mots qui te ressemblent…" />
+        <label className="lib" htmlFor="bio">{t('ed.bio')}</label>
+        <textarea id="bio" className="zone" maxLength={300} value={f.bio} onChange={(e) => set('bio')(e.target.value)} placeholder={t('ed.bioPh')} />
         <span className="small" style={{ textAlign: 'right' }}>{f.bio.length} / 300</span>
         <div className="rang">
-          <div><label className="lib" htmlFor="metier">Profession</label><input id="metier" className="zone" value={f.profession} onChange={(e) => set('profession')(e.target.value)} /></div>
-          <div><label className="lib" htmlFor="taille">Taille (cm)</label><input id="taille" className="zone" type="number" inputMode="numeric" min={120} max={230} value={f.taille} onChange={(e) => set('taille')(e.target.value)} /></div>
+          <div><label className="lib" htmlFor="metier">{t('ed.job')}</label><input id="metier" className="zone" value={f.profession} onChange={(e) => set('profession')(e.target.value)} /></div>
+          <div><label className="lib" htmlFor="taille">{t('ed.height')}</label><input id="taille" className="zone" type="number" inputMode="numeric" min={120} max={230} value={f.taille} onChange={(e) => set('taille')(e.target.value)} /></div>
         </div>
-        <div><label className="lib" htmlFor="etudes">Études</label>
-          <select id="etudes" className="zone" value={f.etudes} onChange={(e) => set('etudes')(e.target.value)}><option value="">Non précisé</option>{ETUDES.map((x) => <option key={x} value={x}>{x}</option>)}</select></div>
-        <div><span className="lib">Langues parlées</span><div style={{ marginTop: 8 }}><Chips options={LANGUES} value={f.langues} onChange={set('langues')} /></div></div>
+        <div><label className="lib" htmlFor="etudes">{t('ed.studies')}</label>
+          <select id="etudes" className="zone" value={f.etudes} onChange={(e) => set('etudes')(e.target.value)}><option value="">{t('ed.unset')}</option>{ETUDES.map((x) => <option key={x} value={x}>{t.v(x)}</option>)}</select></div>
+        <div><span className="lib">{t('ed.langs')}</span><div style={{ marginTop: 8 }}><Chips options={LANGUES} value={f.langues} onChange={set('langues')} /></div></div>
       </section>
 
       <section>
-        <div><span className="lib">Je cherche</span><div style={{ marginTop: 8 }}><Chips options={INTENTIONS} value={f.intention || undefined} onChange={set('intention')} /></div></div>
-        <div><span className="lib">Enfants</span><div style={{ marginTop: 8 }}><Chips options={ENFANTS} value={f.enfants || undefined} onChange={set('enfants')} /></div></div>
+        <div><span className="lib">{t('ed.looking')}</span><div style={{ marginTop: 8 }}><Chips options={INTENTIONS} value={f.intention || undefined} onChange={set('intention')} /></div></div>
+        <div><span className="lib">{t('ed.kids')}</span><div style={{ marginTop: 8 }}><Chips options={ENFANTS} value={f.enfants || undefined} onChange={set('enfants')} /></div></div>
         <div className="rang">
-          <div><label className="lib" htmlFor="tabac">Tabac</label><select id="tabac" className="zone" value={f.tabac} onChange={(e) => set('tabac')(e.target.value)}>{FREQ.map((x) => <option key={x}>{x}</option>)}</select></div>
-          <div><label className="lib" htmlFor="alcool">Alcool</label><select id="alcool" className="zone" value={f.alcool} onChange={(e) => set('alcool')(e.target.value)}>{FREQ.map((x) => <option key={x}>{x}</option>)}</select></div>
+          <div><label className="lib" htmlFor="tabac">{t('ed.tobacco')}</label><select id="tabac" className="zone" value={f.tabac} onChange={(e) => set('tabac')(e.target.value)}>{FREQ.map((x) => <option key={x} value={x}>{t.v(x)}</option>)}</select></div>
+          <div><label className="lib" htmlFor="alcool">{t('ed.alcohol')}</label><select id="alcool" className="zone" value={f.alcool} onChange={(e) => set('alcool')(e.target.value)}>{FREQ.map((x) => <option key={x} value={x}>{t.v(x)}</option>)}</select></div>
         </div>
-        <div><span className="lib">Religion <span className="small">· facultatif</span></span><div style={{ marginTop: 8 }}><Chips options={RELIGIONS} value={f.religion} onChange={set('religion')} /></div></div>
-        <div><span className="lib">Centres d’intérêt (5 maximum)</span><div style={{ marginTop: 8 }}><Chips options={INTERETS} value={f.interets} onChange={set('interets')} max={5} /></div></div>
+        <div><span className="lib">{t('ed.religion')} <span className="small">· {t('c.optional')}</span></span><div style={{ marginTop: 8 }}><Chips options={RELIGIONS} value={f.religion} onChange={set('religion')} /></div></div>
+        <div><span className="lib">{t('ed.interests')}</span><div style={{ marginTop: 8 }}><Chips options={INTERETS} value={f.interets} onChange={set('interets')} max={5} /></div></div>
       </section>
 
       {erreur && <div className="erreur" role="alert">{erreur}</div>}
-      {ok && <div className="ok-msg" role="status">Profil enregistré.</div>}
-      <div className="ed-barre"><button className="cta" type="submit" disabled={!pret || envoi}>{envoi ? 'Enregistrement…' : 'Enregistrer'}</button></div>
+      {ok && <div className="ok-msg" role="status">{t('ed.saved')}</div>}
+      <div className="ed-barre"><button className="cta" type="submit" disabled={!pret || envoi}>{envoi ? t('c.saving') : t('c.save')}</button></div>
     </form>
   );
 }

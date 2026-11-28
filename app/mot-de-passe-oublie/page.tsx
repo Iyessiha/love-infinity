@@ -2,8 +2,10 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { supabaseBrowser } from '@/lib/supabase/client';
+import { useT } from '@/components/I18n';
 
 export default function MotDePasseOublie() {
+  const t = useT();
   const [email, setEmail] = useState('');
   const [envoye, setEnvoye] = useState(false);
   const [envoi, setEnvoi] = useState(false);
@@ -21,18 +23,18 @@ export default function MotDePasseOublie() {
 
   return (
     <main className="ph">
-      <Link className="back" href="/connexion">‹ Retour</Link>
-      <h1>Mot de passe oublié</h1>
+      <Link className="back" href="/connexion">‹ {t('c.back')}</Link>
+      <h1>{t('fg.title')}</h1>
       {envoye ? (
         <div className="col" style={{ gap: 14 }}>
-          <p className="sub">Si un compte existe avec cette adresse, un lien de réinitialisation vient d’être envoyé. Pense à regarder tes courriers indésirables. Le lien est valable peu de temps.</p>
-          <Link className="btn" href="/connexion">Retour à la connexion</Link>
+          <p className="sub">{t('fg.sent')}</p>
+          <Link className="btn" href="/connexion">{t('fg.backLogin')}</Link>
         </div>
       ) : (
         <form onSubmit={envoyer} className="col" style={{ gap: 14 }}>
-          <p className="sub">Entre l’email de ton compte. Nous t’envoyons un lien pour choisir un nouveau mot de passe.</p>
-          <div className="field"><label className="lbl" htmlFor="email">Email</label><input id="email" className="in" type="email" autoComplete="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
-          <button className="btn" type="submit" disabled={!email || envoi}>{envoi ? 'Envoi…' : 'Envoyer le lien'}</button>
+          <p className="sub">{t('fg.intro')}</p>
+          <div className="field"><label className="lbl" htmlFor="email">{t('auth.email')}</label><input id="email" className="in" type="email" autoComplete="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
+          <button className="btn" type="submit" disabled={!email || envoi}>{envoi ? t('fg.sending') : t('fg.send')}</button>
         </form>
       )}
     </main>

@@ -1,7 +1,9 @@
 'use client';
 import { useState } from 'react';
+import { useT } from '@/components/I18n';
 
 export function Acheter({ plan, libelle, gold }: { plan: 'essentiel' | 'premium'; libelle: string; gold?: boolean }) {
+  const t = useT();
   const [envoi, setEnvoi] = useState(false);
   const [err, setErr] = useState<string>();
   async function payer() {
@@ -11,11 +13,11 @@ export function Acheter({ plan, libelle, gold }: { plan: 'essentiel' | 'premium'
       const j = await r.json();
       if (!j.ok) { setErr(j.message); setEnvoi(false); return; }
       window.location.href = j.url;
-    } catch { setErr('Connexion impossible. Réessaie.'); setEnvoi(false); }
+    } catch { setErr(t('c.netErr')); setEnvoi(false); }
   }
   return (
     <>
-      <button className={`btn${gold ? ' gold' : ''}`} onClick={payer} disabled={envoi}>{envoi ? 'Redirection…' : libelle}</button>
+      <button className={`btn${gold ? ' gold' : ''}`} onClick={payer} disabled={envoi}>{envoi ? t('ab.redirect') : libelle}</button>
       {err && <div className="alert" role="alert">{err}</div>}
     </>
   );

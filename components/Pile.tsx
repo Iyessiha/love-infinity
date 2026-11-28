@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FicheProfil } from '@/components/FicheProfil';
 import { HeartIcon, InfoIcon, MsgIcon, PinIcon, ShieldIcon, SlidersIcon, XIcon, SendIcon } from '@/components/Icons';
-import { INTENTIONS, NIVEAUX } from '@/lib/photos';
+import { useT } from '@/components/I18n';
 import '@/app/membre.css';
 
 export type Carte = {
@@ -21,6 +21,7 @@ export function Pile({ cartes, restants, moi, filtres, peutEcrire }: {
   cartes: Carte[]; restants: number | null; moi: { prenom: string; photo: string | null }; filtres: Filtres; peutEcrire: boolean;
 }) {
   const router = useRouter();
+  const t = useT();
   const [i, setI] = useState(0);
   const [photo, setPhoto] = useState(0);
   const [reste, setReste] = useState(restants);
@@ -53,12 +54,12 @@ export function Pile({ cartes, restants, moi, filtres, peutEcrire }: {
       setPhoto(0);
       return true;
     } catch {
-      setErreur({ message: 'Connexion impossible. Réessaie.' });
+      setErreur({ message: t('c.netErr') });
       return false;
     } finally {
       setEnvoi(false);
     }
-  }, [c, envoi, router]);
+  }, [c, envoi, router, t]);
 
   /** Fait sortir la carte puis enregistre le choix ; si la base refuse, la carte revient. */
   const envoler = useCallback(async (action: Action) => {
@@ -121,9 +122,9 @@ export function Pile({ cartes, restants, moi, filtres, peutEcrire }: {
 
   const haut = (
     <header className="mb-top">
-      <span className="mb-marque">Découvrir</span>
+      <span className="mb-marque">{t('pile.title')}</span>
       <span className="sp" />
-      <button className="mb-ico" onClick={() => setFiltreOuvert(true)} aria-label="Filtres de recherche">
+      <button className="mb-ico" onClick={() => setFiltreOuvert(true)} aria-label={t('pile.filters')}>
         <SlidersIcon />{nbFiltres > 0 && <span className="pt">{nbFiltres}</span>}
       </button>
     </header>
@@ -142,11 +143,11 @@ export function Pile({ cartes, restants, moi, filtres, peutEcrire }: {
         {haut}
         <div className="vide" style={{ flex: 1, justifyContent: 'center' }}>
           <div className="rond-deco"><HeartIcon size={38} /></div>
-          <h2>Tu as tout vu pour l’instant</h2>
-          <p>{nbFiltres ? 'Aucun autre profil ne correspond à tes filtres. Élargis ta recherche pour en voir plus.' : 'De nouveaux membres arrivent chaque jour. Reviens bientôt, ou actualise.'}</p>
+          <h2>{t('pile.seenAll')}</h2>
+          <p>{nbFiltres ? t('pile.seenFilters') : t('pile.seenNone')}</p>
           <div className="col" style={{ width: '100%', maxWidth: 300 }}>
-            {nbFiltres > 0 && <button className="cta" onClick={() => setFiltreOuvert(true)}>Modifier les filtres</button>}
-            <button className={`cta${nbFiltres ? ' ghost' : ''}`} onClick={() => router.refresh()}>Actualiser</button>
+            {nbFiltres > 0 && <button className="cta" onClick={() => setFiltreOuvert(true)}>{t('pile.editFilters')}</button>}
+            <button className={`cta${nbFiltres ? ' ghost' : ''}`} onClick={() => router.refresh()}>{t('pile.refresh')}</button>
           </div>
         </div>
         {overlays}
@@ -169,37 +170,37 @@ export function Pile({ cartes, restants, moi, filtres, peutEcrire }: {
           style={style}
           onPointerDown={bas} onPointerMove={deplace} onPointerUp={lache} onPointerCancel={lache}
           onClick={toucher}
-          role="group" aria-label={`Profil de ${c.prenom}, ${c.age} ans`}
+          role="group" aria-label={t('pile.profileOf', { name: c.prenom, age: c.age })}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          {c.photos[photo] && <img className="dk-img" src={c.photos[photo]} alt={`Photo ${photo + 1} de ${c.prenom}`} draggable={false} />}
+          {c.photos[photo] && <img className="dk-img" src={c.photos[photo]} alt={t('pile.photoN', { n: photo + 1, name: c.prenom })} draggable={false} />}
           {c.photos.length > 1 && <div className="dk-bars" aria-hidden="true">{c.photos.map((_, n) => <i key={n} className={n === photo ? 'on' : ''} />)}</div>}
-          {c.verification_level > 0 && <span className="dk-verif"><ShieldIcon size={14} />{NIVEAUX[c.verification_level]}</span>}
-          <span className="dk-stamp l" style={{ opacity: dx > 0 ? p : 0 }}>J’AIME</span>
-          <span className="dk-stamp p" style={{ opacity: dx < 0 ? p : 0 }}>PASSER</span>
+          {c.verification_level > 0 && <span className="dk-verif"><ShieldIcon size={14} />{t(`lvl.${c.verification_level}`)}</span>}
+          <span className="dk-stamp l" style={{ opacity: dx > 0 ? p : 0 }}>{t('pile.like')}</span>
+          <span className="dk-stamp p" style={{ opacity: dx < 0 ? p : 0 }}>{t('pile.pass')}</span>
           <div className="dk-info">
             <div className="dk-nom">{c.prenom}<span>{c.age}</span></div>
             <div className="dk-ligne"><PinIcon size={15} />{c.ville}{c.profession ? ` · ${c.profession}` : ''}</div>
             <div className="dk-chips">
-              {c.intention && <span>{INTENTIONS[c.intention]}</span>}
-              {c.interets.slice(0, 2).map((x) => <span key={x}>{x}</span>)}
+              {c.intention && <span>{t.v(c.intention)}</span>}
+              {c.interets.slice(0, 2).map((x) => <span key={x}>{t.v(x)}</span>)}
             </div>
           </div>
-          <button className="dk-more" onClick={(e) => { e.stopPropagation(); setFiche(true); }} aria-label={`Voir tout le profil de ${c.prenom}`}><InfoIcon size={22} /></button>
+          <button className="dk-more" onClick={(e) => { e.stopPropagation(); setFiche(true); }} aria-label={t('pile.seeAll', { name: c.prenom })}><InfoIcon size={22} /></button>
         </div>
       </div>
 
       {erreur && (
         <div className="erreur" role="alert">
-          {erreur.message}{erreur.abo && <> <Link href="/abonnement" style={{ color: '#4A0E2E', fontWeight: 800 }}>Voir les offres</Link></>}
+          {erreur.message}{erreur.abo && <> <Link href="/abonnement" style={{ color: '#4A0E2E', fontWeight: 800 }}>{t('pile.offers')}</Link></>}
         </div>
       )}
       <div className="dk-actions">
-        <button className="rond pass" disabled={envoi} onClick={() => envoler('pass')} aria-label={`Passer ${c.prenom}`}><XIcon size={28} /></button>
-        <button className="rond msg" disabled={envoi} onClick={() => setEcrire(true)} aria-label={`Écrire à ${c.prenom}`}><MsgIcon size={24} /></button>
-        <button className="rond like" disabled={envoi} onClick={() => envoler('like')} aria-label={`Aimer ${c.prenom}`}><HeartIcon size={34} /></button>
+        <button className="rond pass" disabled={envoi} onClick={() => envoler('pass')} aria-label={t('pile.passAria', { name: c.prenom })}><XIcon size={28} /></button>
+        <button className="rond msg" disabled={envoi} onClick={() => setEcrire(true)} aria-label={t('pile.writeAria', { name: c.prenom })}><MsgIcon size={24} /></button>
+        <button className="rond like" disabled={envoi} onClick={() => envoler('like')} aria-label={t('pile.likeAria', { name: c.prenom })}><HeartIcon size={34} /></button>
       </div>
-      <p className="dk-reste" role="status">{reste === null ? 'Likes illimités' : <><b>{reste}</b> like{reste > 1 ? 's' : ''} restant{reste > 1 ? 's' : ''} aujourd’hui</>}</p>
+      <p className="dk-reste" role="status">{reste === null ? t('pile.unlimited') : <><b>{reste}</b> {t.n('pile.left', reste)}</>}</p>
 
       {fiche && <FicheProfil c={c} occupe={envoi} onClose={() => setFiche(false)} onPass={() => envoler('pass')} onLike={() => envoler('like')} onMessage={() => { setFiche(false); setEcrire(true); }} onSignale={() => { setFiche(false); setI((n) => n + 1); }} />}
       {ecrire && <FeuilleMessage c={c} peutEcrire={peutEcrire} envoi={envoi} erreur={erreur?.message} onClose={() => setEcrire(false)} onEnvoyer={envoyerMessage} />}
@@ -211,30 +212,31 @@ export function Pile({ cartes, restants, moi, filtres, peutEcrire }: {
 function FeuilleMessage({ c, peutEcrire, envoi, erreur, onClose, onEnvoyer }: {
   c: Carte; peutEcrire: boolean; envoi: boolean; erreur?: string; onClose: () => void; onEnvoyer: (t: string) => Promise<boolean>;
 }) {
+  const t = useT();
   const [texte, setTexte] = useState('');
   const idees = [
-    `Salut ${c.prenom} ! Ton profil m’a fait sourire. Comment se passe ta semaine ?`,
-    c.interets[0] ? `Ton intérêt pour « ${c.interets[0].toLowerCase()} » m’a donné envie de te parler. C’est quoi ton meilleur souvenir lié à ça ?` : `Bonjour ${c.prenom}, qu’est-ce qui te passionne en ce moment ?`,
-    c.ville ? `Tu es à ${c.ville.split(',')[0]} ? Quel est ton endroit préféré là-bas ?` : 'Quel est ton endroit préféré dans ta ville ?',
+    t('msg.i1', { name: c.prenom }),
+    c.interets[0] ? t('msg.i2', { x: t.v(c.interets[0]).toLowerCase() }) : t('msg.i2b', { name: c.prenom }),
+    c.ville ? t('msg.i3', { city: c.ville.split(',')[0] }) : t('msg.i3b'),
   ];
   return (
     <div className="voile" onClick={onClose}>
-      <div className="feuille" role="dialog" aria-modal="true" aria-label={`Message pour ${c.prenom}`} onClick={(e) => e.stopPropagation()}>
+      <div className="feuille" role="dialog" aria-modal="true" aria-label={t('msg.dialog', { name: c.prenom })} onClick={(e) => e.stopPropagation()}>
         <div className="poignee" />
-        <h2>Écrire à {c.prenom}</h2>
-        <p className="small" style={{ color: '#5E4A53', fontSize: 14 }}>Ton message accompagne ton like. Si {c.prenom} t’aime aussi, c’est le premier message de votre conversation.</p>
+        <h2>{t('msg.title', { name: c.prenom })}</h2>
+        <p className="small" style={{ color: '#5E4A53', fontSize: 14 }}>{t('msg.explain', { name: c.prenom })}</p>
         {!peutEcrire ? (
           <>
-            <div className="erreur">Pour écrire un message, vérifie d’abord ton selfie vidéo. C’est ce qui rassure tout le monde ici.</div>
-            <Link className="cta" href="/verification">Vérifier mon profil</Link>
+            <div className="erreur">{t('msg.needVerif')}</div>
+            <Link className="cta" href="/verification">{t('msg.verifyCta')}</Link>
           </>
         ) : (
           <>
-            <textarea className="zone" value={texte} maxLength={280} onChange={(e) => setTexte(e.target.value)} placeholder={`Dis quelque chose à ${c.prenom}…`} aria-label="Ton message" autoFocus />
+            <textarea className="zone" value={texte} maxLength={280} onChange={(e) => setTexte(e.target.value)} placeholder={t('msg.ph', { name: c.prenom })} aria-label={t('msg.yours')} autoFocus />
             <div className="small" style={{ textAlign: 'right', marginTop: -8 }}>{texte.length}/280</div>
-            <div className="pastilles" aria-label="Idées de premier message">{idees.map((t) => <button key={t} className="pastille" onClick={() => setTexte(t)}>{t}</button>)}</div>
+            <div className="pastilles" aria-label={t('msg.ideas')}>{idees.map((t) => <button key={t} className="pastille" onClick={() => setTexte(t)}>{t}</button>)}</div>
             {erreur && <div className="erreur" role="alert">{erreur}</div>}
-            <button className="cta or" disabled={envoi || !texte.trim()} onClick={() => onEnvoyer(texte.trim())}><SendIcon size={18} /> {envoi ? 'Envoi…' : 'Envoyer avec mon like'}</button>
+            <button className="cta or" disabled={envoi || !texte.trim()} onClick={() => onEnvoyer(texte.trim())}><SendIcon size={18} /> {envoi ? t('msg.sending') : t('msg.send')}</button>
           </>
         )}
       </div>
@@ -244,6 +246,7 @@ function FeuilleMessage({ c, peutEcrire, envoi, erreur, onClose, onEnvoyer }: {
 
 function FeuilleFiltres({ f, onClose }: { f: Filtres; onClose: () => void }) {
   const router = useRouter();
+  const t = useT();
   const [min, setMin] = useState(String(f.age_min));
   const [max, setMax] = useState(String(f.age_max));
   const [ville, setVille] = useState(f.ville);
@@ -265,43 +268,44 @@ function FeuilleFiltres({ f, onClose }: { f: Filtres; onClose: () => void }) {
 
   return (
     <div className="voile" onClick={onClose}>
-      <div className="feuille" role="dialog" aria-modal="true" aria-label="Filtres" onClick={(e) => e.stopPropagation()}>
+      <div className="feuille" role="dialog" aria-modal="true" aria-label={t('flt.title')} onClick={(e) => e.stopPropagation()}>
         <div className="poignee" />
-        <h2>Filtres</h2>
+        <h2>{t('flt.title')}</h2>
         <div>
-          <label className="small" style={{ fontWeight: 800, display: 'block', marginBottom: 6 }} htmlFor="f-min">Âge</label>
-          <div className="champ-num"><input id="f-min" inputMode="numeric" value={min} onChange={(e) => setMin(e.target.value.replace(/\D/g, '').slice(0, 2))} aria-label="Âge minimum" /><span>à</span><input inputMode="numeric" value={max} onChange={(e) => setMax(e.target.value.replace(/\D/g, '').slice(0, 2))} aria-label="Âge maximum" /></div>
+          <label className="small" style={{ fontWeight: 800, display: 'block', marginBottom: 6 }} htmlFor="f-min">{t('flt.age')}</label>
+          <div className="champ-num"><input id="f-min" inputMode="numeric" value={min} onChange={(e) => setMin(e.target.value.replace(/\D/g, '').slice(0, 2))} aria-label={t('flt.min')} /><span>{t('flt.to')}</span><input inputMode="numeric" value={max} onChange={(e) => setMax(e.target.value.replace(/\D/g, '').slice(0, 2))} aria-label={t('flt.max')} /></div>
         </div>
         <div>
-          <label className="small" style={{ fontWeight: 800, display: 'block', marginBottom: 6 }} htmlFor="f-ville">Ville</label>
+          <label className="small" style={{ fontWeight: 800, display: 'block', marginBottom: 6 }} htmlFor="f-ville">{t('flt.city')}</label>
           <div className="champ-num"><input id="f-ville" value={ville} onChange={(e) => setVille(e.target.value)} placeholder="Abidjan, Bouaké…" /></div>
         </div>
         <div>
-          <span className="small" style={{ fontWeight: 800, display: 'block', marginBottom: 6 }}>Ce qu’il ou elle cherche</span>
+          <span className="small" style={{ fontWeight: 800, display: 'block', marginBottom: 6 }}>{t('flt.looking')}</span>
           <div className="pastilles">
-            <button className={`pastille${intention === '' ? ' on' : ''}`} onClick={() => setIntention('')}>Peu importe</button>
-            {Object.entries(INTENTIONS).map(([k, v]) => <button key={k} className={`pastille${intention === k ? ' on' : ''}`} onClick={() => setIntention(k)}>{v}</button>)}
+            <button className={`pastille${intention === '' ? ' on' : ''}`} onClick={() => setIntention('')}>{t('flt.any')}</button>
+            {['relation_serieuse', 'mariage', 'amitie', 'decouverte'].map((k) => <button key={k} className={`pastille${intention === k ? ' on' : ''}`} onClick={() => setIntention(k)}>{t.v(k)}</button>)}
           </div>
         </div>
-        <button className="cta" onClick={() => appliquer()}>Voir les profils</button>
-        <button className="cta ghost" onClick={() => appliquer(true)}>Réinitialiser</button>
+        <button className="cta" onClick={() => appliquer()}>{t('flt.apply')}</button>
+        <button className="cta ghost" onClick={() => appliquer(true)}>{t('flt.reset')}</button>
       </div>
     </div>
   );
 }
 
 function EcranMatch({ c, moi, matchId, onClose }: { c: Carte; moi: { prenom: string; photo: string | null }; matchId: string | null; onClose: () => void }) {
+  const t = useT();
   return (
-    <div className="match" role="dialog" aria-modal="true" aria-label="Nouveau match">
+    <div className="match" role="dialog" aria-modal="true" aria-label={t('match.aria')}>
       <div className="coeurs" aria-hidden="true">{Array.from({ length: 10 }, (_, n) => <i key={n} style={{ left: `${6 + n * 9.5}%`, animationDelay: `${(n % 5) * 0.5}s` }}><HeartIcon size={18 + (n % 3) * 8} /></i>)}</div>
       <div className="match-ph">
         <div>{/* eslint-disable-next-line @next/next/no-img-element */ moi.photo && <img src={moi.photo} alt={moi.prenom} />}</div>
         <div>{/* eslint-disable-next-line @next/next/no-img-element */ c.photos[0] && <img src={c.photos[0]} alt={c.prenom} />}</div>
       </div>
-      <h1>C’est un match !</h1>
-      <p style={{ maxWidth: 300 }}>Toi et {c.prenom} vous êtes plu. Lancez la conversation maintenant.</p>
-      {matchId ? <Link className="cta or" href={`/matchs/${matchId}`}>Envoyer un message</Link> : <Link className="cta or" href="/matchs">Voir mes messages</Link>}
-      <button className="cta ghost" style={{ color: '#FBF6EE', borderColor: 'rgba(251,246,238,.6)' }} onClick={onClose}>Continuer à découvrir</button>
+      <h1>{t('match.title')}</h1>
+      <p style={{ maxWidth: 300 }}>{t('match.text', { name: c.prenom })}</p>
+      {matchId ? <Link className="cta or" href={`/matchs/${matchId}`}>{t('match.send')}</Link> : <Link className="cta or" href="/matchs">{t('match.see')}</Link>}
+      <button className="cta ghost" style={{ color: '#FBF6EE', borderColor: 'rgba(251,246,238,.6)' }} onClick={onClose}>{t('match.keep')}</button>
     </div>
   );
 }

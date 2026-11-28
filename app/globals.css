@@ -114,3 +114,10 @@ textarea.in{height:112px;padding:12px 14px;line-height:1.4;resize:none;align-ite
 .bulle.moi{align-self:flex-end;background:#4A0E2E;color:#FBF6EE;border-bottom-right-radius:6px}
 .bulle.autre{align-self:flex-start;background:#fff;border:1px solid #E6D6CC;border-bottom-left-radius:6px}
 .bulle .heure{display:block;font-size:11px;opacity:.75;margin-top:2px}
+
+/* Sélecteur de langue */
+.langsw{display:inline-flex;align-self:center;background:#F3ECE6;border-radius:24px;padding:4px;gap:2px}
+.langsw button{border:0;background:none;font:800 14px Nunito,system-ui,sans-serif;color:#6F5A63;height:36px;padding:0 16px;border-radius:20px;cursor:pointer}
+.langsw button.on{background:#4A0E2E;color:#FBF6EE}
+.langsw button:focus-visible{outline:3px solid #D4A24C;outline-offset:2px}
+

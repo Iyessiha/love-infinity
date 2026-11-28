@@ -5,9 +5,12 @@ import { useCallback, useRef, useState } from 'react';
 import { Turnstile } from '@/components/Turnstile';
 import { passwordRules, passwordStrength } from '@/lib/password';
 import { Check, Chevron } from '@/components/Icons';
+import { LangSwitch, useT } from '@/components/I18n';
+import { href } from '@/lib/i18n';
 
 export default function Inscription() {
   const router = useRouter();
+  const t = useT();
   const startedAt = useRef(Date.now());
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -41,7 +44,7 @@ export default function Inscription() {
       if (j.ok) router.push(`/confirmer-email?e=${encodeURIComponent(email)}`);
       else setErreur(j.message);
     } catch {
-      setErreur('Connexion impossible. Vérifie ton réseau et réessaie.');
+      setErreur(t('su.netErr'));
     } finally {
       setEnvoi(false);
     }
@@ -49,42 +52,43 @@ export default function Inscription() {
 
   return (
     <main className="ph">
-      <Link className="back" href="/"><Chevron /> Retour</Link>
+      <Link className="back" href="/"><Chevron /> {t('c.back')}</Link>
       <div className="bar"><i className="on"></i><i></i><i></i><i></i><i></i></div>
-      <h1>Crée ton compte</h1>
+      <h1>{t('su.title')}</h1>
       <form onSubmit={envoyer} className="col" style={{ gap: 14 }} noValidate>
         <div className="field">
-          <label className="lbl" htmlFor="email">Email</label>
+          <label className="lbl" htmlFor="email">{t('auth.email')}</label>
           <input id="email" className="in" type="email" autoComplete="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="prenom@exemple.com" />
-          <span className="hint">Nous t'envoyons un lien de confirmation.</span>
+          <span className="hint">{t('su.emailHint')}</span>
         </div>
         <div className="field">
-          <label className="lbl" htmlFor="pw">Mot de passe</label>
+          <label className="lbl" htmlFor="pw">{t('auth.password')}</label>
           <input id="pw" className="in" type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
           <div className="meter" aria-hidden="true">{[1, 2, 3, 4].map((i) => <i key={i} className={force >= i ? 'on' : ''} />)}</div>
           <div className="rules">
-            <span>{regles.longueur ? <b><Check size={14} /></b> : '•'} 8 caractères minimum</span>
-            <span>{regles.lettre ? <b><Check size={14} /></b> : '•'} Une lettre</span>
-            <span>{regles.chiffre ? <b><Check size={14} /></b> : '•'} Un chiffre</span>
+            <span>{regles.longueur ? <b><Check size={14} /></b> : '•'} {t('su.r8')}</span>
+            <span>{regles.lettre ? <b><Check size={14} /></b> : '•'} {t('su.rLetter')}</span>
+            <span>{regles.chiffre ? <b><Check size={14} /></b> : '•'} {t('su.rDigit')}</span>
           </div>
         </div>
         <div className="field">
-          <label className="lbl" htmlFor="pw2">Confirme le mot de passe</label>
+          <label className="lbl" htmlFor="pw2">{t('su.confirm')}</label>
           <input id="pw2" className={`in${confirm ? (identiques ? ' ok' : ' err') : ''}`} type="password" autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} />
-          {confirm && !identiques && <span className="hint err">Les mots de passe ne sont pas identiques.</span>}
+          {confirm && !identiques && <span className="hint err">{t('su.mismatch')}</span>}
         </div>
         {/* Piège à robots : invisible pour les humains */}
         <div className="hp" aria-hidden="true">
-          <label>Site web<input tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} /></label>
+          <label>{t('su.website')}<input tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} /></label>
         </div>
         <label className="check">
           <input type="checkbox" checked={cgu} onChange={(e) => setCgu(e.target.checked)} />
-          <span>J'ai 18 ans ou plus et j'accepte les <Link href="/conditions" target="_blank" className="link" style={{ fontSize: 14 }}>conditions d'utilisation</Link> et la <Link href="/confidentialite" target="_blank" className="link" style={{ fontSize: 14 }}>politique de confidentialité</Link>.</span>
+          <span>{t('su.cgu1')}<Link href={href(t.lang, '/conditions')} target="_blank" className="link" style={{ fontSize: 14 }}>{t('su.cgu2')}</Link>{t('su.cgu3')}<Link href={href(t.lang, '/confidentialite')} target="_blank" className="link" style={{ fontSize: 14 }}>{t('su.cgu4')}</Link>.</span>
         </label>
         <Turnstile onToken={onToken} />
         {erreur && <div className="alert" role="alert">{erreur}</div>}
-        <button className="btn" type="submit" disabled={!pret || envoi}>{envoi ? 'Création…' : 'Créer mon compte'}</button>
+        <button className="btn" type="submit" disabled={!pret || envoi}>{envoi ? t('su.creating') : t('su.submit')}</button>
       </form>
+      <LangSwitch />
     </main>
   );
 }

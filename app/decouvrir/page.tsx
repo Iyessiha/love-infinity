@@ -5,6 +5,7 @@ import { ApercuProfils, type Apercu } from '@/components/Apercu';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { MemberNav } from '@/components/MemberNav';
 import { urlsPhotos } from '@/lib/photos';
+import { getT } from '@/lib/lang';
 import '@/app/membre.css';
 
 export const dynamic = 'force-dynamic';
@@ -14,6 +15,7 @@ type SP = { min?: string; max?: string; ville?: string; but?: string };
 export default async function Decouvrir({ searchParams }: { searchParams: Promise<SP> }) {
   const { supabase, user } = await requireComplet();
   const sp = await searchParams;
+  const t = await getT();
   const { data: moi } = await supabase.from('profiles').select('account_status').eq('id', user.id).single();
   if (moi?.account_status !== 'active') {
     // En attente de validation : aperçu en lecture seule, seulement si les photos ont été envoyées.
@@ -27,7 +29,7 @@ export default async function Decouvrir({ searchParams }: { searchParams: Promis
     const profils: Apercu[] = lignes.map((p) => ({ ...p, photo: p.photo_path?.startsWith('https://') ? p.photo_path : signees.find((s) => s.path === p.photo_path)?.signedUrl ?? null }));
     return (
       <main className="ph" style={{ gap: 12 }}>
-        <div className="row"><h1>Aperçu</h1></div>
+        <div className="row"><h1>{t('ap.title')}</h1></div>
         <ApercuProfils profils={profils} />
       </main>
     );

@@ -2,6 +2,8 @@ import { notFound } from 'next/navigation';
 import { Chat } from '@/components/Chat';
 import { requireComplet } from '@/lib/auth';
 import { urlsPhotos } from '@/lib/photos';
+import { getT } from '@/lib/lang';
+import { I18nProvider } from '@/components/I18n';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,6 +11,7 @@ export default async function Conversation({ params }: { params: Promise<{ id: s
   const { id } = await params;
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
   const { supabase, user } = await requireComplet();
+  const t = await getT();
 
   const { data: matchs } = await supabase.rpc('mes_matchs');
   const m = (matchs ?? []).find((x: { match_id: string }) => x.match_id === id) as { autre_id: string; prenom: string; photo_path: string | null; cree_le: string } | undefined;
@@ -20,8 +23,10 @@ export default async function Conversation({ params }: { params: Promise<{ id: s
   ]);
 
   return (
+    <I18nProvider lang={t.lang}>
     <main className="mb chatpage">
-      <Chat matchId={id} moi={user.id} prenom={m.prenom} autreId={m.autre_id} initial={msgs ?? []} photo={m.photo_path ? urls.get(m.photo_path) ?? null : null} depuis={new Date(m.cree_le).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} />
+      <Chat matchId={id} moi={user.id} prenom={m.prenom} autreId={m.autre_id} initial={msgs ?? []} photo={m.photo_path ? urls.get(m.photo_path) ?? null : null} depuis={t.date(m.cree_le)} />
     </main>
+    </I18nProvider>
   );
 }

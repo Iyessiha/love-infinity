@@ -4,12 +4,14 @@ import { MemberNav } from '@/components/MemberNav';
 import { ChevronLeft } from '@/components/Icons';
 import { requireComplet } from '@/lib/auth';
 import { urlsPhotos } from '@/lib/photos';
+import { getT } from '@/lib/lang';
 import '@/app/membre.css';
 
 export const dynamic = 'force-dynamic';
 
 export default async function Modifier() {
   const { supabase, user } = await requireComplet();
+  const t = await getT();
   const [{ data: p }, { data: photos }] = await Promise.all([
     supabase.from('profiles').select('bio,profession,taille_cm,etudes,langues,intention,enfants,tabac,alcool,religion,interets').eq('id', user.id).single(),
     supabase.from('profile_photos').select('path').eq('user_id', user.id).order('position'),
@@ -20,7 +22,7 @@ export default async function Modifier() {
   return (
     <>
       <main className="mb">
-        <header className="mb-top"><Link className="mb-ico" href="/moi" aria-label="Retour"><ChevronLeft /></Link><h1 style={{ fontSize: 24 }}>Modifier mon profil</h1></header>
+        <header className="mb-top"><Link className="mb-ico" href="/moi" aria-label={t('c.back')}><ChevronLeft /></Link><h1 style={{ fontSize: 24 }}>{t('ed.title')}</h1></header>
         <EditerProfil init={{
           bio: p?.bio ?? '', profession: p?.profession ?? '', taille: p?.taille_cm ? String(p.taille_cm) : '', etudes: p?.etudes ?? '',
           langues: p?.langues ?? [], intention: p?.intention ?? '', enfants: p?.enfants ?? '', tabac: p?.tabac ?? 'Non', alcool: p?.alcool ?? 'Non',
