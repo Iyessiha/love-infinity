@@ -8,7 +8,7 @@ export default async function Matchs() {
   const { supabase } = await requireComplet();
   const { data } = await supabase.rpc('mes_matchs');
   const liste = (data ?? []) as { match_id: string; autre_id: string; prenom: string; photo_path: string | null; cree_le: string; dernier_message: string | null; dernier_le: string | null; non_lus: number }[];
-  const chemins = liste.map((m) => m.photo_path).filter(Boolean) as string[];
+  const chemins = liste.map((m) => m.photo_path).filter((c): c is string => !!c && !c.startsWith('https://'));
   const signees = chemins.length ? (await supabase.storage.from('photos').createSignedUrls(chemins, 3600)).data ?? [] : [];
 
   return (
@@ -18,7 +18,7 @@ export default async function Matchs() {
       {liste.length === 0 && <p className="sub">Pas encore de match. Continue à découvrir des profils.</p>}
       <div className="col">
         {liste.map((m) => {
-          const src = signees.find((s) => s.path === m.photo_path)?.signedUrl;
+          const src = m.photo_path?.startsWith('https://') ? m.photo_path : signees.find((s) => s.path === m.photo_path)?.signedUrl;
           return (
             <Link key={m.match_id} href={`/matchs/${m.match_id}`} className="card row" style={{ textDecoration: 'none', color: 'inherit', minHeight: 72 }}>
               <div style={{ width: 56, height: 56, borderRadius: 28, overflow: 'hidden', background: 'linear-gradient(160deg,#E8B4B8,#D4A24C)', flex: 'none' }}>

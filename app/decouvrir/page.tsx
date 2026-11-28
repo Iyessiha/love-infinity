@@ -17,9 +17,9 @@ export default async function Decouvrir() {
     const { data: apercu } = await supabase.rpc('apercu_decouverte');
     type Ligne = Omit<Apercu, 'photo'> & { photo_path: string | null };
     const lignes = (apercu ?? []) as Ligne[];
-    const chemins = lignes.map((p) => p.photo_path).filter(Boolean) as string[];
+    const chemins = lignes.map((p) => p.photo_path).filter((c): c is string => !!c && !c.startsWith('https://'));
     const signees = chemins.length ? (await supabaseAdmin().storage.from('photos').createSignedUrls(chemins, 900)).data ?? [] : [];
-    const profils: Apercu[] = lignes.map((p) => ({ ...p, photo: signees.find((s) => s.path === p.photo_path)?.signedUrl ?? null }));
+    const profils: Apercu[] = lignes.map((p) => ({ ...p, photo: p.photo_path?.startsWith('https://') ? p.photo_path : signees.find((s) => s.path === p.photo_path)?.signedUrl ?? null }));
     return (
       <main className="ph" style={{ gap: 12 }}>
         <div className="row"><h1>Aperçu</h1></div>
@@ -37,9 +37,9 @@ export default async function Decouvrir() {
     id: string; prenom: string; age: number; ville: string; bio: string | null; intention: string | null;
     profession: string | null; interets: string[]; verification_level: number; photo_path: string | null;
   }[];
-  const chemins = liste.map((p) => p.photo_path).filter(Boolean) as string[];
+  const chemins = liste.map((p) => p.photo_path).filter((c): c is string => !!c && !c.startsWith('https://'));
   const signees = chemins.length ? (await supabase.storage.from('photos').createSignedUrls(chemins, 3600)).data ?? [] : [];
-  const url = (path: string | null) => signees.find((s) => s.path === path)?.signedUrl ?? null;
+  const url = (path: string | null) => path?.startsWith('https://') ? path : signees.find((s) => s.path === path)?.signedUrl ?? null;
 
   const cartes: Carte[] = liste.map((p) => ({ ...p, interets: p.interets ?? [], photo: url(p.photo_path) }));
 
